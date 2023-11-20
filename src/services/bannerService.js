@@ -24,7 +24,7 @@ const registerBanner = async (bannerDetails, filename) => {
   let bannerCount = 0;
   bannerCount = await BannerModel.find().count();
 
-  if (client) {
+  if (client.isActive) {
     // Creating banner model based on UI
     const newBannerDetails = await BannerModel({
       bannerId: bannerCount + 1,
@@ -92,12 +92,22 @@ const deleteBanner = async (bannerId, deleteDetails) => {
   if (!updateData) {
     throw new Error("Banner could not deactivate");
   }
-
   return updateData;
 };
+
+// Get API's
+const getAllRegistersBanner = async () => {
+
+  const userData = await BannerModel.find({});
+  if(!userData) {
+    throw new Error('Could not fetch users')
+  }
+  return userData;
+}
 
 module.exports = {
   registerBanner,
   updateBanner,
   deleteBanner,
+  getAllRegistersBanner
 };

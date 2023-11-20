@@ -15,6 +15,18 @@ const registerCity = async (req, res) => {
   }
 };
 
+
+const getAllRegistersCity = async (req, res) => {
+  try {
+    const getResponse = await cityService.getAllRegistersCity();
+    return res.json({ message: "Fetch all city register details successfully ", getResponse})
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+    
+  }
+}
+
 module.exports = {
     registerCity,
+    getAllRegistersCity
 };

@@ -63,9 +63,20 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const getAllRegistersClient = async (req, res) => {
+  try {
+    const getResponse = await clientService.getAllRegistersClient();
+    return res.json({ message: "Fetch all client register details successfully ", getResponse})
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+    
+  }
+}
+
 module.exports = {
   registerClient,
   LoginClient,
   forgetPassword,
   resetPassword,
+  getAllRegistersClient
 };

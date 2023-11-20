@@ -26,7 +26,19 @@ const updateJoin = async (req, res) => {
     }
 }
 
+
+const getAllRegistersJoin = async (req, res) => {
+    try {
+      const getResponse = await joinService.getAllRegistersJoin();
+      return res.json({ message: "Fetch all Join register details successfully ", getResponse})
+    } catch (error) {
+      return res.status(500).json({ error: error.message })
+      
+    }
+  }
+
 module.exports = {
     registerJoin,
-    updateJoin
+    updateJoin,
+    getAllRegistersJoin
 }

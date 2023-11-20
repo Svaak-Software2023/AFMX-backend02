@@ -41,8 +41,19 @@ const deleteBanner = async (req, res) => {
   }
 };
 
+const getAllRegistersBanner = async (req, res) => {
+  try {
+    const getResponse = await bannerService.getAllRegistersBanner();
+    return res.json({ message: "Fetch all Banner register details successfully ", getResponse})
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+    
+  }
+}
+
 module.exports = {
   registerBanner,
   updateBanner,
   deleteBanner,
+  getAllRegistersBanner
 };

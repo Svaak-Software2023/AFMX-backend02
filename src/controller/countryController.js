@@ -31,7 +31,19 @@ const updateCountry = async (req, res) => {
   }
 };
 
+
+const getAllRegistersCountry = async (req, res) => {
+  try {
+    const getResponse = await countryService.getAllRegistersCountry();
+    return res.json({ message: "Fetch all country register details successfully ", getResponse})
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+    
+  }
+}
+
 module.exports = {
   registerCountry,
   updateCountry,
+  getAllRegistersCountry
 };

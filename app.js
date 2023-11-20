@@ -15,6 +15,7 @@ const join_route = require("./src/routes/joinRoute.js");
 const contact_route = require("./src/routes/contactRoute.js");
 const complaintCategory_route = require("./src/routes/complaintCategoryRoute.js");
 const complaintStatus_route = require("./src/routes/complaintStatusRoute.js");
+const role_route = require("./src/routes/roleRoute.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -39,6 +40,7 @@ app.use("/api", join_route);
 app.use('/api', contact_route);
 app.use('/api', complaintCategory_route);
 app.use('/api', complaintStatus_route);
+app.use('/api', role_route);
 
 
 // mongoDB Connection

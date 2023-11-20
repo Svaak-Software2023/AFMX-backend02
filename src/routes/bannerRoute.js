@@ -16,4 +16,6 @@ banner_route.put("/banner-update/:bannerId", banner_controller.updateBanner);
 
 banner_route.put("/banner-delete/:bannerId", banner_controller.deleteBanner);
 
+banner_route.get("/all-banner", banner_controller.getAllRegistersBanner);
+
 module.exports = banner_route;

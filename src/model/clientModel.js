@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const clientSchema = mongoose.Schema({
   clientId: {
-    type: String,
+    type: Number,
+    required: true,
+  },
+  roleId: {
+    type: Number,
     required: true,
   },
   clientPrifix: {
@@ -50,11 +54,11 @@ const clientSchema = mongoose.Schema({
     default: "",
   },
   stateId: {
-    type: String,
+    type: Number,
     default: "",
   },
   countryId: {
-    type: String,
+    type: Number,
     default: "",
   },
   clientPassword: {
@@ -83,6 +87,7 @@ const clientSchema = mongoose.Schema({
   },
   updatedDate: {
     type: Date,
+    default: Date.now
   },
   isActive: {
     type: Boolean,

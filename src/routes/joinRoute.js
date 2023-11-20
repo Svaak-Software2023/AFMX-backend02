@@ -13,4 +13,6 @@ join_route.post(
 
 join_route.put("/update-join/:afmxJoinId", join_controller.updateJoin);
 
+join_route.get("/all-join", join_controller.getAllRegistersJoin);
+
 module.exports = join_route;

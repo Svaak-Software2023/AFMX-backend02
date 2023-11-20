@@ -77,7 +77,19 @@ const updateCountry = async (countryId, updateCountryDetails) => {
   return updatedCountry;
 };
 
+
+// Get API's
+const getAllRegistersCountry = async () => {
+
+  const countryData = await CountryModel.find({});
+  if(!countryData) {
+    throw new Error('Could not fetch data')
+  }
+  return countryData;
+}
+
 module.exports = {
   registerCountry,
   updateCountry,
+  getAllRegistersCountry
 };

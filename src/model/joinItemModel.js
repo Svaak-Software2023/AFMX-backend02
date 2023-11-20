@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const joinItemSchema = new mongoose.Schema({
   afmxJoinId: {
-    type: String,
+    type: Number,
     required: true,
   },
   afmxJoinImageVideo: {

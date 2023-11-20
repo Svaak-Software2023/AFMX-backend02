@@ -52,7 +52,19 @@ const updateJoin = async (afmxJoinId, updatedJoinDetails) => {
   return updateJoinAfmx;
 };
 
+
+const getAllRegistersJoin = async () => {
+
+  const joinData = await JoinModel.find({});
+
+  if(!joinData) {
+    throw new Error('Could not fetch data')
+  }
+  return joinData;
+}
+
 module.exports = {
   registerJoin,
   updateJoin,
+  getAllRegistersJoin,
 };

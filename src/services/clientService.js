@@ -6,6 +6,9 @@ const bycrptjs = require("bcryptjs");
 require("dotenv").config();
 const sendResetPasswordEmail = require("../utility/sendEmail.js");
 const sendEmail = require("../utility/sendEmail.js");
+const roleModel = require("../model/roleModel.js");
+const countryModel = require("../model/countryModel.js");
+const stateModel = require("../model/stateModel.js");
 
 const bycrptSalt = process.env.BCRYPT_SALT;
 const jwt_secret = process.env.JWT_SECRET;
@@ -33,6 +36,7 @@ const registerClient = async (signUpDetails, filename) => {
   const sPassword = await securePassword(signUpDetails.clientPassword);
 
   const {
+    roleName,
     clientPrifix,
     clientFirstName,
     clientMiddleName,
@@ -58,8 +62,39 @@ const registerClient = async (signUpDetails, filename) => {
   let clientCount = 0;
   clientCount = await clientModel.find().count();
 
+  // finding the roleId from the roleModel 
+  const role = await roleModel.findOne({ roleName })
+
+  if(!role) {
+    throw new Error('Role is not valid')
+  }
+ // Check if isActive is not true  
+  if(!role.isActive) {
+    throw new Error('This types of account is not active');
+  }
+
+// Finding the country based on the name
+if(countryId) {
+const countryRoleId = await countryModel.findOne({ countryId });
+
+console.log("countryId", countryRoleId);
+ if(!countryRoleId) {
+   throw new Error('Please select as the valid country')
+ }
+}
+
+// Validate the state based on the Id
+ if(stateId) {
+  const stateRoleId = await stateModel.findOne({ stateId });
+  if(!stateRoleId) {
+    throw new Error('Please select as the valid state');
+  }
+
+ }
+
   const newClientDetails = await clientModel({
     clientId: clientCount + 1,
+    roleId: role.roleId,
     clientPrifix,
     clientFirstName,
     clientMiddleName,
@@ -286,9 +321,19 @@ const resetPassword = async (userId, token, clientPassword) => {
   return { message: "Password reset was successful" };
 };
 
+const getAllRegistersClient = async () => {
+
+  const clientData = await clientModel.find({});
+  if(!clientData) {
+    throw new Error('Could not fetch users')
+  }
+  return clientData;
+}
+
 module.exports = {
   registerClient,
   LoginClient,
   forgetPassword,
   resetPassword,
+  getAllRegistersClient
 };

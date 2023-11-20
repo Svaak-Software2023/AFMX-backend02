@@ -35,6 +35,19 @@ const registerCity = async (cityDetails) => {
   }
 };
 
+
+// Get API's
+const getAllRegistersCity = async () => {
+
+  const cityData = await CityModel.find({});
+  if(!cityData) {
+    throw new Error('Could not fetch data')
+  }
+  return cityData;
+}
+
+
 module.exports = {
   registerCity,
+  getAllRegistersCity
 };
