@@ -6,12 +6,10 @@ const createComplaintStatus = async (req, res) => {
     // Handle create complaintStatus response.
     const complaintStatusResponse =
       await complaintStatusService.createComplaintStatus(req.body);
-    return res
-      .status(201)
-      .json({
-        message: "Complaint Status created successfully",
-        complaintStatusResponse,
-      });
+    return res.status(201).json({
+      message: "Complaint Status created successfully",
+      complaintStatusResponse,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -26,11 +24,11 @@ const updateComplaintStatus = async (req, res) => {
         req.params.complaintStatusId,
         req.body
       );
-    
-      return res.status(202).json({
-        message: "Complaint Status updated successfully.",
-        complaintStatusUpdatedResponse,
-      });
+
+    return res.status(202).json({
+      message: "Complaint Status updated successfully.",
+      complaintStatusUpdatedResponse,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -45,7 +43,11 @@ const deleteComplaintStatus = async (req, res) => {
         req.params.complaintStatusId,
         req.body
       );
-      console.log("req.params.complaintStatusId", req.params.complaintStatusId, req.body);
+    console.log(
+      "req.params.complaintStatusId",
+      req.params.complaintStatusId,
+      req.body
+    );
     return res.json({
       message: "Complaint Status de-activated",
       complaintStatusDeleteResponse,

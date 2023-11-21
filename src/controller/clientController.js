@@ -1,4 +1,7 @@
 const clientService = require("../services/clientService");
+const uploadToVSCode = require("../middleware/fileHandler");
+const path = require("path");
+const fs = require("fs");
 
 const registerClient = async (req, res) => {
   try {
@@ -8,10 +11,21 @@ const registerClient = async (req, res) => {
       req.file.filename
     );
 
+    // After API execution succeeds, perform the file upload
+    const uploadedFilePath = req.file.path;
+    const targetDirectory = path.join(__dirname, "../public/clientImages");
+
+    await uploadToVSCode(uploadedFilePath, targetDirectory);
+
     return res
       .status(201)
       .json({ message: "Client Created Successfully", signUpResponse });
   } catch (error) {
+    // If an error occurs, delete the uploaded file
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
     return res.status(500).json({ error: error.message });
   }
 };
@@ -66,17 +80,19 @@ const resetPassword = async (req, res) => {
 const getAllRegistersClient = async (req, res) => {
   try {
     const getResponse = await clientService.getAllRegistersClient();
-    return res.json({ message: "Fetch all client register details successfully ", getResponse})
+    return res.json({
+      message: "Fetch all client register details successfully ",
+      getResponse,
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message })
-    
+    return res.status(500).json({ error: error.message });
   }
-}
+};
 
 module.exports = {
   registerClient,
   LoginClient,
   forgetPassword,
   resetPassword,
-  getAllRegistersClient
+  getAllRegistersClient,
 };

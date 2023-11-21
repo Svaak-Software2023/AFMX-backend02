@@ -9,11 +9,7 @@ const destinationPathbannerImage = path.join(
   __dirname,
   "../public/bannerImages"
 );
-const destinationPathJoinImage = path.join(
-  __dirname,
-  "../public/joinImages"
-);
-
+const destinationPathJoinImage = path.join(__dirname, "../public/joinImages");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -29,18 +25,14 @@ const storage = multer.diskStorage({
     }
 
     if (destinationPath) {
-      cb(null, destinationPath, function (error, success) {
-        if (error) throw error;
-      });
+      cb(null, destinationPath);
     } else {
-      cb(new Error("Invalid fieldname"), null);
+      cb(new Error("Invalid fieldname"));
     }
   },
   filename: function (req, file, cb) {
     const name = Date.now() + "-" + file.originalname;
-    cb(null, name, function (error1, success1) {
-      if (error1) throw error1;
-    });
+    cb(null, name);
   },
 });
 const upload = multer({

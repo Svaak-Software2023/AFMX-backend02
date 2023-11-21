@@ -1,14 +1,14 @@
 const express = require("express");
 const banner_route = express.Router();
 
-const uploadImage = require("../middleware/multer.js");
+const fileUploadMiddleware = require("../middleware/multer");
 
 const banner_controller = require("../controller/bannerController");
 
 banner_route.use(express.static("public"));
 banner_route.post(
   "/banner-create",
-  uploadImage.single("bannerImage"),
+  fileUploadMiddleware.single("bannerImage"),
   banner_controller.registerBanner
 );
 

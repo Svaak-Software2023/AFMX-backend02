@@ -6,12 +6,10 @@ const createComplaintCategory = async (req, res) => {
     // Handle create complaintCategory response.
     const complaintCategoryResponse =
       await complaintCategoryService.createComplaintCategory(req.body);
-    return res
-      .status(201)
-      .json({
-        message: "Complaint Category created successfully",
-        complaintCategoryResponse,
-      });
+    return res.status(201).json({
+      message: "Complaint Category created successfully",
+      complaintCategoryResponse,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -26,11 +24,11 @@ const updateComplaintCategory = async (req, res) => {
         req.params.complaintCategoryId,
         req.body
       );
-    
-      return res.status(202).json({
-        message: "Complaint Category updated successfully.",
-        complaintCategoryUpdatedResponse,
-      });
+
+    return res.status(202).json({
+      message: "Complaint Category updated successfully.",
+      complaintCategoryUpdatedResponse,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -45,7 +43,11 @@ const deleteComplaintCategory = async (req, res) => {
         req.params.complaintCategoryId,
         req.body
       );
-      console.log("req.params.complaintCategoryId", req.params.complaintCategoryId, req.body);
+    console.log(
+      "req.params.complaintCategoryId",
+      req.params.complaintCategoryId,
+      req.body
+    );
     return res.json({
       message: "Complaint Category de-activated",
       complaintCategoryDeleteResponse,

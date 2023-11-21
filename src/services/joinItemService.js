@@ -11,11 +11,17 @@ const registerJoin = async (joinDetails, fileName) => {
     isActive,
   } = joinDetails;
 
-  // Finding the total number of document in join collection
-  let joinCount = 0;
-  joinCount = await JoinModel.find().count();
+  // check existing id
+  const existingJoin = await JoinModel.findOne({ afmxJoinId });
 
-  const joinNewDetails = await JoinModel({
+  if (existingJoin) {
+    throw new Error("Join afmx exists");
+  }
+
+  // Fetch the count of banners
+  const joinCount = await JoinModel.countDocuments();
+
+  const joinNewDetails = new JoinModel({
     //Save in Join Model
     afmxJoinId: joinCount + 1,
     afmxJoinImageVideo: fileName,
@@ -25,21 +31,15 @@ const registerJoin = async (joinDetails, fileName) => {
     updatedDate,
     isActive,
   });
-  // check existing id
-  const existingJoin = await JoinModel.findOne({ afmxJoinId });
 
-  if (existingJoin) {
-    throw new Error("Join afmx exists");
-  } else {
-  
-    const details = await joinNewDetails.save();
-    return details;
-  }
+  const details = await joinNewDetails.save();
+  return details;
 };
 
 const updateJoin = async (afmxJoinId, updatedJoinDetails) => {
   const joinData = await JoinModel.findOne({ afmxJoinId: afmxJoinId });
 
+  //Check existing join data
   if (!joinData) {
     throw new Error("join data is not found");
   }
@@ -52,16 +52,14 @@ const updateJoin = async (afmxJoinId, updatedJoinDetails) => {
   return updateJoinAfmx;
 };
 
-
 const getAllRegistersJoin = async () => {
-
   const joinData = await JoinModel.find({});
 
-  if(!joinData) {
-    throw new Error('Could not fetch data')
+  if (!joinData) {
+    throw new Error("Could not fetch data");
   }
   return joinData;
-}
+};
 
 module.exports = {
   registerJoin,

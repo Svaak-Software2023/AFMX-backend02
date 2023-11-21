@@ -4,21 +4,19 @@ const sendEmail = require("../utility/sendEmail");
 const contactUsPage = async (contactDetails) => {
   const { name, email, message, subject, phoneNumber } = contactDetails;
 
-  console.log("contactDetails", contactDetails);
-
   const createContact = await contactModel({
     name,
     email,
     message,
     subject,
-    phoneNumber
+    phoneNumber,
   });
 
-   // Save in Contact Model
-    const contactData = await createContact.save();
+  // Save in Contact Model
+  const contactData = await createContact.save();
 
-    const sub = `New Inquiry - [${subject}]`
-    const data = `
+  const sub = `New Inquiry - [${subject}]`;
+  const data = `
     <p>Dear AFMX,</p>
     <p>A new inquiry has been submitted through our online inquiry form. Here are the details:</p><br/>
     <p><b>Inquirer's Name:</b> ${name}</p>
@@ -29,13 +27,13 @@ const contactUsPage = async (contactDetails) => {
     <p>${message}</p><br/>
     <p>Best regards,</p>
     <p>AFMX</p>
-    `
-    // Sending email to the Admin.
-     sendEmail(process.env.ADMIN_EMAIL, sub, data)
+    `;
+  // Sending email to the Admin.
+  sendEmail(process.env.ADMIN_EMAIL, sub, data);
 
-     const subUser = `Thank You for Your Inquiry`
+  const subUser = `Thank You for Your Inquiry`;
 
-     const dataForUser = `
+  const dataForUser = `
      <p>Dear ${name},</p>
      <p>Thank you for reaching out to the exclusive AFMX community! We appreciate your interest in AFMX. 
      AFMX is pleased to assist you with any questions or information you may need.</p>
@@ -51,12 +49,12 @@ const contactUsPage = async (contactDetails) => {
      to serve you</p><br/>
      <p>Best regards,</p>
      <p>AFMX</p>
-     ` 
+     `;
 
-    //  Sending email to the Users.
-    sendEmail(email, subUser, dataForUser);
+  //  Sending email to the Users.
+  sendEmail(email, subUser, dataForUser);
 
-    return contactData;
+  return contactData;
 };
 
 module.exports = {

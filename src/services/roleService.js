@@ -11,11 +11,19 @@ const createRole = async (roleDetail) => {
     isActive,
   } = roleDetail;
 
-  // Check total Number of documents(records) in the role collection(table)
-  let roleCount = 0;
-  roleCount = await roleModel.find().count();
+  // Check Existing role
+  const roleExists = await roleModel.findOne({
+    roleName,
+  });
 
-  const newRoleDetail = await roleModel({
+  if (roleExists) {
+    throw new Error("Role exists");
+  }
+
+  // Fetch count of role
+  let roleCount = await roleModel.countDocuments();
+
+  const newRoleDetail = new roleModel({
     //Save in role Model
     roleId: roleCount + 1,
     roleName,
@@ -25,24 +33,12 @@ const createRole = async (roleDetail) => {
     isActive,
   });
 
-  // Check Existing role
-  const roleExists = await roleModel.findOne({
-    roleName,
-  });
-
-  if (roleExists) {
-    throw new Error("Role exists");
-  } else {
-    const newRoleDetails = await newRoleDetail.save();
-    return newRoleDetails;
-  }
+  const newRoleDetails = await newRoleDetail.save();
+  return newRoleDetails;
 };
 
 //Update role
-const updateRole = async (
-  roleId,
-  updateRoleDetail
-) => {
+const updateRole = async (roleId, updateRoleDetail) => {
   // Check existing role
   const roleData = await roleModel.findOne({
     roleId: roleId,
@@ -51,12 +47,11 @@ const updateRole = async (
     throw new Error("Role not found.");
   }
 
-  const updatedRole =
-    await roleModel.findOneAndUpdate(
-      { roleId: roleId },
-      { $set: updateRoleDetail },
-      { new: true }
-    );
+  const updatedRole = await roleModel.findOneAndUpdate(
+    { roleId: roleId },
+    { $set: updateRoleDetail },
+    { new: true }
+  );
   if (!updatedRole) {
     throw new Error("Role could not updated");
   }
@@ -64,10 +59,7 @@ const updateRole = async (
 };
 
 //Delete role
-const deleteRole = async (
-  roleId,
-  deleteRoleDetail
-) => {
+const deleteRole = async (roleId, deleteRoleDetail) => {
   // Check Existing roleId
   const roleData = await roleModel.findOne({
     roleId: roleId,
@@ -77,12 +69,11 @@ const deleteRole = async (
     throw new Error("Role not found.");
   }
   // update only if isActive is true
-  const updateRoleData =
-    await roleModel.findOneAndUpdate(
-      { roleId: roleId },
-      { $set: deleteRoleDetail },
-      { new: true }
-    );
+  const updateRoleData = await roleModel.findOneAndUpdate(
+    { roleId: roleId },
+    { $set: deleteRoleDetail },
+    { new: true }
+  );
 
   if (!updateRoleData) {
     throw new Error("Role could not de-activate");

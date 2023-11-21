@@ -10,7 +10,7 @@ function twoWeekFromNow() {
 
 const bannerSchema = mongoose.Schema({
   bannerId: {
-    type: String,
+    type: Number,
     required: true,
   },
   businessName: {

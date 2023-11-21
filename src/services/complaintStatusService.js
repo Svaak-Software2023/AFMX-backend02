@@ -10,11 +10,19 @@ const createComplaintStatus = async (complaintStatusDetail) => {
     isActive,
   } = complaintStatusDetail;
 
-  // Check total Number of documents(records) in the complaintStatus collection(table)
-  let complaintStatusCount = 0;
-  complaintStatusCount = await complaintStatusModel.find().count();
+  // Check Existing ComplaintStatus
+  const complaintStatusExists = await complaintStatusModel.findOne({
+    complaintStatusName,
+  });
 
-  const newComplaintStatusDetail = await complaintStatusModel({
+  if (complaintStatusExists) {
+    throw new Error("Complaint Status exists");
+  }
+
+  // Fetch count of complaint status count
+  let complaintStatusCount = await complaintStatusModel.countDocuments();
+
+  const newComplaintStatusDetail = new complaintStatusModel({
     //Save in ComplaintStatus Model
     complaintStatusId: complaintStatusCount + 1,
     complaintStatusName,
@@ -23,17 +31,8 @@ const createComplaintStatus = async (complaintStatusDetail) => {
     isActive,
   });
 
-  // Check Existing ComplaintStatus
-  const complaintStatusExists = await complaintStatusModel.findOne({
-    complaintStatusName,
-  });
-
-  if (complaintStatusExists) {
-    throw new Error("Complaint Status exists");
-  } else {
-    const newComplaintStatusDetails = await newComplaintStatusDetail.save();
-    return newComplaintStatusDetails;
-  }
+  const newComplaintStatusDetails = await newComplaintStatusDetail.save();
+  return newComplaintStatusDetails;
 };
 
 //Update ComplaintStatus
@@ -49,12 +48,11 @@ const updateComplaintStatus = async (
     throw new Error("Complaint Status not found.");
   }
 
-  const updatedComplaintStatus =
-    await complaintStatusModel.findOneAndUpdate(
-      { complaintStatusId: complaintStatusId },
-      { $set: updateComplaintStatusDetail },
-      { new: true }
-    );
+  const updatedComplaintStatus = await complaintStatusModel.findOneAndUpdate(
+    { complaintStatusId: complaintStatusId },
+    { $set: updateComplaintStatusDetail },
+    { new: true }
+  );
   if (!updatedComplaintStatus) {
     throw new Error("Complaint Status could not updated");
   }
@@ -75,12 +73,11 @@ const deleteComplaintStatus = async (
     throw new Error("Complaint Status not found.");
   }
   // update only if isActive is true
-  const updateComplaintStatusData =
-    await complaintStatusModel.findOneAndUpdate(
-      { complaintStatusId: complaintStatusId },
-      { $set: deleteComplaintStatusDetail },
-      { new: true }
-    );
+  const updateComplaintStatusData = await complaintStatusModel.findOneAndUpdate(
+    { complaintStatusId: complaintStatusId },
+    { $set: deleteComplaintStatusDetail },
+    { new: true }
+  );
 
   if (!updateComplaintStatusData) {
     throw new Error("Complaint Status could not de-activate");

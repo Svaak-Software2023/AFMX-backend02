@@ -10,13 +10,19 @@ const registerCity = async (cityDetails) => {
     isActive,
   } = cityDetails;
 
-  // Check total Number of documents in the City collection
-  let cityCount = 0;
-  cityCount = await CityModel.find().count();
+  // Check Existing City
+  const cityExists = await CityModel.findOne({ cityName });
 
-  const newCityDetails = await CityModel({
+  if (cityExists) {
+    throw new Error("City exists");
+  }
+
+  // Fetch count of city
+  let cityCount = await CityModel.countDocuments();
+
+  const newCityDetails = new CityModel({
     //Save in City Model
-    cityId: cityCount  + 1,
+    cityId: cityCount + 1,
     cityName,
     stateId,
     createdDate,
@@ -24,30 +30,20 @@ const registerCity = async (cityDetails) => {
     isActive,
   });
 
-  // Check Existing City
-  const cityExists = await CityModel.findOne({ cityName });
-
-  if (cityExists) {
-    throw new Error("City exists");
-  } else {
-    const newDetails = await newCityDetails.save();
-    return newDetails;
-  }
+  const newDetails = await newCityDetails.save();
+  return newDetails;
 };
-
 
 // Get API's
 const getAllRegistersCity = async () => {
-
   const cityData = await CityModel.find({});
-  if(!cityData) {
-    throw new Error('Could not fetch data')
+  if (!cityData) {
+    throw new Error("Could not fetch data");
   }
   return cityData;
-}
-
+};
 
 module.exports = {
   registerCity,
-  getAllRegistersCity
+  getAllRegistersCity,
 };

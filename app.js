@@ -16,6 +16,7 @@ const contact_route = require("./src/routes/contactRoute.js");
 const complaintCategory_route = require("./src/routes/complaintCategoryRoute.js");
 const complaintStatus_route = require("./src/routes/complaintStatusRoute.js");
 const role_route = require("./src/routes/roleRoute.js");
+const deparment_route = require("./src/routes/deparmentRoute.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -27,9 +28,9 @@ app.use(cors());
 // To handle the incoming request
 app.use(express.json());
 
-app.get('/', (req, res) => {
- return res.send('fetching the data')
-})
+app.get("/", (req, res) => {
+  return res.send("fetching the data");
+});
 // To pass and handle the routes
 app.use("/api", client_route);
 app.use("/api", banner_route);
@@ -37,11 +38,11 @@ app.use("/api", country_route);
 app.use("/api", state_route);
 app.use("/api", city_route);
 app.use("/api", join_route);
-app.use('/api', contact_route);
-app.use('/api', complaintCategory_route);
-app.use('/api', complaintStatus_route);
-app.use('/api', role_route);
-
+app.use("/api", contact_route);
+app.use("/api", complaintCategory_route);
+app.use("/api", complaintStatus_route);
+app.use("/api", role_route);
+app.use("/api", deparment_route);
 
 // mongoDB Connection
 mongoose

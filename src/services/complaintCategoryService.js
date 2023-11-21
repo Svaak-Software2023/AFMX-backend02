@@ -92,5 +92,5 @@ const deleteComplaintCategory = async (
 module.exports = {
   createComplaintCategory,
   updateComplaintCategory,
-  deleteComplaintCategory
+  deleteComplaintCategory,
 };

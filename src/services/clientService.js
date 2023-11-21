@@ -1,14 +1,13 @@
-const jwt = require("jsonwebtoken");
-const clientModel = require("../model/clientModel.js");
-const TokenModel = require("../model/tokenModel.js");
-const crypto = require("crypto");
-const bycrptjs = require("bcryptjs");
 require("dotenv").config();
-const sendResetPasswordEmail = require("../utility/sendEmail.js");
 const sendEmail = require("../utility/sendEmail.js");
-const roleModel = require("../model/roleModel.js");
-const countryModel = require("../model/countryModel.js");
-const stateModel = require("../model/stateModel.js");
+const jwt = require("jsonwebtoken");
+const bycrptjs = require("bcryptjs");
+const crypto = require("crypto");
+const ClientModel = require("../model/clientModel.js");
+const TokenModel = require("../model/tokenModel.js");
+const RoleModel = require("../model/roleModel.js");
+const CountryModel = require("../model/countryModel.js");
+const StateModel = require("../model/stateModel.js");
 
 const bycrptSalt = process.env.BCRYPT_SALT;
 const jwt_secret = process.env.JWT_SECRET;
@@ -58,41 +57,33 @@ const registerClient = async (signUpDetails, filename) => {
     isActive,
   } = signUpDetails;
 
-  // finding the client total number of count
-  let clientCount = 0;
-  clientCount = await clientModel.find().count();
+  // finding the roleId from the roleModel
+  const role = await RoleModel.findOne({ roleName });
 
-  // finding the roleId from the roleModel 
-  const role = await roleModel.findOne({ roleName })
-
-  if(!role) {
-    throw new Error('Role is not valid')
-  }
- // Check if isActive is not true  
-  if(!role.isActive) {
-    throw new Error('This types of account is not active');
+  // Check role exists and if isActive is not true
+  if (!role || !role.isActive) {
+    throw new Error("Invalid or inactive role");
   }
 
-// Finding the country based on the name
-if(countryId) {
-const countryRoleId = await countryModel.findOne({ countryId });
-
-console.log("countryId", countryRoleId);
- if(!countryRoleId) {
-   throw new Error('Please select as the valid country')
- }
-}
-
-// Validate the state based on the Id
- if(stateId) {
-  const stateRoleId = await stateModel.findOne({ stateId });
-  if(!stateRoleId) {
-    throw new Error('Please select as the valid state');
+  // Finding the country based on the name
+  if (countryId) {
+    const countryRoleId = await CountryModel.findOne({ countryId });
+    if (!countryRoleId) {
+      throw new Error("Please select as the valid country");
+    }
   }
 
- }
+  // Validate the state based on the Id
+  if (stateId) {
+    const stateRoleId = await StateModel.findOne({ stateId });
+    if (!stateRoleId) {
+      throw new Error("Please select as the valid state");
+    }
+  }
+  // Fetch the count of client
+  const clientCount = await ClientModel.countDocuments();
 
-  const newClientDetails = await clientModel({
+  const newClientDetails = new ClientModel({
     clientId: clientCount + 1,
     roleId: role.roleId,
     clientPrifix,
@@ -119,14 +110,17 @@ console.log("countryId", countryRoleId);
   });
 
   // cheking exitsting user
-  const existingUser = await clientModel.findOne({ clientEmail });
+  const existingUser = await ClientModel.findOne({ clientEmail });
 
   if (existingUser) {
     throw new Error("Email already exist");
-  } else {
-    const clientDetails = await newClientDetails.save();
-    const subject = `Thank You for Joining AFMX Membership!`;
-    const data = `
+  }
+
+  const clientDetails = await newClientDetails.save();
+
+  // Prepare the data to send an email to users.
+  const subject = `Thank You for Joining AFMX Membership!`;
+  const emailContent = `
     <p>Dear ${clientFirstName} ${clientMiddleName},</p> 
     <p>Welcome to the exclusive AFMX community! We are thrilled to have you as a member, and we want to express 
      our gratitude for choosing AFMX for your tour experiences.</p>
@@ -149,11 +143,11 @@ console.log("countryId", countryRoleId);
     dedicated customer support team.</p>
     <p>Once again, thank you for joining AFMX. We look forward to being part of your unforgettable
     cleaning experiences!
-    </p>`
-  //Sending the email to client Users. 
-    sendEmail(clientEmail, subject, data)
-    return clientDetails;
-  }
+    </p>`;
+  //Sending the email to client Users.
+  sendEmail(clientEmail, subject, emailContent);
+
+  return clientDetails;
 };
 
 const LoginClient = async (loginDetails) => {
@@ -163,7 +157,7 @@ const LoginClient = async (loginDetails) => {
     throw new Error("clientEmail and clientPassword must be compulsory !");
   }
 
-  const user = await clientModel.findOne({ clientEmail });
+  const user = await ClientModel.findOne({ clientEmail });
 
   if (!user) {
     // User not found, handle this case
@@ -173,7 +167,6 @@ const LoginClient = async (loginDetails) => {
   // validate, user is active or not
   // only active user is allowed to login
   if (!user.isActive) {
-    console.log("inside if block");
     throw new Error(
       "user is not active.. Need to create an account then login"
     );
@@ -223,7 +216,7 @@ const LoginClient = async (loginDetails) => {
 const forgetPassword = async (forgetDetails) => {
   const { clientEmail } = forgetDetails;
 
-  const user = await clientModel.findOne({ clientEmail: clientEmail });
+  const user = await ClientModel.findOne({ clientEmail: clientEmail });
 
   if (!user) throw new Error("Email does not exits");
 
@@ -267,14 +260,13 @@ const forgetPassword = async (forgetDetails) => {
   Customerservice@americasfinestmaintenance.com or (844)-200-900. We are here to assist you.</p>
   `;
 
-// Sending email to the client for reset password.
-  sendResetPasswordEmail(clientEmail, subject, link);
+  // Sending email to the client for reset password.
+  sendEmail(clientEmail, subject, link);
   return { link };
 };
 
 const resetPassword = async (userId, token, clientPassword) => {
   let passwordResetToken = await TokenModel.findOne({ userId });
-
 
   if (!passwordResetToken) {
     throw new Error("Invalid or expired password reset token");
@@ -287,15 +279,15 @@ const resetPassword = async (userId, token, clientPassword) => {
   }
   const newPassword = await securePassword(clientPassword);
 
-  await clientModel.findByIdAndUpdate(
+  await ClientModel.findByIdAndUpdate(
     { _id: userId },
     { $set: { clientPassword: newPassword } },
     { new: true }
   );
 
-  const user = await clientModel.findById({ _id: userId });
+  const user = await ClientModel.findById({ _id: userId });
 
-  const subject = `Your Password Has Been Successfully Reset`
+  const subject = `Your Password Has Been Successfully Reset`;
 
   const data = `
   <p>Dear ${user.clientFirstName} ${user.clientMiddleName},</p>
@@ -310,11 +302,10 @@ const resetPassword = async (userId, token, clientPassword) => {
   <p>Thank you for your prompt attention to this matter.</p>
   <p>Best regards,</p>
   <p>AFMX</p>
-  `
+  `;
 
-  // const link = ` ${user.clientFirstName} ${user.clientMiddleName}`;
-  // Sending an email to the client reset password. 
-  sendResetPasswordEmail(user.clientEmail, subject, data);
+  // Sending an email to the client reset password.
+  sendEmail(user.clientEmail, subject, data);
 
   await passwordResetToken.deleteOne();
 
@@ -322,18 +313,17 @@ const resetPassword = async (userId, token, clientPassword) => {
 };
 
 const getAllRegistersClient = async () => {
-
-  const clientData = await clientModel.find({});
-  if(!clientData) {
-    throw new Error('Could not fetch users')
+  const clientData = await ClientModel.find({});
+  if (!clientData) {
+    throw new Error("Could not fetch users");
   }
   return clientData;
-}
+};
 
 module.exports = {
   registerClient,
   LoginClient,
   forgetPassword,
   resetPassword,
-  getAllRegistersClient
+  getAllRegistersClient,
 };

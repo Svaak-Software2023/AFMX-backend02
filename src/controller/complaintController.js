@@ -1,6 +1,4 @@
-
-
 // const createComplaintPortal = async (req, res) => {
-    
-//     const complaintResponse = await  
+
+//     const complaintResponse = await
 // }
