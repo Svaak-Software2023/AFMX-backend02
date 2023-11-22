@@ -17,6 +17,7 @@ const complaintCategory_route = require("./src/routes/complaintCategoryRoute.js"
 const complaintStatus_route = require("./src/routes/complaintStatusRoute.js");
 const role_route = require("./src/routes/roleRoute.js");
 const deparment_route = require("./src/routes/deparmentRoute.js");
+const admin_route = require('./src/routes/superAdminRoute.js');
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -43,6 +44,7 @@ app.use("/api", complaintCategory_route);
 app.use("/api", complaintStatus_route);
 app.use("/api", role_route);
 app.use("/api", deparment_route);
+app.use("/api", admin_route);
 
 // mongoDB Connection
 mongoose
