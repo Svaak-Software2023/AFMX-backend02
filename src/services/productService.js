@@ -16,7 +16,6 @@ const addProduct = async (productDetails, fileName) => {
 
   // Check if department with the same name already exists
   const productCategory = await ProductCategoryModel.findOne({ productCategoryName });
-  console.log("productCategorty", productCategory);
 
   if(!productCategory ) {
     throw new Error('Category does not exists')
