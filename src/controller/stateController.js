@@ -11,6 +11,24 @@ const registerState = async (req, res) => {
   }
 };
 
+//Update country
+const updateState = async (req, res) => {
+  try {
+    // Handle updated country response.
+    const stateUpdatedResponse = await stateService.updateState(
+      req.params.stateId,
+      req.body
+    );
+
+    return res
+      .status(202)
+      .json({ message: "State updated", stateUpdatedResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
 const getAllRegistersState = async (req, res) => {
   try {
     const getResponse = await stateService.getAllRegistersState();
@@ -25,5 +43,6 @@ const getAllRegistersState = async (req, res) => {
 
 module.exports = {
   registerState,
+  updateState,
   getAllRegistersState,
 };

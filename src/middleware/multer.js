@@ -10,6 +10,7 @@ const destinationPathbannerImage = path.join(
   "../public/bannerImages"
 );
 const destinationPathJoinImage = path.join(__dirname, "../public/joinImages");
+const destinationPathProductImage = path.join(__dirname, "../public/productImages");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -22,6 +23,8 @@ const storage = multer.diskStorage({
       destinationPath = destinationPathbannerImage;
     } else if (file.fieldname === "afmxJoinImageVideo") {
       destinationPath = destinationPathJoinImage;
+    } else if (file.fieldname === "productImage") {
+      destinationPath = destinationPathProductImage;
     }
 
     if (destinationPath) {

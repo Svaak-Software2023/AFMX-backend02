@@ -11,6 +11,24 @@ const registerCity = async (req, res) => {
   }
 };
 
+//Update country
+const updateCity = async (req, res) => {
+  try {
+    // Handle updated country response.
+    const cityUpdatedResponse = await cityService.updateCity(
+      req.params.cityId,
+      req.body
+    );
+
+    return res
+      .status(202)
+      .json({ message: "City updated", cityUpdatedResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
 const getAllRegistersCity = async (req, res) => {
   try {
     const getResponse = await cityService.getAllRegistersCity();
@@ -25,5 +43,6 @@ const getAllRegistersCity = async (req, res) => {
 
 module.exports = {
   registerCity,
+  updateCity,
   getAllRegistersCity,
 };

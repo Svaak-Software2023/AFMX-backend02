@@ -34,7 +34,26 @@ const registerCity = async (cityDetails) => {
   return newDetails;
 };
 
-// Get API's
+// Update method 
+const updateCity = async (cityId, updateCityDetails) => {
+  // Check existing country
+  const cityData = await CityModel.findOne({ cityId });
+
+  if (!cityData) {
+    throw new Error("City data not found");
+  }
+
+  const updatedCity = await CityModel.findOneAndUpdate(
+    { cityId: cityId },
+    { $set: updateCityDetails },
+    { new: true }
+  );
+
+  return updatedCity;
+};
+
+
+// Get method
 const getAllRegistersCity = async () => {
   const cityData = await CityModel.find({});
   if (!cityData) {
@@ -45,5 +64,6 @@ const getAllRegistersCity = async () => {
 
 module.exports = {
   registerCity,
+  updateCity,
   getAllRegistersCity,
 };

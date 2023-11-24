@@ -43,7 +43,27 @@ const registerState = async (stateDetails) => {
   return newDetails;
 };
 
-// Get API's
+
+// Update Method
+const updateState = async (stateId, updatedStateDetails) => {
+  // Check existing country
+  const stateData = await StateModel.findOne({ stateId });
+
+  if (!stateData) {
+    throw new Error("State data not found");
+  }
+
+  const updatedState = await StateModel.findOneAndUpdate(
+    { stateId: stateId },
+    { $set: updatedStateDetails },
+    { new: true }
+  );
+
+  return updatedState;
+};
+
+
+// Get Method
 const getAllRegistersState = async () => {
   const stateData = await StateModel.find({});
   if (!stateData) {
@@ -54,5 +74,6 @@ const getAllRegistersState = async () => {
 
 module.exports = {
   registerState,
+  updateState,
   getAllRegistersState,
 };
