@@ -4,14 +4,14 @@ const bycrptjs = require("bcryptjs");
 const bycrptSalt = process.env.BCRYPT_SALT;
 
 // Secure the password
-const securePassword = async(password) => {
-    try {
-        const bycrptPassword = await bycrptjs.hash(password, Number(bycrptSalt));
-        return bycrptPassword
-    } catch (error) {
-        return error.message;
-    }
-}
+const securePassword = async (password) => {
+  try {
+    const bycrptPassword = await bycrptjs.hash(password, Number(bycrptSalt));
+    return bycrptPassword;
+  } catch (error) {
+    return error.message;
+  }
+};
 // const createAdmin = async (adminDetails) => {
 
 //     const { adminPassword, adminEmail } = adminDetails;
@@ -59,33 +59,30 @@ const loginAdmin = async (adminDetails) => {
 };
 
 // change password method
-const changePassowrd = async(adminDetails) => {
+const changePassowrd = async (adminDetails) => {
+  const { adminId, adminPassword } = adminDetails;
 
-    const { adminId, adminPassword } = adminDetails;
+  if (!adminId || !adminPassword) {
+    throw new Error("Id or Password field is missing");
+  }
 
-    if(!adminId || !adminPassword) {
-        throw new Error('Id or Password field is missing')
-    }
+  const newPassword = await securePassword(adminPassword);
 
-        const newPassword = await securePassword(adminPassword);
-        console.log("newPassword", newPassword);
+  const updatedAdmin = await AdminModel.findOneAndUpdate(
+    { adminId }, //  Finding based on adminId field
+    { adminPassword: newPassword },
+    { new: true } // Return the updated document
+  );
+  console.log("updateData", updatedAdmin);
 
-       const updatedAdmin =  await AdminModel.findOneAndUpdate(
-         { adminId }, //  Finding based on adminId field
-         { adminPassword: newPassword },
-         { new: true} // Return the updated document
-        );
-        console.log("updateData", updatedAdmin);
+  if (!updatedAdmin) {
+    throw new Error("Admin ID not found");
+  }
 
-        if (!updatedAdmin) {
-            throw new Error('Admin ID not found');
-          }
-       
-        return updatedAdmin;
-
-}
+  return updatedAdmin;
+};
 
 module.exports = {
   loginAdmin,
-  changePassowrd
+  changePassowrd,
 };

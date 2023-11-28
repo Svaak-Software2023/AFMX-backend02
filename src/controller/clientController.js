@@ -2,7 +2,7 @@ const clientService = require("../services/clientService");
 const uploadToVSCode = require("../middleware/fileHandler");
 const path = require("path");
 const fs = require("fs");
-const { infoMsg } = require("../const/errorHelper");
+const { errorMsg, infoMsg, pathMsg } = require("../const/errorHelper");
 
 
 const registerClient = async (req, res) => {
@@ -15,13 +15,13 @@ const registerClient = async (req, res) => {
 
     // After API execution succeeds, perform the file upload
     const uploadedFilePath = req.file.path;
-    const targetDirectory = path.join(__dirname, "../public/clientImages");
+    const targetDirectory = path.join(__dirname, pathMsg.CLIENT_IMAGES_PATH);
 
     await uploadToVSCode(uploadedFilePath, targetDirectory);
 
     return res
       .status(201)
-      .json({ message: infoMsg.CLIENT_CREATED, signUpResponse });
+      .json({ message: infoMsg.CLIENT_CREATION_SUCCESS, signUpResponse });
   } catch (error) {
     // If an error occurs, delete the uploaded file
     if (req.file && fs.existsSync(req.file.path)) {
@@ -41,10 +41,10 @@ const LoginClient = async (req, res) => {
       .status(200)
       .json({ message: "Login Succefully", signInResponse });
   } catch (error) {
-    if (error.message === "Password does not match") {
-      return res.status(401).json({ error: "Invalid Credentials Password" });
+    if (error.message === errorMsg.INVAID_PASSWORD) {
+      return res.status(401).json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
     } else {
-      if (error.message === "User not found") {
+      if (error.message === errorMsg.NOT_FOUND_USER) {
         return res.status(401).json({ error: "Unauthorized User" });
       }
     }
