@@ -20,8 +20,10 @@ const deparment_route = require("./src/routes/deparmentRoute.js");
 const admin_route = require('./src/routes/superAdminRoute.js');
 const product_route = require('./src/routes/productRoute.js');
 const productcategory_route = require('./src/routes/productCategoryRoute.js');
+const productDeliveryAdress_route = require('./src/routes/productDeliveryAddressRoute.js');
 const cart_route = require('./src/routes/cartRoute.js');
 const cartItem_route = require('./src/routes/cartItemsRoute.js');
+const clientPaymentOption_route = require('./src/routes/clientPaymentOptionRoute.js');
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -50,6 +52,7 @@ app.use("/api", role_route);
 app.use("/api", deparment_route);
 app.use("/api", admin_route);
 app.use("/api", productcategory_route);
+app.use("/api", productDeliveryAdress_route);
 
 // product routes
 app.use("/api", product_route);
@@ -59,6 +62,9 @@ app.use("/api", cart_route);
 
 // Cart items routes
 app.use("/api", cartItem_route);
+
+// Payment option routes
+app.use("/api", clientPaymentOption_route);
 
 // mongoDB Connection
 mongoose

@@ -9,6 +9,9 @@ const RoleModel = require("../model/roleModel.js");
 const CountryModel = require("../model/countryModel.js");
 const StateModel = require("../model/stateModel.js");
 
+const emailContentInfo = require('../const/emailContent.js');
+const errorMsg = require("../const/errorHelper.js");
+
 const bycrptSalt = process.env.BCRYPT_SALT;
 const jwt_secret = process.env.JWT_SECRET;
 const client_url = process.env.CLIENT_URL;
@@ -30,7 +33,12 @@ const securePassword = async (password) => {
     console.log("error", error.message);
   }
 };
-
+/**
+ * 
+ * @param {New client information} signUpDetails 
+ * @param {Client prefence image } filename 
+ * @returns New client created object
+ */
 const registerClient = async (signUpDetails, filename) => {
   const sPassword = await securePassword(signUpDetails.clientPassword);
 
@@ -62,7 +70,7 @@ const registerClient = async (signUpDetails, filename) => {
 
   // Check role exists and if isActive is not true
   if (!role || !role.isActive) {
-    throw new Error("Invalid or inactive role");
+    throw new Error(errorMsg.INVALID_ACTIVE);
   }
 
   // Finding the country based on the name
@@ -119,7 +127,7 @@ const registerClient = async (signUpDetails, filename) => {
   const clientDetails = await newClientDetails.save();
 
   // Prepare the data to send an email to users.
-  const subject = `Thank You for Joining AFMX Membership!`;
+  // const subject = `Thank You for Joining AFMX Membership!`;
   const emailContent = `
     <p>Dear ${clientFirstName} ${clientMiddleName},</p> 
     <p>Welcome to the exclusive AFMX community! We are thrilled to have you as a member, and we want to express 
@@ -145,10 +153,18 @@ const registerClient = async (signUpDetails, filename) => {
     cleaning experiences!
     </p>`;
   //Sending the email to client Users.
-  sendEmail(clientEmail, subject, emailContent);
+  console.log("emailContent", emailContentInfo.WELCOME_RESPONSE_SUBJECT);
+  sendEmail(clientEmail, emailContentInfo.WELCOME_RESPONSE_SUBJECT, emailContent);
 
   return clientDetails;
 };
+
+
+/**
+ * 
+ * @param {Login client credentials information} loginDetails 
+ * @returns Logged in client object
+ */
 
 const LoginClient = async (loginDetails) => {
   const { clientEmail, clientPassword } = loginDetails;

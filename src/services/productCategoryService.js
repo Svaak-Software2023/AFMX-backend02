@@ -19,7 +19,7 @@ const addProductCategory = async(categoryDetails) => {
   }
   
     // Fetch count of product category
-    const productCategory = await ProductCategoryModel.find().countDocuments();
+    const productCategory = await ProductCategoryModel.countDocuments();
 
     const categoryData = new ProductCategoryModel({
         productCategoryId: productCategory + 1,

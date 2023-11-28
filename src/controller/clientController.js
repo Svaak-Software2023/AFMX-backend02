@@ -2,6 +2,8 @@ const clientService = require("../services/clientService");
 const uploadToVSCode = require("../middleware/fileHandler");
 const path = require("path");
 const fs = require("fs");
+const { infoMsg } = require("../const/errorHelper");
+
 
 const registerClient = async (req, res) => {
   try {
@@ -19,7 +21,7 @@ const registerClient = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "Client Created Successfully", signUpResponse });
+      .json({ message: infoMsg.CLIENT_CREATED, signUpResponse });
   } catch (error) {
     // If an error occurs, delete the uploaded file
     if (req.file && fs.existsSync(req.file.path)) {

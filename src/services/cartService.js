@@ -7,7 +7,7 @@ const cartAdd = async (cartDetails) => {
   // Check if the client exists
   const client = await ClientModel.findOne({ clientId });
   console.log('client', client);
-  console.log('client', client.clientId);
+  // console.log('client', client.clientId);
 
 
   if (!client) {
