@@ -39,13 +39,13 @@ const LoginClient = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Login Succefully", signInResponse });
+      .json({ message:infoMsg.LOGIN_SUCCESSFUL, signInResponse });
   } catch (error) {
     if (error.message === errorMsg.INVAID_PASSWORD) {
       return res.status(401).json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
     } else {
       if (error.message === errorMsg.NOT_FOUND_USER) {
-        return res.status(401).json({ error: "Unauthorized User" });
+        return res.status(401).json({ error: errorMsg.UNAUTHORIZED_USER });
       }
     }
 
@@ -59,7 +59,7 @@ const forgetPassword = async (req, res) => {
     const forgetResponse = await clientService.forgetPassword(req.body);
     return res
       .status(200)
-      .json({ message: "Link has been sent in your email", forgetResponse });
+      .json({ message: infoMsg.RESET_LINK_SENT, forgetResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -83,7 +83,7 @@ const getAllRegistersClient = async (req, res) => {
   try {
     const getResponse = await clientService.getAllRegistersClient();
     return res.json({
-      message: "Fetch all client register details successfully ",
+      message: infoMsg.FETCH_CLIENT_SUCCESS,
       getResponse,
     });
   } catch (error) {

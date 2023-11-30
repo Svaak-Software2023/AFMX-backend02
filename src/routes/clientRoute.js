@@ -17,7 +17,6 @@ client_route.post(
 client_route.post("/signin", client_controller.LoginClient);
 client_route.post("/forget-password", client_controller.forgetPassword);
 client_route.post("/reset-password", client_controller.resetPassword);
-
 client_route.get("/all-signup", client_controller.getAllRegistersClient);
 
 module.exports = client_route;

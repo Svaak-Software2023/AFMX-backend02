@@ -20,7 +20,7 @@ const {
 } = require("../const/emailContent.js");
 
 // Importing error messages from the error helper module
-const { errorMsg } = require("../const/errorHelper.js");
+const { errorMsg, infoMsg } = require("../const/errorHelper.js");
 
 // Fetch client url from environment variables
 const client_url = process.env.CLIENT_URL;
@@ -31,6 +31,7 @@ const client_url = process.env.CLIENT_URL;
  * @param {Client prefence image } filename
  * @returns New client created object
  */
+
 const registerClient = async (signUpDetails, filename) => {
   const hashedPassword = await securePassword(signUpDetails.clientPassword);
 
@@ -196,6 +197,12 @@ const LoginClient = async (loginDetails) => {
   }
 };
 
+/**
+ *
+ * @param {Forget client credentials information} forgetDetails
+ * @returns Send the link to the client to reset the password
+ */
+
 const forgetPassword = async (forgetDetails) => {
   const { clientEmail } = forgetDetails;
 
@@ -219,7 +226,7 @@ const forgetPassword = async (forgetDetails) => {
   const resetContentAndLink = `
   <p>Dear ${user.clientFirstName} ${user.clientMiddleName},</p>
   ${forgetPassContentInfo.FORGET_PASSWORD_CONTENT_ONE}
-  <a href="${client_url}/api/reset-password?&token=${randomBytesString}&id=${user._id}">Password Reset Link</a>. 
+  <a href="${client_url}/api/reset-password?&token=${randomBytesString}&id=${user._id}">${infoMsg.PASSWORD_RESET_LINK}</a>. 
   ${forgetPassContentInfo.FORGET_PASSWORD_CONTENT_TWO}
   `;
 
@@ -228,13 +235,20 @@ const forgetPassword = async (forgetDetails) => {
   return { resetContentAndLink };
 };
 
+/**
+ * 
+ * @param {*Take the obejctId } userId 
+ * @param {*Take the token} token 
+ * @param {* client password to bycrpt it } clientPassword 
+ * @returns 
+ */
+
 const resetPassword = async (userId, token, clientPassword) => {
   let passwordResetToken = await TokenModel.findOne({ userId });
 
   if (!passwordResetToken) {
     throw new Error(errorMsg.INVALID_OR_EXPIRED_TOKEN);
   }
-
   const isValid = await bycrptjs.compare(token, passwordResetToken.token);
 
   if (!isValid) {
@@ -262,9 +276,12 @@ const resetPassword = async (userId, token, clientPassword) => {
 
   await passwordResetToken.deleteOne();
 
-  return { message: "Password reset was successful" };
+  return { message: infoMsg.PASSWORD_RESET_SUCCESS };
 };
-
+/**
+ * 
+ * @returns All the client data
+ */
 const getAllRegistersClient = async () => {
   const clientData = await ClientModel.find({});
 

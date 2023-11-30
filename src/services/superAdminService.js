@@ -1,17 +1,10 @@
 const AdminModel = require("../model/superAdminModel");
 const bycrptjs = require("bcryptjs");
 
-const bycrptSalt = process.env.BCRYPT_SALT;
+const { errorMsg } = require("../const/errorHelper")
 
-// Secure the password
-const securePassword = async (password) => {
-  try {
-    const bycrptPassword = await bycrptjs.hash(password, Number(bycrptSalt));
-    return bycrptPassword;
-  } catch (error) {
-    return error.message;
-  }
-};
+const { securePassword } = require("../utility/passwordUtils");
+
 // const createAdmin = async (adminDetails) => {
 
 //     const { adminPassword, adminEmail } = adminDetails;
@@ -35,7 +28,7 @@ const loginAdmin = async (adminDetails) => {
   const adminData = await AdminModel.findOne({ adminEmail });
 
   if (!adminData) {
-    throw new Error("Admin Exists");
+    throw new Error(errorMsg.ADMIN_EXISTS);
   }
 
   if (adminData) {
@@ -51,10 +44,10 @@ const loginAdmin = async (adminDetails) => {
       };
       return updateDetails;
     } else {
-      throw new Error("Password does not match");
+      throw new Error(errorMsg.INVAID_PASSWORD);
     }
   } else {
-    throw new Error("Login details are not valid");
+    throw new Error(errorMsg.INVALID_LOGIN);
   }
 };
 
@@ -63,7 +56,7 @@ const changePassowrd = async (adminDetails) => {
   const { adminId, adminPassword } = adminDetails;
 
   if (!adminId || !adminPassword) {
-    throw new Error("Id or Password field is missing");
+    throw new Error(errorMsg.ID_AND_PASSWORD_MISSING);
   }
 
   const newPassword = await securePassword(adminPassword);
@@ -73,10 +66,9 @@ const changePassowrd = async (adminDetails) => {
     { adminPassword: newPassword },
     { new: true } // Return the updated document
   );
-  console.log("updateData", updatedAdmin);
 
   if (!updatedAdmin) {
-    throw new Error("Admin ID not found");
+    throw new Error(errorMsg.ADMIN_NOT_FOUND);
   }
 
   return updatedAdmin;
