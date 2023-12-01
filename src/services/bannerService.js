@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const BannerModel = require("../model/bannerModel.js");
 const clientModel = require("../model/clientModel.js");
 
@@ -23,11 +24,11 @@ const registerBanner = async (bannerDetails, filename) => {
   const client = await clientModel.findOne({ clientId });
 
   if (!client) {
-    throw new Error("Client with the provided ID does not exist");
+    throw new Error(errorMsg.CLIENT_NOT_FOUND);
   }
 
   if (!client.isActive) {
-    throw new Error("Your clientId is not active, unable to create a banner");
+    throw new Error(errorMsg.INACTIVE_CLIENT_BANNER_ERROR);
   }
 
   // Fetch the count of banners
@@ -55,35 +56,6 @@ const registerBanner = async (bannerDetails, filename) => {
 
   const bannerCreateDetails = await newBannerDetails.save();
   return bannerCreateDetails;
-
-  // if (client.isActive) {
-  //   // Creating banner model based on UI
-  //   const newBannerDetails = new BannerModel({
-  //     bannerId: bannerCount + 1,
-  //     businessName,
-  //     businessURL,
-  //     countryName,
-  //     countryCode,
-  //     phoneNumber,
-  //     bannerLocation,
-  //     bannerImage: filename,
-  //     bannerImageTitle,
-  //     bannerImageAltText,
-  //     bannerImageLink,
-  //     startDate,
-  //     endDate,
-  //     description,
-  //     clientId,
-  //     isActive,
-  //   });
-
-  //   const bannerCreateDetails = await newBannerDetails.save();
-  //   return bannerCreateDetails;
-  // } else {
-  //   throw new Error(
-  //     "Your clientId does not exists, go to singup then create banner"
-  //   );
-  // }
 };
 
 const updateBanner = async (bannerId, updateDetails) => {

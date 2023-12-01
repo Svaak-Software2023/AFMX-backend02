@@ -1,3 +1,4 @@
+const { errorMsg } = require('../const/errorHelper');
 const CartItemsModel = require('../model/cartItemsModel');
 const CartModel = require('../model/cartModel');
 const ProductModel = require('../model/productModel');
@@ -13,16 +14,15 @@ const addCartItems = async(cartItemsDetails) => {
     } = cartItemsDetails;
 
     const Cart = await CartModel.findOne({ cartId }).select('-_id cartId');
-    console.log("cart", Cart);
+
     if(!Cart) throw new Error("cart id is not valid");
 
     const product = await ProductModel.findOne({ productId }).select('-_id productId productPrice');
-    console.log("product", product);
-    if(!product) throw new Error("product id is not valid");
+    if(!product) throw new Error(errorMsg.PRODUCT_ID_INVALID);
 
     // if(!product.isActive) throw new Error("product id is not active");
 
-    if(product.productPrice !== productPrice) throw new Error("Product price is not valid") 
+    if(product.productPrice !== productPrice) throw new Error(errorMsg.PRODUCT_PRICE_INVALID) 
 
     // Fetch count of cart items
     const cartItemCount = await CartItemsModel.countDocuments();

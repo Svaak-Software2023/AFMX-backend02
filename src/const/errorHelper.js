@@ -7,6 +7,7 @@ const errorMsg = {
     NO_CLIENTS_FOUND_ERROR: "No clients found",
     NOT_FOUND_USER: "User not found",
     REQUIRED_CLIENT_CREDENTIALS: "clientEmail and clientPassword must be compulsory !",
+    REQUIRED_TOKEN: "A token is required for authentication",
     ID_AND_PASSWORD_MISSING:  "Id or Password field is missing",
     INVALID_CREDENTIALS_PASSWORD: "Invalid Credentials Password",
     INVALID_OR_EXPIRED_TOKEN: "Invalid or expired password reset token",
@@ -14,14 +15,17 @@ const errorMsg = {
     INVALID_LOGIN:  "Login details are not valid",
     INVAID_PASSWORD:"Password does not match",
     UNAUTHORIZED_USER: "Unauthorized User",
+    UNAUTHORIZED_TOKEN: "Unauthorized Token",
     VALID_COUNTRY:  "Please select as the valid country",
     VALID_STATE:    "Please select as the valid state",
 }
 
 const infoMsg = {
+    ADMIN_LOGIN_SUCCESS:     "Admin Loggin Successfully",
     CLIENT_CREATION_SUCCESS: "Client Created Successfully",
     FETCH_CLIENT_SUCCESS:    "Fetch all client register details successfully",
     LOGIN_SUCCESSFUL:        "Login Successfully",
+    PASSWORD_UPDATE_SUCCESS: "Password Updated Successfully",
     PASSWORD_RESET_SUCCESS:  "Password reset was successful",
     PASSWORD_RESET_LINK:     "Password Reset Link",
     RESET_LINK_SENT:         "Link has been sent in your email",

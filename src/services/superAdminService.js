@@ -1,25 +1,10 @@
 const AdminModel = require("../model/superAdminModel");
 const bycrptjs = require("bcryptjs");
 
-const { errorMsg } = require("../const/errorHelper")
+const { errorMsg } = require("../const/errorHelper");
 
 const { securePassword } = require("../utility/passwordUtils");
-
-// const createAdmin = async (adminDetails) => {
-
-//     const { adminPassword, adminEmail } = adminDetails;
-
-//     const sPassword = await securePassword(adminPassword);
-//     console.log("password", sPassword);
-
-//     const newAdmin = await AdminModel({
-//         adminEmail,
-//         adminPassword: sPassword
-//     });
-
-//      const adminData = await newAdmin.save();
-//      return adminData;
-// }
+const { generateToken } = require("../utility/tokenValidateUtils");
 
 // login admin api
 const loginAdmin = async (adminDetails) => {
@@ -38,9 +23,13 @@ const loginAdmin = async (adminDetails) => {
     );
 
     if (passwordMatch) {
+      const tokenData = await generateToken(adminData.adminId);
       const updateDetails = {
+        adminId: adminData.adminId,
+        adminName: adminData.adminName,
         adminEmail: adminData.adminEmail,
         adminPassword: adminData.adminPassword,
+        token: tokenData,
       };
       return updateDetails;
     } else {
