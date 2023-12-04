@@ -31,4 +31,10 @@ const countrySchema = mongoose.Schema({
   },
 });
 
+// Define pre hook to update updatedDate before findOneAndUpdate
+countrySchema.pre('findOneAndUpdate', function(next) {
+  this._update.updatedDate = new Date(); // Set updatedDate to current date/time
+  next();
+});
+
 module.exports = mongoose.model("Country", countrySchema);

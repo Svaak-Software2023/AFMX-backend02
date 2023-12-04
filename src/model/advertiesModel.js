@@ -8,8 +8,8 @@ function twoWeekFromNow() {
   return oneWeekLater;
 }
 
-const bannerSchema = mongoose.Schema({
-  bannerId: {
+const advertiesSchema = mongoose.Schema({
+  advertiesId: {
     type: Number,
     required: true,
   },
@@ -21,35 +21,27 @@ const bannerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  countryName: {
-    type: String,
-    default: "",
-  },
-  countryCode: {
-    type: String,
-    default: "",
-  },
-  phoneNumber: {
-    type: String,
-    default: "",
-  },
-  bannerLocation: {
-    type: String,
-    default: "",
-  },
-  bannerImage: {
+  advertiesPage: {
     type: String,
     required: true,
   },
-  bannerImageTitle: {
+  phoneNumber: {
     type: String,
-    default: "",
+    required: true,
   },
-  bannerImageAltText: {
+  advertiesLocation: {
     type: String,
-    default: "",
+    required: true,
   },
-  bannerImageLink: {
+  advertiesImage: {
+    type: Array,
+    required: true,
+  },
+  advertiesImageAltText: {
+    type: String,
+    required: true,
+  },
+  advertiesImageLink: {
     type: String,
     required: true,
   },
@@ -63,10 +55,10 @@ const bannerSchema = mongoose.Schema({
   },
   description: {
     type: String,
-    default: "",
+   required: true,
   },
   clientId: {
-    type: String,
+    type: Number,
     required: true,
   },
   isActive: {
@@ -75,4 +67,4 @@ const bannerSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Banner", bannerSchema);
+module.exports = mongoose.model("Adverties", advertiesSchema);

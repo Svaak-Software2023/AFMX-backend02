@@ -1,7 +1,7 @@
 const AdminModel = require("../model/superAdminModel");
 const bycrptjs = require("bcryptjs");
 
-const { errorMsg } = require("../const/errorHelper");
+const { errorMsg, infoMsg } = require("../const/errorHelper");
 
 const { securePassword } = require("../utility/passwordUtils");
 const { generateToken } = require("../utility/tokenValidateUtils");
@@ -58,6 +58,7 @@ const changePassowrd = async (adminDetails) => {
 
   if (!updatedAdmin) {
     throw new Error(errorMsg.ADMIN_NOT_FOUND);
+    throw new Error(infoMsg.ADMIN_LOGIN_SUCCESS)
   }
 
   return updatedAdmin;

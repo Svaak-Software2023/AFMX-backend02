@@ -27,4 +27,10 @@ const citySchema = mongoose.Schema({
   },
 });
 
+// Define pre hook to update updatedDate before findOneAndUpdate
+citySchema.pre('findOneAndUpdate', function(next) {
+  this._update.updatedDate = new Date(); // Set updatedDate to current date/time
+  next();
+});
+
 module.exports = mongoose.model("City", citySchema);

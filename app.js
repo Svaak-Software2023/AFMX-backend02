@@ -7,7 +7,7 @@ require("dotenv").config();
 
 // Define all the routes
 const client_route = require("./src/routes/clientRoute.js");
-const banner_route = require("./src/routes/bannerRoute.js");
+const adverties_route = require("./src/routes/advertiesRoute.js");
 const country_route = require("./src/routes/countryRoute.js");
 const state_route = require("./src/routes/stateRoute.js");
 const city_route = require("./src/routes/cityRoute.js");
@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 });
 // To pass and handle the routes
 app.use("/api", client_route);
-app.use("/api", banner_route);
+app.use("/api", adverties_route);
 app.use("/api", country_route);
 app.use("/api", state_route);
 app.use("/api", city_route);
