@@ -1,12 +1,12 @@
-const advertiesService = require("../services/advertiesService");
+const advertiseService = require("../services/advertiseService");
 const uploadToVSCode = require("../middleware/fileHandler");
 const path = require("path");
 const fs = require("fs");
 
-const registerAdverties = async (req, res) => {
+const registerAdvertise = async (req, res) => {
   try {
     // Call registerBanner function and await its response
-    const advertiesResponse = await advertiesService.registerAdverties(
+    const advertiseResponse = await advertiseService.registerAdvertise(
       req.body,
       req.files
     );
@@ -14,12 +14,12 @@ const registerAdverties = async (req, res) => {
     // After API execution succeeds, perform the file upload, Assuming req.files is an array of files
     const uploadedFiles = req.files.map((file) => file.path);
     const targetDirectories = Array(req.files.length).fill(
-      path.join(__dirname, "../public/advertiesImages")
+      path.join(__dirname, "../public/advertiseImages")
     );
 
     await uploadToVSCode(uploadedFiles, targetDirectories);
 
-    return res.json({ message: "Adverties created", advertiesResponse });
+    return res.json({ message: "Advertise created", advertiseResponse });
   } catch (error) {
     console.log("error1", error.message);
 
@@ -35,37 +35,37 @@ const registerAdverties = async (req, res) => {
   }
 };
 
-const updateAdverties = async (req, res) => {
+const updateAdvertise = async (req, res) => {
   try {
     // Handle the update banner response
-    const advertiesUpdateResponse = await advertiesService.updateAdverties(
-      req.params.advertiesId,
+    const advertiseUpdateResponse = await advertiseService.updateAdvertise(
+      req.params.advertiseId,
       req.body
     );
-    return res.json({ message: "Adverties Update", advertiesUpdateResponse });
+    return res.json({ message: "Advertise Update", advertiseUpdateResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
-const deleteAdverties = async (req, res) => {
+const deleteAdvertise = async (req, res) => {
   try {
     // Handle the delete banner response based on bannerId
-    const advertiesDeleteResponse = await advertiesService.deleteAdverties(
-      req.params.advertiesId,
+    const advertiseDeleteResponse = await advertiseService.deleteAdvertise(
+      req.params.advertiseId,
       req.body
     );
-    return res.json({ message: "Adverties deactivated", advertiesDeleteResponse });
+    return res.json({ message: "Advertise deactivated", advertiseDeleteResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
-const getAllRegistersAdverties = async (req, res) => {
+const getAllRegistersAdvertise = async (req, res) => {
   try {
-    const getResponse = await advertiesService.getAllRegistersAdverties();
+    const getResponse = await advertiseService.getAllRegistersAdvertise();
     return res.json({
-      message: "Fetch all Adverties register details successfully ",
+      message: "Fetch all Advertise register details successfully ",
       getResponse,
     });
   } catch (error) {
@@ -74,8 +74,8 @@ const getAllRegistersAdverties = async (req, res) => {
 };
 
 module.exports = {
-  registerAdverties,
-  updateAdverties,
-  deleteAdverties,
-  getAllRegistersAdverties,
+  registerAdvertise,
+  updateAdvertise,
+  deleteAdvertise,
+  getAllRegistersAdvertise,
 };

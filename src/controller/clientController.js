@@ -41,7 +41,7 @@ const LoginClient = async (req, res) => {
       .status(200)
       .json({ message:infoMsg.LOGIN_SUCCESSFUL, signInResponse });
   } catch (error) {
-    if (error.message === errorMsg.INVAID_PASSWORD) {
+    if (error.message === errorMsg.INVALID_PASSWORD) {
       return res.status(401).json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
     } else {
       if (error.message === errorMsg.NOT_FOUND_USER) {

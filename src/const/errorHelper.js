@@ -22,7 +22,7 @@ const errorMsg = {
     INVALID_OR_EXPIRED_TOKEN: "Invalid or expired password reset token",
     INVALID_ACTIVE: "Invalid or inactive role",
     INVALID_LOGIN:  "Login details are not valid",
-    INVAID_PASSWORD:"Password does not match",
+    INVALID_PASSWORD:"Password does not match",
     UNAUTHORIZED_USER: "Unauthorized User",
     UNAUTHORIZED_TOKEN: "Unauthorized Token",
     VALID_COUNTRY:  "Please select as the valid country",
@@ -30,7 +30,7 @@ const errorMsg = {
 }
 
 const infoMsg = {
-    ADMIN_LOGIN_SUCCESS:     "Admin Loggin Successfully",
+    ADMIN_LOGIN_SUCCESS:     "Admin Login Successfully",
     CLIENT_CREATION_SUCCESS: "Client Created Successfully",
     FETCH_CLIENT_SUCCESS:    "Fetch all client register details successfully",
     LOGIN_SUCCESSFUL:        "Login Successfully",

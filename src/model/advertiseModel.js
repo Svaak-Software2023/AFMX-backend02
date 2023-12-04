@@ -8,8 +8,8 @@ function twoWeekFromNow() {
   return oneWeekLater;
 }
 
-const advertiesSchema = mongoose.Schema({
-  advertiesId: {
+const advertiseSchema = mongoose.Schema({
+  advertiseId: {
     type: Number,
     required: true,
   },
@@ -21,7 +21,7 @@ const advertiesSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  advertiesPage: {
+  advertisePage: {
     type: String,
     required: true,
   },
@@ -29,19 +29,19 @@ const advertiesSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  advertiesLocation: {
+  advertiseLocation: {
     type: String,
     required: true,
   },
-  advertiesImage: {
+  advertiseImage: {
     type: Array,
     required: true,
   },
-  advertiesImageAltText: {
+  advertiseImageAltText: {
     type: String,
     required: true,
   },
-  advertiesImageLink: {
+  advertiseImageLink: {
     type: String,
     required: true,
   },
@@ -55,7 +55,7 @@ const advertiesSchema = mongoose.Schema({
   },
   description: {
     type: String,
-   required: true,
+    required: true,
   },
   clientId: {
     type: Number,
@@ -67,4 +67,4 @@ const advertiesSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Adverties", advertiesSchema);
+module.exports = mongoose.model("Advertise", advertiseSchema);

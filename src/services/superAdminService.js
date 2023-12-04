@@ -4,7 +4,7 @@ const bycrptjs = require("bcryptjs");
 const { errorMsg, infoMsg } = require("../const/errorHelper");
 
 const { securePassword } = require("../utility/passwordUtils");
-const { generateToken } = require("../utility/tokenValidateUtils");
+const { generateToken } = require("../utility/tokenUtils");
 
 // login admin api
 const loginAdmin = async (adminDetails) => {
@@ -33,7 +33,7 @@ const loginAdmin = async (adminDetails) => {
       };
       return updateDetails;
     } else {
-      throw new Error(errorMsg.INVAID_PASSWORD);
+      throw new Error(errorMsg.INVALID_PASSWORD);
     }
   } else {
     throw new Error(errorMsg.INVALID_LOGIN);
