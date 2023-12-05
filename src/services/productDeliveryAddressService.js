@@ -1,6 +1,7 @@
 const ProductDeliveryAddressModel = require('../model/productDeliveryAddress');
 const ClientModel = require('../model/clientModel');
 const CartModel = require('../model/cartModel');
+const { errorMsg } = require('../const/errorHelper');
 
 
 const createProductDeliveryAddress = async(deliveryAddressDetails) => {
@@ -17,17 +18,14 @@ const createProductDeliveryAddress = async(deliveryAddressDetails) => {
     } = deliveryAddressDetails;
 
     const Cart = await CartModel.findOne({ cartId });
-
-    console.log("cart", Cart);
-    if(!Cart) throw new Error("cart id is not valid");
+    if(!Cart) throw new Error(errorMsg.CART_ID_NOT_VALID);
 
     // Check if the client exists
   const client = await ClientModel.findOne({ clientId });
-  console.log('client', client);
-//   console.log('client', client.clientId);
-    if(!client) throw new Error("Client with the provided ID does not exist");
 
-    if(!client.isActive) throw new Error("Your clientId is not active, unable to add the Address");
+    if(!client) throw new Error(errorMsg.CLIENT_NOT_FOUND);
+
+    if(!client.isActive) throw new Error(errorMsg.INACTIVE_CLIENT_ADDRESS_ERROR);
 
 
 
@@ -59,7 +57,7 @@ const updateProductDeliveryAddress = async (deliveryAddressId, updatedDeliveryAd
   
     //Check existing join data
     if (!productDeliveryAddressData) {
-      throw new Error(" Product Delivery Address is not found");
+      throw new Error(errorMsg.PRODUCT_DELIVERY_ADDRESS_NOT_FOUND_ERROR);
     }
   
     const updatedDeliveryAddress = await ProductDeliveryAddressModel.findOneAndUpdate(
@@ -78,7 +76,7 @@ const getSingleCreateProductDeliveryAddress = async (deliveryAddressSingleDetail
     const deliveryAddressData = await ProductDeliveryAddressModel.findOne({ deliveryAddressId });
   
     if (!deliveryAddressData) {
-      throw new Error("Could not fetch address, Id is missing");
+      throw new Error(errorMsg.FETCH_USERS_ID_MISSING_ERROR);
     }
     return deliveryAddressData;
   };
@@ -88,7 +86,7 @@ const getAllCreateProductDeliveryAddress = async () => {
     const productDeliveryAddressData = await ProductDeliveryAddressModel.find({});
   
     if (!productDeliveryAddressData) {
-      throw new Error("Could not fetch data");
+      throw new Error(errorMsg.FETCH_USERS_FAILED);
     }
     return productDeliveryAddressData;
 };

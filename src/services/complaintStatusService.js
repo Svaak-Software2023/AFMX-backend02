@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const complaintStatusModel = require("../model/complaintStatusModel.js");
 
 //Create ComplaintStatus
@@ -16,7 +17,7 @@ const createComplaintStatus = async (complaintStatusDetail) => {
   });
 
   if (complaintStatusExists) {
-    throw new Error("Complaint Status exists");
+    throw new Error(errorMsg.COMPLAINT_STATUS_EXISTS);
   }
 
   // Fetch count of complaint status count
@@ -45,7 +46,7 @@ const updateComplaintStatus = async (
     complaintStatusId: complaintStatusId,
   });
   if (!complaintStatusData) {
-    throw new Error("Complaint Status not found.");
+    throw new Error(errorMsg.COMPLAINT_STATUS_NOT_FOUND);
   }
 
   const updatedComplaintStatus = await complaintStatusModel.findOneAndUpdate(
@@ -54,7 +55,7 @@ const updateComplaintStatus = async (
     { new: true }
   );
   if (!updatedComplaintStatus) {
-    throw new Error("Complaint Status could not updated");
+    throw new Error(errorMsg.COMPALINT_STATUS_NOT_UPDATED);
   }
   return updatedComplaintStatus;
 };
@@ -70,7 +71,7 @@ const deleteComplaintStatus = async (
   });
 
   if (!complaintStatusData) {
-    throw new Error("Complaint Status not found.");
+    throw new Error(errorMsg.COMPLAINT_STATUS_NOT_FOUND);
   }
   // update only if isActive is true
   const updateComplaintStatusData = await complaintStatusModel.findOneAndUpdate(
@@ -80,7 +81,7 @@ const deleteComplaintStatus = async (
   );
 
   if (!updateComplaintStatusData) {
-    throw new Error("Complaint Status could not de-activate");
+    throw new Error(errorMsg.COMPALINT_STATUS_NOT_UPDATED);
   }
 
   return updateComplaintStatusData;

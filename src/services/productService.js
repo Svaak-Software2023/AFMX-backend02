@@ -1,5 +1,6 @@
 const Product = require("../model/productModel");
 const ProductCategoryModel = require('../model/productCategoryModel');
+const { errorMsg } = require("../const/errorHelper");
 
 
 const addProduct = async (productDetails, fileName) => {
@@ -18,11 +19,11 @@ const addProduct = async (productDetails, fileName) => {
   const productCategory = await ProductCategoryModel.findOne({ productCategoryName });
 
   if(!productCategory ) {
-    throw new Error('Category does not exists')
+    throw new Error(errorMsg.CATEGORY_NOT_EXISTS);
   }
 
     if (!productCategory.isActive) { 
-      throw new Error("Product Category is not active");
+      throw new Error(errorMsg.PRODUCT_CATEGORY_NOT_ACTIVE);
     } 
 
 // Storing multiple image in arrImages   

@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper");
 const CartModel = require("../model/cartModel");
 const ClientModel = require('../model/clientModel');
 
@@ -11,11 +12,11 @@ const cartAdd = async (cartDetails) => {
 
 
   if (!client) {
-    throw new Error("Client with the provided ID does not exist");
+    throw new Error(errorMsg.CLIENT_NOT_FOUND);
   }
 
   if (!client.isActive) {
-    throw new Error("Your clientId is not active, unable to add the cart");
+    throw new Error(errorMsg.INACTIVE_CLIENT_CART_ERROR);
   }
 
     //Fetch count of cart

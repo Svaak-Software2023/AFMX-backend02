@@ -11,7 +11,6 @@ const fileUploadMiddleware = require("../middleware/multer");
 
 const advertise_controller = require("../controller/advertiseController");
 
-advertise_route.use(express.static("public"));
 advertise_route.post(
   "/advertise-create",
   fileUploadMiddleware.array("advertiseImage"),

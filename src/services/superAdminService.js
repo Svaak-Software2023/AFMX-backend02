@@ -58,7 +58,6 @@ const changePassowrd = async (adminDetails) => {
 
   if (!updatedAdmin) {
     throw new Error(errorMsg.ADMIN_NOT_FOUND);
-    throw new Error(infoMsg.ADMIN_LOGIN_SUCCESS)
   }
 
   return updatedAdmin;

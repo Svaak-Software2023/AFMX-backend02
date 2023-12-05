@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper");
 const DepartmentModel = require("../model/dapartmentModel");
 
 const registerDeparment = async (departmentDetails) => {
@@ -45,7 +46,7 @@ const updateDepartment = async (departmentId, updateDepartmentDetails) => {
     departmentId: departmentId,
   });
   if (!departmentData) {
-    throw new Error("Deparment is not found.");
+    throw new Error(errorMsg.DEPARTENT_NOT_FOUND);
   }
 
   const updatedDepartment = await DepartmentModel.findOneAndUpdate(
@@ -54,7 +55,7 @@ const updateDepartment = async (departmentId, updateDepartmentDetails) => {
     { new: true }
   );
   if (!updatedDepartment) {
-    throw new Error("Deparment could not be updated");
+    throw new Error(errorMsg.DEPARTENT_NOT_UPDATED);
   }
   return updatedDepartment;
 };
@@ -67,7 +68,7 @@ const getSingleRegistersDepartment = async (departmentSingleDetails) => {
   const departmentData = await DepartmentModel.findOne({ departmentId });
 
   if (!departmentData) {
-    throw new Error("Could not fetch users, Id is missing");
+    throw new Error(errorMsg.FETCH_USERS_ID_MISSING_ERROR);
   }
   return departmentData;
 };
@@ -76,7 +77,7 @@ const getSingleRegistersDepartment = async (departmentSingleDetails) => {
 const getAllRegistersDepartment = async () => {
   const departmentData = await DepartmentModel.find({});
   if (!departmentData) {
-    throw new Error("Could not fetch users");
+    throw new Error(errorMsg.FETCH_USERS_FAILED);
   }
   return departmentData;
 };

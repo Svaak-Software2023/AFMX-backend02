@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const complaintCategoryModel = require("../model/complaintCategoryModel.js");
 
 //Create ComplaintCategory
@@ -29,7 +30,7 @@ const createComplaintCategory = async (complaintCategoryDetails) => {
   });
 
   if (complaintCategoryExists) {
-    throw new Error("Complaint Category exists");
+    throw new Error(errorMsg.COMPLAINT_EXISTS);
   } else {
     const complaintCategoryData = await newComplaintCategoryDetails.save();
     return complaintCategoryData;
@@ -46,7 +47,7 @@ const updateComplaintCategory = async (
     complaintCategoryId: complaintCategoryId,
   });
   if (!complaintCategoryData) {
-    throw new Error("Complaint Category not found.");
+    throw new Error(errorMsg.COMPLAINT_NOT_FOUND);
   }
 
   const updatedComplaintCategory =
@@ -56,7 +57,7 @@ const updateComplaintCategory = async (
       { new: true }
     );
   if (!updatedComplaintCategory) {
-    throw new Error("Complaint Category could not updated");
+    throw new Error(errorMsg.COMPLAINT_NOT_UPDATED);
   }
   return updatedComplaintCategory;
 };
@@ -72,7 +73,7 @@ const deleteComplaintCategory = async (
   });
 
   if (!complaintCategoryData) {
-    throw new Error("Complaint Category not found.");
+    throw new Error(errorMsg.COMPLAINT_NOT_FOUND);
   }
   // update only if isActive is true
   const updateComplaintCategoryData =
@@ -83,7 +84,7 @@ const deleteComplaintCategory = async (
     );
 
   if (!updateComplaintCategoryData) {
-    throw new Error("Complaint Category could not de-activate");
+    throw new Error(errorMsg.COMPLAINT_NOT_UPDATED);
   }
 
   return updateComplaintCategoryData;

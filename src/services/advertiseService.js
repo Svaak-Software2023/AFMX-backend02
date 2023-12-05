@@ -63,12 +63,9 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
 
 const updateAdvertise = async (advertiseId, updateDetails) => {
 
-  console.log("updateDetails", updateDetails);
-
   // check existing bannerId
   const advertiseData = await AdvertiseModel.findOne({ advertiseId })
   .select("-_id advertisePage advertiseLocation advertiseImageAltText isActive");
-  console.log("advertises", advertiseData);
 
   if (!advertiseData) {
     throw new Error(errorMsg.ADVERTIES_NOT_FOUND);

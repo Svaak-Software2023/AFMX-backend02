@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const CountryModel = require("../model/countryModel.js");
 
 const registerCountry = async (countryDetails) => {
@@ -15,7 +16,7 @@ const registerCountry = async (countryDetails) => {
   const countryExists = await CountryModel.findOne({ countryName });
 
   if (countryExists) {
-    throw new Error("Country exists");
+    throw new Error(errorMsg.COUNTRY_EXISTS);
   }
 
   // Check total Number of documents in the Country collection
@@ -43,7 +44,7 @@ const updateCountry = async (countryId, updateCountryDetails) => {
   const countryData = await CountryModel.findOne({ countryId: countryId });
 
   if (!countryData) {
-    throw new Error("country data not found");
+    throw new Error(errorMsg.COUNTRY_NOT_FOUND);
   }
 
   const updatedCountry = await CountryModel.findOneAndUpdate(
@@ -53,7 +54,7 @@ const updateCountry = async (countryId, updateCountryDetails) => {
   );
 
   if (!updatedCountry) {
-    throw new Error("Country not found");
+    throw new Error(errorMsg.COUNTRY_NOT_FOUND);
   }
 
   return updatedCountry;
@@ -63,7 +64,7 @@ const updateCountry = async (countryId, updateCountryDetails) => {
 const getAllRegistersCountry = async () => {
   const countryData = await CountryModel.find({});
   if (!countryData) {
-    throw new Error("Could not fetch data");
+    throw new Error(errorMsg.FETCH_USERS_FAILED);
   }
   return countryData;
 };

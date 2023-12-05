@@ -66,6 +66,10 @@ app.use("/api", cartItem_route);
 // Payment option routes
 app.use("/api", clientPaymentOption_route);
 
+// // Json data routes
+// const industries_route = require("./src/routes/industriesRoute.js");
+// app.use("/api", industries_route);
+
 // mongoDB Connection
 mongoose
   .connect(MONGO_URL)

@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const roleModel = require("../model/roleModel.js");
 
 //Create role
@@ -17,7 +18,7 @@ const createRole = async (roleDetail) => {
   });
 
   if (roleExists) {
-    throw new Error("Role exists");
+    throw new Error(errorMsg.ROLE_EXISTS);
   }
 
   // Fetch count of role
@@ -44,7 +45,7 @@ const updateRole = async (roleId, updateRoleDetail) => {
     roleId: roleId,
   });
   if (!roleData) {
-    throw new Error("Role not found.");
+    throw new Error(errorMsg.ROLE_NOT_FOUND);
   }
 
   const updatedRole = await roleModel.findOneAndUpdate(
@@ -53,7 +54,7 @@ const updateRole = async (roleId, updateRoleDetail) => {
     { new: true }
   );
   if (!updatedRole) {
-    throw new Error("Role could not updated");
+    throw new Error(errorMsg.ROLE_NOT_FOUND);
   }
   return updatedRole;
 };
@@ -66,7 +67,7 @@ const deleteRole = async (roleId, deleteRoleDetail) => {
   });
 
   if (!roleData) {
-    throw new Error("Role not found.");
+    throw new Error(errorMsg.ROLE_NOT_FOUND);
   }
   // update only if isActive is true
   const updateRoleData = await roleModel.findOneAndUpdate(
@@ -76,7 +77,7 @@ const deleteRole = async (roleId, deleteRoleDetail) => {
   );
 
   if (!updateRoleData) {
-    throw new Error("Role could not de-activate");
+    throw new Error(errorMsg.ROLE_NOT_FOUND);
   }
 
   return updateRoleData;

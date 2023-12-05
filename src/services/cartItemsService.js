@@ -15,7 +15,7 @@ const addCartItems = async(cartItemsDetails) => {
 
     const Cart = await CartModel.findOne({ cartId }).select('-_id cartId');
 
-    if(!Cart) throw new Error("cart id is not valid");
+    if(!Cart) throw new Error(errorMsg.CART_ID_NOT_VALID);
 
     const product = await ProductModel.findOne({ productId }).select('-_id productId productPrice');
     if(!product) throw new Error(errorMsg.PRODUCT_ID_INVALID);

@@ -1,3 +1,4 @@
+const { errorMsg } = require("../const/errorHelper.js");
 const countryModel = require("../model/countryModel.js");
 const StateModel = require("../model/stateModel.js");
 
@@ -15,7 +16,7 @@ const registerState = async (stateDetails) => {
   if (countryId) {
     const countryRoleId = await countryModel.findOne({ countryId });
     if (!countryRoleId) {
-      throw new Error("Please select the valid country");
+      throw new Error(errorMsg.VALID_COUNTRY);
     }
   }
 
@@ -23,7 +24,7 @@ const registerState = async (stateDetails) => {
   const stateExists = await StateModel.findOne({ stateName });
 
   if (stateExists) {
-    throw new Error("State already exists");
+    throw new Error(errorMsg.STATE_EXISTS);
   }
 
   // Check total Number of documents in the State collection
@@ -50,7 +51,7 @@ const updateState = async (stateId, updatedStateDetails) => {
   const stateData = await StateModel.findOne({ stateId });
 
   if (!stateData) {
-    throw new Error("State data not found");
+    throw new Error(errorMsg.STATE_NOT_FOUND);
   }
 
   const updatedState = await StateModel.findOneAndUpdate(
@@ -67,7 +68,7 @@ const updateState = async (stateId, updatedStateDetails) => {
 const getAllRegistersState = async () => {
   const stateData = await StateModel.find({});
   if (!stateData) {
-    throw new Error("Could not fetch data");
+    throw new Error(errorMsg.FETCH_USERS_FAILED);
   }
   return stateData;
 };

@@ -286,7 +286,7 @@ const getAllRegistersClient = async () => {
   const clientData = await ClientModel.find({});
 
   if (clientData.length === 0) {
-  throw new Error(errorMsg.NO_CLIENTS_FOUND_ERROR);
+  throw new Error(errorMsg.FETCH_USERS_FAILED);
 }
   return clientData;
 };

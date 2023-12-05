@@ -1,5 +1,6 @@
 const ClientPaymentOptionModel = require("../model/clientPaymentOptionModel");
 const ClientModel = require("../model/clientModel");
+const { errorMsg } = require("../const/errorHelper");
 
 const createPaymentOption = async (clientId, paymentOption) => {
   try {
@@ -7,9 +8,9 @@ const createPaymentOption = async (clientId, paymentOption) => {
     const client = await ClientModel.findOne({ clientId }).select('-_id clientId isActive');
     console.log("client", client);
 
-    if (!client) throw new Error("Client with the provided ID does not exist");
+    if (!client) throw new Error(errorMsg.CLIENT_NOT_FOUND);
 
-    if(!client.isActive) throw new Error("Your clientId is not active, unable to proceed payment")
+    if(!client.isActive) throw new Error(errorMsg.INACTIVE_CLIENT_PAYMENT_ERROR)
 
     // Fetch count of payment option
     const paymentOptionIdCount =
