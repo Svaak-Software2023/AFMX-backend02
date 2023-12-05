@@ -7,7 +7,7 @@ const destinationPathClientImage = path.join(
 );
 const destinationPathbannerImage = path.join(
   __dirname,
-  "../public/advertiesImages"
+  "../public/advertiseImages"
 );
 const destinationPathJoinImage = path.join(__dirname, "../public/joinImages");
 const destinationPathProductImage = path.join(__dirname, "../public/productImages");
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     // check the fieldname to determine the destination path
     if (file.fieldname === "clientProfileImage") {
       destinationPath = destinationPathClientImage;
-    } else if (file.fieldname === "advertiesImage") {
+    } else if (file.fieldname === "advertiseImage") {
       destinationPath = destinationPathbannerImage;
     } else if (file.fieldname === "afmxJoinImageVideo") {
       destinationPath = destinationPathJoinImage;
