@@ -23,8 +23,8 @@ const registerAdvertise = async (req, res) => {
   } catch (error) {
     console.log("error1", error.message);
 
-     // If an error occurs, delete the uploaded files
-     if (req.files) {
+    // If an error occurs, delete the uploaded files
+    if (req.files) {
       req.files.forEach((file) => {
         if (fs.existsSync(file.path)) {
           fs.unlinkSync(file.path);

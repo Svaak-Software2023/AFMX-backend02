@@ -9,6 +9,10 @@ const destinationPathbannerImage = path.join(
   __dirname,
   "../public/advertiseImages"
 );
+const destinationPathServicesImage = path.join(
+  __dirname,
+  "../public/servicesImages"
+);
 const destinationPathJoinImage = path.join(__dirname, "../public/joinImages");
 const destinationPathProductImage = path.join(__dirname, "../public/productImages");
 
@@ -25,6 +29,8 @@ const storage = multer.diskStorage({
       destinationPath = destinationPathJoinImage;
     } else if (file.fieldname === "productImage") {
       destinationPath = destinationPathProductImage;
+    } else if (file.fieldname === "serviceImage") {
+      destinationPath = destinationPathServicesImage;
     }
 
     if (destinationPath) {
