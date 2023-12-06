@@ -1,21 +1,13 @@
 const mongoose = require("mongoose");
 
-const departmentSchema = mongoose.Schema({
-  departmentId: {
+const serviceDepartmentSchema = mongoose.Schema({
+  serviceDepartmentId: {
     type: Number,
     required: true,
   },
-  departmentName: {
+  serviceDepartmentName: {
     type: String,
     required: true,
-  },
-  departmentDescription: {
-    type: String,
-    default: "",
-  },
-  jobLocation: {
-    type: String,
-    default: "",
   },
   createdDate: {
     type: Date,
@@ -31,4 +23,4 @@ const departmentSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("department", departmentSchema);
+module.exports = mongoose.model("ServiceDepartment", serviceDepartmentSchema);
