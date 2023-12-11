@@ -1,6 +1,22 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const clientComplaintSchema = mongoose.Schema({
+const remarksSchema = new Schema({
+    remarks: {
+        type: 'string',
+        required: true
+    },
+    clientId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Client'
+    },
+    createdDate: {
+        type: Date,
+        default: Date.now
+    }
+})
+
+const complaintSchema = new Schema({
     complaintId: {
         type: Number,
         required: true
@@ -14,24 +30,23 @@ const clientComplaintSchema = mongoose.Schema({
         default: ""
     },
     complaintCategoryId: {
-        type: String,
+        type: Number,
         required: true
     },
     complaineeId: {
-        type: String,
+        type: Number,
         required: true
     },
     complaintStatusId: {
-        type: String,
+        type: Number,
         required: true
     },
     complaintRemarks: {
-        type: String,
-        default: ""
+        type: [remarksSchema]
     },
     complaintAttendeeId: {
-        type: String,
-        required: true
+        type: Number,
+        ref: 'Admin',
     },
     createdDate: {
         type: Date,
@@ -42,4 +57,4 @@ const clientComplaintSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("complaint", clientComplaintSchema);
+module.exports = mongoose.model("complaint", complaintSchema);

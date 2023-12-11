@@ -1,5 +1,6 @@
 const { errorMsg } = require("../const/errorHelper.js");
 const CityModel = require("../model/cityModel.js");
+const StateModel = require("../model/stateModel.js");
 
 const registerCity = async (cityDetails) => {
   const {
@@ -16,6 +17,11 @@ const registerCity = async (cityDetails) => {
 
   if (cityExists) {
     throw new Error(errorMsg.CITY_EXISTS);
+  }
+
+  const stateIds = await StateModel.findOne({ stateId , isActive: true});
+  if (!stateIds) {
+    throw new Error("Neither state exists nor active");
   }
 
   // Fetch count of city
@@ -38,10 +44,10 @@ const registerCity = async (cityDetails) => {
 // Update method 
 const updateCity = async (cityId, updateCityDetails) => {
   // Check existing country
-  const cityData = await CityModel.findOne({ cityId });
+  const cityData = await CityModel.findOne({ cityId, isActive: true });
 
   if (!cityData) {
-    throw new Error(errorMsg.CITY_NOT_FOUND);
+    throw new Error("Neither city exists nor active");
   }
 
   const updatedCity = await CityModel.findOneAndUpdate(

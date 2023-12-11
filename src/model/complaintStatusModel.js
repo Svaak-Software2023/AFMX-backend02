@@ -7,7 +7,8 @@ const complaintStatusSchema = mongoose.Schema({
     },
     complaintStatusName: {
       type: String,
-      required: true,
+      enum: ['Not Yet Started','Debugging', 'In Progress','On Hold','Done'],
+      default: 'Not Yet Started'
     },
     createdDate: {
       type: Date,

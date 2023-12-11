@@ -14,7 +14,7 @@ const registerState = async (stateDetails) => {
 
   // Validate the country based on Id
   if (countryId) {
-    const countryRoleId = await countryModel.findOne({ countryId });
+    const countryRoleId = await countryModel.findOne({ countryId, isActive: true });
     if (!countryRoleId) {
       throw new Error(errorMsg.VALID_COUNTRY);
     }
@@ -48,7 +48,7 @@ const registerState = async (stateDetails) => {
 // Update Method
 const updateState = async (stateId, updatedStateDetails) => {
   // Check existing country
-  const stateData = await StateModel.findOne({ stateId });
+  const stateData = await StateModel.findOne({ stateId, isActive: true });
 
   if (!stateData) {
     throw new Error(errorMsg.STATE_NOT_FOUND);

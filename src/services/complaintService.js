@@ -1,13 +1,13 @@
-const complaintModel = require('../model/clientComplaintModel');
+const ComplaintModel = require('../model/complaintModel');
+const ComplaintCategoryModel = require('../model/complaintCategoryModel');
+const ClientModel = require('../model/clientModel');
 
-const createComplaintPortal = async (complaintDetails) => {
+const createComplaintPortal = async (complaintDetails, loggedInIds) => {
  
     const {
-        complaintId,
         complaintName,
         complaintDescription,
         complaintCategoryId,
-        complaineeId,
         complaintStatusId,
         complaintRemarks,
         complaintAttendeeId,
@@ -15,27 +15,38 @@ const createComplaintPortal = async (complaintDetails) => {
         updatedDate,
     } = complaintDetails
 
-    let complaintCount = 0;
-    complaintCount = await complaintModel.find().count();
+    const complaintCategory = await ComplaintCategoryModel.findOne({ complaintCategoryId });
 
-    const complaintNewDetails = await complaintModel({
+    console.log("ComplaintCategory", complaintCategory);
+
+    if(complaintCategoryId !== complaintCategory.complaintCategoryId) {
+        throw new Error("ComplaintCategory id mismatch");
+    }
+
+    const clientIds = await ClientModel.findOne({clientId: loggedInIds, isActive: true}).select("clientId isActive");
+
+    console.log("clientIds: ", clientIds);
+
+    if(!clientIds) throw new Error("Neither clientIds exists nor Active");
+
+
+    // Fetch the count of the complaint
+   let complaintCount = await ComplaintModel.countDocuments();
+
+    const complaintNewDetails = new ComplaintModel({
         complaintId: complaintCount + 1,
         complaintName,
         complaintDescription,
-        complaintCategoryId,
-        complaineeId,
+        complaintCategoryId: complaintCategory.complaintCategoryId,
+        complaineeId: clientIds.clientId,
         complaintStatusId,
         complaintRemarks,
         complaintAttendeeId,
         createdDate,
         updatedDate,
     })
-
-    const complaintExist = await complaintModel.findOne({ complaintName });
-
-    if(!complaintExist) {
-        
-    } 
+    const complaintCreateDetails = await complaintNewDetails.save();
+    return complaintCreateDetails;
 }
 
 

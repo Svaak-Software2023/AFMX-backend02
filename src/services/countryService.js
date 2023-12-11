@@ -41,7 +41,7 @@ const registerCountry = async (countryDetails) => {
 
 const updateCountry = async (countryId, updateCountryDetails) => {
   // Check existing country
-  const countryData = await CountryModel.findOne({ countryId: countryId });
+  const countryData = await CountryModel.findOne({ countryId, isActive: true });
 
   if (!countryData) {
     throw new Error(errorMsg.COUNTRY_NOT_FOUND);

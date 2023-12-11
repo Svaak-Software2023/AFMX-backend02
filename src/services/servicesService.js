@@ -1,3 +1,5 @@
+// const fs = require('fs').promises; // File System module for file operations
+// const path = require('path');
 const ServiceModel = require("../model/servicesModel");
 const ServiceDepartmentModel = require("../model/serviceDapartmentModel");
 const { errorMsg } = require("../const/errorHelper");
@@ -34,11 +36,13 @@ const createService = async (serviceDetails, fileName) => {
     }
 
     // Storing multiple image in arrImages   
-    const arrImages = [];
-    for (let i = 0; i < fileName.length; i++) {
-        arrImages[i] = fileName[i].filename;
-    }
+    const arrImages = fileName.map(file => file.filename);
 
+    console.log("arrImages: ", arrImages);
+    // Remove duplicates using Set
+    const uniqueImages = Array.from(new Set(arrImages));
+
+    console.log("Unique images: ", uniqueImages);
 
     // Fetch the count of services
     const serviceCount = await ServiceModel.countDocuments();
@@ -48,7 +52,7 @@ const createService = async (serviceDetails, fileName) => {
         serviceId: serviceCount + 1,
         serviceDepartmentId,
         serviceName,
-        serviceImage: arrImages,
+        serviceImage: uniqueImages, // Store saved file names in the database
         serviceDescription,
         createdDate,
         updatedDate,

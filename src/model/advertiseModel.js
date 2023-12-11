@@ -47,11 +47,19 @@ const advertiseSchema = mongoose.Schema({
   },
   startDate: {
     type: Date,
-    default: Date.now,
+    required: [true, 'Start date is required'],
   },
   endDate: {
     type: Date,
     default: twoWeekFromNow, // Date in two week from now
+  },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedDate: {
+    type: Date,
+    default: Date.now,
   },
   description: {
     type: String,
@@ -65,6 +73,23 @@ const advertiseSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+});
+
+// Define pre hook to update updatedDate before findOneAndUpdate
+advertiseSchema.pre('findOneAndUpdate', function(next) {
+  // const update = this.getUpdate();
+
+  // // Check if startDate is being updated
+  // if (update.startDate !== undefined) {
+  //   // If startDate is provided, update the startDate
+  //   this._update.startDate = update.startDate;
+  // }
+
+  // // Skip updating createdDate
+  // delete this._update.createdDate;
+
+  this._update.updatedDate = new Date(); // Set updatedDate to current date/time
+  next();
 });
 
 module.exports = mongoose.model("Advertise", advertiseSchema);

@@ -13,6 +13,7 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
     advertiseImageLink,
     startDate,
     endDate,
+    updateDate,
     description,
     clientId,
     isActive,
@@ -31,13 +32,19 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
 
 
   // Storing multiple image in arrImages   
-  const arrImages = [];
-  for (let i = 0; i < fileName.length; i++) {
-    arrImages[i] = fileName[i].filename;
-  }
+  const arrImages = fileName.map(file => file.filename);
 
   // Fetch the count of banners
   const advertiseCount = await AdvertiseModel.countDocuments();
+
+ // Determine the createdDate
+const createdDate = new Date(); // Default to current date
+
+// Convert startDate to Date object if it's a string
+const providedStartDate = new Date(startDate);
+
+// Check if startDate is provided and greater than or equal to createdDate
+let adjustedStartDate = startDate && providedStartDate >= createdDate ? providedStartDate : createdDate;
 
   // Creating banner model based on UI
   const newAdvertiseDetails = new AdvertiseModel({
@@ -50,8 +57,10 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
     advertiseImage: arrImages,
     advertiseImageAltText,
     advertiseImageLink,
-    startDate,
+    startDate: adjustedStartDate,
     endDate,
+    createdDate,
+    updateDate,
     description,
     clientId,
     isActive,
