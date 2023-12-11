@@ -4,8 +4,9 @@ const createComplaintPortal = async (req, res) => {
     try {
         const complaintDetails = req.body;
         const loggedInIds = Number(req.query.id);
+        const fileName = req.file && req.file.filename;
         console.log('Logging in', loggedInIds);
-        const complaintResponse = await complaintService.createComplaintPortal(complaintDetails, loggedInIds);
+        const complaintResponse = await complaintService.createComplaintPortal(complaintDetails, loggedInIds, fileName);
        return res.status(200).json({
             message: "Complaint Created Successfully",
             complaintResponse

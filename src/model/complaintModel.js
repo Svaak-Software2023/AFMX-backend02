@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const remarksSchema = new Schema({
     remarks: {
-        type: 'string',
+        type: String,
         required: true
     },
     clientId: {
@@ -14,7 +14,7 @@ const remarksSchema = new Schema({
         type: Date,
         default: Date.now
     }
-})
+});
 
 const complaintSchema = new Schema({
     complaintId: {
@@ -25,9 +25,9 @@ const complaintSchema = new Schema({
         type: String,
         required: true
     },
-    complaintDescription: {
+    complaintMessage: {
         type: String,
-        default: ""
+        required: true
     },
     complaintCategoryId: {
         type: Number,
@@ -46,14 +46,19 @@ const complaintSchema = new Schema({
     },
     complaintAttendeeId: {
         type: Number,
-        ref: 'Admin',
+        default: 1,
+    },
+    complaintDoc: {
+        type: String,
+        default: null
     },
     createdDate: {
         type: Date,
         default: Date.now
     },
     updatedDate: {
-        type: Date
+        type: Date,
+        default: Date.now
     }
 });
 
