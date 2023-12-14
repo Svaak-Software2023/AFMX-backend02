@@ -37,7 +37,6 @@ const createService = async (serviceDetails, fileName) => {
 
     // Storing multiple image in arrImages   
     const arrImages = fileName.map(file => file.filename);
-
     console.log("arrImages: ", arrImages);
     // Remove duplicates using Set
     const uniqueImages = Array.from(new Set(arrImages));

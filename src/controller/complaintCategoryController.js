@@ -57,8 +57,21 @@ const deleteComplaintCategory = async (req, res) => {
   }
 };
 
+const getAllComplaintCategory = async (req, res) => {
+  try {
+    const getResponse = await complaintCategoryService.getAllComplaintCategory();
+    return res.json({
+      message: "Fetch all complaint category details successfully ",
+      getResponse,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createComplaintCategory,
   updateComplaintCategory,
   deleteComplaintCategory,
+  getAllComplaintCategory
 };

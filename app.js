@@ -12,6 +12,7 @@ const client_route = require("./src/routes/clientRoute.js");
 const clientPaymentOption_route = require('./src/routes/clientPaymentOptionRoute.js');
 const complaintCategory_route = require("./src/routes/complaintCategoryRoute.js");
 const complaintStatus_route = require("./src/routes/complaintStatusRoute.js");
+const complaint_remarks_routes = require("./src/routes/complaintRemarksRoute.js");
 const complaint_route = require("./src/routes/complaintRoute.js");
 const cartItem_route = require('./src/routes/cartItemsRoute.js');
 const country_route = require("./src/routes/countryRoute.js");
@@ -34,6 +35,11 @@ const PORT = process.env.PORT;
 app.use(morgan("dev"));
 // for communicate with cors platform
 app.use(cors());
+// app.use(cors({
+//   origin: "http://localhost:5173",
+//   methods: ["GET", "POST", "PUT", "DELETE"]
+
+// }))
 // To handle the incoming request
 app.use(express.json());
 
@@ -45,6 +51,7 @@ app.get("/", (req, res) => {
 app.use("/api", admin_route);
 app.use("/api", advertise_route);
 app.use("/api", client_route);
+app.use("/api", complaint_remarks_routes);
 app.use("/api", clientPaymentOption_route);
 app.use("/api", complaintCategory_route);
 app.use("/api", complaintStatus_route);

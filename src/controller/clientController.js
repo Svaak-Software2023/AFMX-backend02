@@ -41,6 +41,7 @@ const LoginClient = async (req, res) => {
       .status(200)
       .json({ message:infoMsg.LOGIN_SUCCESSFUL, signInResponse });
   } catch (error) {
+    console.log("error: " + error.message)
     if (error.message === errorMsg.INVALID_PASSWORD) {
       return res.status(401).json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
     } else {

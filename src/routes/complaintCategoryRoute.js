@@ -18,4 +18,6 @@ complaintCategory_route.put(
   complaintCategory_controller.deleteComplaintCategory
 );
 
+complaintCategory_route.get("/all-category", complaintCategory_controller.getAllComplaintCategory);
+
 module.exports = complaintCategory_route;

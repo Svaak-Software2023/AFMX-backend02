@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const servicesModel = mongoose.Schema({
-    serviceDepartmentId: {
+    serviceId: {
         type: Number,
         required: true,
     },
-    serviceId: {
+    serviceDepartmentId: {
         type: Number,
         required: true,
     },

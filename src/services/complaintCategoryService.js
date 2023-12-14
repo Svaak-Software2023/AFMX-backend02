@@ -90,8 +90,18 @@ const deleteComplaintCategory = async (
   return updateComplaintCategoryData;
 };
 
+// Get Method
+const getAllComplaintCategory = async () => {
+  const complaintCategoryData = await complaintCategoryModel.find({});
+  if (!complaintCategoryData) {
+    throw new Error(errorMsg.FETCH_USERS_FAILED);
+  }
+  return complaintCategoryData;
+};
+
 module.exports = {
   createComplaintCategory,
   updateComplaintCategory,
   deleteComplaintCategory,
+  getAllComplaintCategory
 };

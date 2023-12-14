@@ -13,9 +13,13 @@ const destinationPathServicesImage = path.join(
   __dirname,
   "../public/servicesImages"
 );
-const destinationPathComplaintImage = path.join(
+const destinationPathEvidencePicture = path.join(
   __dirname,
-  "../public/complaintImages"
+  "../public/evidencePictures"
+);
+const destinationPathEvidenceVideo = path.join(
+  __dirname,
+  "../public/evidenceVideos"
 );
 const destinationPathJoinImage = path.join(__dirname, "../public/joinImages");
 const destinationPathProductImage = path.join(__dirname, "../public/productImages");
@@ -35,8 +39,10 @@ const storage = multer.diskStorage({
       destinationPath = destinationPathProductImage;
     } else if (file.fieldname === "serviceImage") {
       destinationPath = destinationPathServicesImage;
-    } else if (file.fieldname === "complaintDoc") {
-      destinationPath = destinationPathComplaintImage;
+    } else if (file.fieldname === "evidencePicture") {
+      destinationPath = destinationPathEvidencePicture;
+    } else if(file.fieldname === "evidenceVideo") {
+      destinationPath = destinationPathEvidenceVideo;
     }
 
     if (destinationPath) {

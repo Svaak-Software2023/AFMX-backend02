@@ -1,56 +1,94 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const remarksSchema = new Schema({
-    remarks: {
-        type: String,
-        required: true
-    },
-    clientId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Client'
-    },
-    createdDate: {
-        type: Date,
-        default: Date.now
-    }
-});
-
 const complaintSchema = new Schema({
     complaintId: {
         type: Number,
         required: true
     },
-    complaintName: {
+    customerName: {
         type: String,
         required: true
     },
+    customerPhone: {
+        type: Number,
+        required: true
+    },
+    customerEmail: {
+        type: String,
+        required: true,
+        lowercase: true, // Converts the email to lowercase before saving
+        validate: {
+            validator: function (value) {
+                // Regular expression for basic email validation
+                return /^\S+@\S+\.\S+$/.test(value);
+            },
+            message: props => `${props.value} is not a valid email!`
+        }
+    },
+    complaintServiceName: {
+        type: String,
+        default: null
+    },
+    complaintType: {
+        type: String,
+        required: true,
+        enum: ['Driver/Fleet Vehicle Complaint', 'Employee Complaint', 'Billing Help', 'Motor/Automobile Accident',
+                'Suggestions How We Can Improve','Other']
+    },
+    dynamicFields: {
+        type: Schema.Types.Mixed, // Allows storing dynamic data
+        default: {}
+    },
+    complaintAddress: {
+        type: String,
+        required: true
+    },
+    createdBy: {
+        type: String,
+        required: true
+    },
+    desireOutcome: {
+        type: String,
+        required: true
+    },
+    evidencePicture: {
+        type: String,
+        default: null,
+        validate: {
+            validator: function (value) {
+                // Check if the value (file path) ends with an image extension
+                return /\.(jpg|jpeg|png|gif)$/i.test(value);
+            },
+            message: props => `${props.value} is not a valid image file path!`
+        }
+    },
+    evidenceVideo: {
+        type: String,
+        default: null,
+        validate: {
+            validator: function (value) {
+                // Check if the value (file path) ends with a video extension
+                return /\.(mp4|avi|mov|wmv)$/i.test(value);
+            },
+            message: props => `${props.value} is not a valid video file path!`
+        }
+    },  
     complaintMessage: {
         type: String,
         required: true
     },
-    complaintCategoryId: {
-        type: Number,
-        required: true
-    },
     complaineeId: {
         type: Number,
-        required: true
+        default: null,
     },
     complaintStatusId: {
         type: Number,
-        required: true
+        default: 1
     },
-    complaintRemarks: {
-        type: [remarksSchema]
-    },
-    complaintAttendeeId: {
+    adminId: {
         type: Number,
         default: 1,
-    },
-    complaintDoc: {
-        type: String,
-        default: null
     },
     createdDate: {
         type: Date,
@@ -62,4 +100,5 @@ const complaintSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model("complaint", complaintSchema);
+const ComplaintModel = mongoose.model("complaint", complaintSchema);
+module.exports = ComplaintModel;

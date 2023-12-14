@@ -147,9 +147,9 @@ const LoginClient = async (loginDetails) => {
 
   if (!user) {
     // User not found, handle this case
-    throw new Error(errorMsg.NOT_FOUND_USER);
+    throw new Error(errorMsg.UNAUTHORIZED_USER);
   }
-
+  
   // validate, user is active or not
   // only active user is allowed to login
   if (!user.isActive) {
@@ -190,7 +190,7 @@ const LoginClient = async (loginDetails) => {
       };
       return userDetails;
     } else {
-      throw new Error(errorMsg.INVAID_PASSWORD);
+      throw new Error(errorMsg.INVALID_PASSWORD);
     }
   } else {
     throw new Error(errorMsg.INVALID_LOGIN);
