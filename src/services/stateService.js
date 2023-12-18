@@ -59,7 +59,7 @@ const updateState = async (stateId, updatedStateDetails) => {
     { $set: { isActive: updatedStateDetails.isActive } }, // Explicitly specify the field to update
     { 
       new: true,
-      select: 'isActive' // Only allows the 'isActive' field to be returned in the updatedCountry 
+      select: 'isActive' // Only allows the 'isActive' field to be returned in the updatedState
     }
   );
 

@@ -13,7 +13,7 @@ const registerCity = async (cityDetails) => {
   } = cityDetails;
 
   // Check Existing City
-  const cityExists = await CityModel.findOne({ cityName });
+  const cityExists = await CityModel.findOne({ cityName: { $regex: new RegExp(`^${cityName}$`, 'i') } });
 
   if (cityExists) {
     throw new Error(errorMsg.CITY_EXISTS);
@@ -44,16 +44,19 @@ const registerCity = async (cityDetails) => {
 // Update method 
 const updateCity = async (cityId, updateCityDetails) => {
   // Check existing country
-  const cityData = await CityModel.findOne({ cityId, isActive: true });
+  const cityData = await CityModel.findOne({ cityId });
 
   if (!cityData) {
-    throw new Error("Neither city exists nor active");
+    throw new Error("City does not exist");
   }
 
   const updatedCity = await CityModel.findOneAndUpdate(
     { cityId: cityId },
-    { $set: updateCityDetails },
-    { new: true }
+    { $set: { isActive: updateCityDetails.isActive } }, // Explicitly specify the field to update
+    { 
+      new: true,
+      select: 'isActive' // Only allows the 'isActive' field to be returned in the updatedCity
+    }
   );
 
   return updatedCity;
