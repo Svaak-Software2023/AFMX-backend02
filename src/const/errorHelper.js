@@ -13,6 +13,7 @@ const errorMsg = {
     COMPLAINT_EXISTS: "Complaint Category exists",
     CITY_NOT_FOUND:"City data not found",
     COUNTRY_NOT_FOUND:"Country data not found",
+    COUNTRY_NOT_UPDATED:"Only isActive is allowed to update",
     COUNTRY_EXISTS: "Country exists",
     CITY_EXISTS: "City exists",
     CART_ID_NOT_VALID:"cart id is not valid",
@@ -48,12 +49,16 @@ const errorMsg = {
     STATE_NOT_FOUND: "State data not found",
     UNAUTHORIZED_USER: "Unauthorized User",
     UNAUTHORIZED_TOKEN: "Unauthorized Token",
-    VALID_COUNTRY:  "Please select as the valid country",
+    VALID_COUNTRY:  "Please select as the valid country Ids",
     VALID_STATE:    "Please select as the valid state",
 }
 
 const infoMsg = {
-    ADMIN_LOGIN_SUCCESS:     "Admin Login Successfully",
+
+
+
+
+
     CLIENT_CREATION_SUCCESS: "Client Created Successfully",
     FETCH_CLIENT_SUCCESS:    "Fetch all client register details successfully",
     LOGIN_SUCCESSFUL:        "Login Successfully",

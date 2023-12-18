@@ -36,7 +36,7 @@ app.use(morgan("dev"));
 // for communicate with cors platform
 app.use(cors());
 // app.use(cors({
-//   origin: "http://localhost:5173",
+//   origin: "https://f4d4-122-161-51-91.ngrok-free.app",
 //   methods: ["GET", "POST", "PUT", "DELETE"]
 
 // }))

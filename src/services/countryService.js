@@ -13,8 +13,8 @@ const registerCountry = async (countryDetails) => {
   } = countryDetails;
 
   // Check Existing Country
-  const countryExists = await CountryModel.findOne({ countryName });
-
+  const countryExists = await CountryModel.findOne({ countryName: { $regex: new RegExp(`^${countryName}$`, 'i') } });
+  console.log("countryExists", countryExists);
   if (countryExists) {
     throw new Error(errorMsg.COUNTRY_EXISTS);
   }
@@ -41,23 +41,26 @@ const registerCountry = async (countryDetails) => {
 
 const updateCountry = async (countryId, updateCountryDetails) => {
   // Check existing country
-  const countryData = await CountryModel.findOne({ countryId, isActive: true });
+  const countryData = await CountryModel.findOne({ countryId });
 
   if (!countryData) {
     throw new Error(errorMsg.COUNTRY_NOT_FOUND);
   }
 
-  const updatedCountry = await CountryModel.findOneAndUpdate(
+  const dataToUpdate = await CountryModel.findOneAndUpdate(
     { countryId: countryId },
-    { $set: updateCountryDetails },
-    { new: true }
+    { $set: { isActive: updateCountryDetails.isActive } }, // Explicitly specify the field to update
+    { 
+      new: true,
+      select: 'isActive' // Only allows the 'isActive' field to be returned in the updatedCountry 
+    }
   );
 
-  if (!updatedCountry) {
-    throw new Error(errorMsg.COUNTRY_NOT_FOUND);
+  if (!dataToUpdate) {
+    throw new Error(errorMsg.COUNTRY_NOT_UPDATED);
   }
 
-  return updatedCountry;
+  return dataToUpdate;
 };
 
 // Get API's

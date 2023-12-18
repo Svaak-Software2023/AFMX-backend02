@@ -21,7 +21,7 @@ const registerState = async (stateDetails) => {
   }
 
   // Check Existing State
-  const stateExists = await StateModel.findOne({ stateName });
+  const stateExists = await StateModel.findOne({ stateName: { $regex: new RegExp(`^${stateName}$`, 'i') } });
 
   if (stateExists) {
     throw new Error(errorMsg.STATE_EXISTS);
@@ -48,19 +48,22 @@ const registerState = async (stateDetails) => {
 // Update Method
 const updateState = async (stateId, updatedStateDetails) => {
   // Check existing country
-  const stateData = await StateModel.findOne({ stateId, isActive: true });
+  const stateData = await StateModel.findOne({ stateId });
 
   if (!stateData) {
     throw new Error(errorMsg.STATE_NOT_FOUND);
   }
 
-  const updatedState = await StateModel.findOneAndUpdate(
+  const dataToUpdate = await StateModel.findOneAndUpdate(
     { stateId: stateId },
-    { $set: updatedStateDetails },
-    { new: true }
+    { $set: { isActive: updatedStateDetails.isActive } }, // Explicitly specify the field to update
+    { 
+      new: true,
+      select: 'isActive' // Only allows the 'isActive' field to be returned in the updatedCountry 
+    }
   );
 
-  return updatedState;
+  return dataToUpdate;
 };
 
 

@@ -20,6 +20,8 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
         updatedDate,
     } = complaintDetails
 
+    console.log("complaintDetails", complaintDetails);
+
     const clientIds = await ClientModel.findOne({ clientId: loggedInIds, isActive: true })
         .select('-_id clientId clientFirstName clientMiddleName clientLastName clientEmail clientPhone clientAddress1 clientAddress2 clientPostalCode');
 
@@ -176,21 +178,19 @@ const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evi
         updatedDate,
     })
 
-    // const keysToRemove = ['adminId', 'complaintStatusId'];
+    const cleanedComplaintDetails = { ...complaintNewDetails._doc };
 
-    // const cleanedComplaintDetails = { ...complaintNewDetails._doc };
+    Object.keys(cleanedComplaintDetails).forEach((key) => {
+      if (cleanedComplaintDetails[key] === null || keysToRemove.includes(key)) {
+        delete cleanedComplaintDetails[key];
+      }
+    }); 
 
-    // Object.keys(cleanedComplaintDetails).forEach((key) => {
-    //   if (cleanedComplaintDetails[key] === null || keysToRemove.includes(key)) {
-    //     delete cleanedComplaintDetails[key];
-    //   }
-    // }); 
+  console.log("cleanedComplaintDetails=========>", cleanedComplaintDetails);
 
-//   console.log("cleanedComplaintDetails=========>", cleanedComplaintDetails);
-
-// // Create a new ComplaintModel instance with the cleaned data
-// const cleanedComplaintInstance = new ComplaintModel(cleanedComplaintDetails);
-// console.log("cleanedComplaintInstance", cleanedComplaintInstance);
+// Create a new ComplaintModel instance with the cleaned data
+const cleanedComplaintInstance = new ComplaintModel(cleanedComplaintDetails);
+console.log("cleanedComplaintInstance", cleanedComplaintInstance);
 
 const complaintCreateDetails = await complaintNewDetails.save();
 return complaintCreateDetails;
