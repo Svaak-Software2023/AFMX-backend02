@@ -44,6 +44,10 @@ const complaintSchema = new Schema({
         type: String,
         required: true
     },
+    dateOfIncedent: {
+        type: Date,
+        required: true,
+    },    
     createdBy: {
         type: String,
         required: true
