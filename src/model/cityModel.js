@@ -9,6 +9,10 @@ const citySchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  isCity: {
+    type: Boolean,
+    required: true,
+  },
   cityName: {
     type: String,
     required: true,

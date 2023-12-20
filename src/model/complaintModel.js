@@ -6,6 +6,10 @@ const complaintSchema = new Schema({
         type: Number,
         required: true
     },
+    radioInputType: {
+        type: String,
+        required: true
+    },
     customerName: {
         type: String,
         required: true

@@ -6,6 +6,7 @@ const registerCity = async (cityDetails) => {
   const {
     //Field values from UI
     cityName,
+    isCity,
     stateId,
     createdDate,
     updatedDate,
@@ -31,6 +32,7 @@ const registerCity = async (cityDetails) => {
     //Save in City Model
     cityId: cityCount + 1,
     cityName,
+    isCity,
     stateId,
     createdDate,
     updatedDate,

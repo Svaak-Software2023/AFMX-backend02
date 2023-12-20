@@ -4,6 +4,7 @@ const ServiceModel = require('../model/servicesModel');
 
 const existingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     const {
+        radioInputType,
         customerName,
         customerPhone,
         customerEmail,
@@ -91,6 +92,7 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
 
     const complaintNewDetails = new ComplaintModel({
         complaintId: complaintCount + 1,
+        radioInputType,
         customerName: existingClientName,
         customerPhone: customerPhone || clientIds.clientPhone,
         customerEmail: customerEmail || clientIds.clientEmail,

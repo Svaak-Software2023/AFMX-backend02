@@ -5,6 +5,7 @@ const registerCountry = async (countryDetails) => {
   const {
     //Field values from UI
     countryName,
+    continent,
     countryShortName,
     countryPhoneCode,
     createdDate,
@@ -25,6 +26,7 @@ const registerCountry = async (countryDetails) => {
   const newCountryDetails = await CountryModel({
     //Save in Country Model
     countryId: countryCount + 1,
+    continent,
     countryName,
     countryShortName,
     countryPhoneCode,
