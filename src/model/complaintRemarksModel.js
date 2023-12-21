@@ -1,46 +1,37 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const remarksSchema = new Schema({
-    remarks: {
-        type: String,
-        required: true
-    },
-    remarksCreatedBy: {
-        type: String,
-        default: 'employee',
-        enum: ['admin', 'employee', 'client']
-    },
-    createdDate: {
-        type: Date,
-        default: Date.now
-    }
-});
-
 const complaintRemarksSchema = new Schema({
     complaintRemarksId: {
         type: Number,
         required: true
     },
     complaintId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'complaint' // Reference to the associated complaint
-    },
-    complaineeId: {
         type: Number,
-        required: true,
+        required: true
     },
     adminId: {
         type: Number,
-        required: true,
+        default: 1,
     },
-    complaintAttendeeId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Admin' // Reference to the attendee handling the complaint (if applicable)
+    complaintAssigneeId: {
+        type: Number,
+        required: true
     },
-    remarks: [remarksSchema] // Array of remarks with its schema
-}, { timestamps: true }); // Optional: Adds createdAt and updatedAt fields
+    remarks: {
+        type: String,
+        default: "",
+    },
+    remarksCreatedBy: {
+        type: String,
+        default: 'A',
+        enum: ['A', 'E', 'C']
+    },
+    createdDate: {
+        type: Date,
+        default: Date.now
+    }
+}); 
 
 const ComplaintRemarksModel = mongoose.model('ComplaintRemarks', complaintRemarksSchema);
 
