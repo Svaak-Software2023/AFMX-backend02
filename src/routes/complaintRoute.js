@@ -23,6 +23,6 @@ complaint_route.post(
   complaint_controller.nonExistingComplaintPortal
 );
 
-complaint_route.get('/all-complaint-portal', complaint_controller.getAllCreateComplaintPortalService);
+complaint_route.get('/all-complaint-portal/:complaineeId', complaint_controller.getAllCreateComplaintPortalService);
 
 module.exports = complaint_route;

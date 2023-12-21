@@ -54,7 +54,8 @@ const nonExistingComplaintPortal = async (req, res) => {
 
 const getAllCreateComplaintPortalService = async (req, res) => {
     try {
-        const getResponse = await complaintService.getAllCreateComplaintPortalService();
+        const { complaineeId } = req.params;
+        const getResponse = await complaintService.getAllCreateComplaintPortalService(complaineeId);
         return res.json({
             message: "Fetch all create complaint portal service details successfully ",
             getResponse,

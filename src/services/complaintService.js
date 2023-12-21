@@ -1,6 +1,7 @@
 const ComplaintModel = require('../model/complaintModel');
 const ClientModel = require('../model/clientModel');
 const ServiceModel = require('../model/servicesModel');
+const complaintStatusModel = require('../model/complaintStatusModel');
 
 const existingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     const {
@@ -87,6 +88,16 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
         }
     });
 
+    const complaintStatus = await complaintStatusModel.findOne({ complaintStatusId });
+
+    // let complaintstatusIds;
+
+    // if(complaintStatus.complaintStatusName === 'open')  {
+    //     complaintstatusIds = complaintStatus.complaintStatusId;
+    // } else if (complaintStatus.complaintStatusName === 'closed') {
+    //     complaintstatusIds = complaintStatus.complaintStatusId;
+    // }
+
     // Fetch the count of the complaint
     let complaintCount = await ComplaintModel.countDocuments();
 
@@ -107,7 +118,7 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
         desireOutcome,
         complaintMessage,
         complaineeId: clientIds.clientId,
-        complaintStatusId,
+        complaintStatusId: complaintstatusIds,
         adminId,
         createdDate,
         updatedDate,
@@ -201,8 +212,10 @@ return complaintCreateDetails;
 }
 
 // Get API's
-const getAllCreateComplaintPortalService = async () => {
-    const complaintPortalData = await ComplaintModel.find({});
+const getAllCreateComplaintPortalService = async (complaineeId) => {
+
+    const complaintPortalData = await ComplaintModel.find({ complaineeId: complaineeId });
+
     if (!complaintPortalData) {
         throw new Error(errorMsg.FETCH_USERS_FAILED);
     }

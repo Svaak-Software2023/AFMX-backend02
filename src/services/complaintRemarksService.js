@@ -27,8 +27,8 @@ const createComplaintRemarks = async (complaintRemarksDetails) => {
     if(!clientIds) {
         throw new Error("Neither assignee exists nor is active");
     }
-    let complaintRemarksCount = 0;
-     complaintRemarksCount = await ComplaintRemarksModel.findOne().count();
+
+    const complaintRemarksCount = await ComplaintRemarksModel.countDocuments();
 
     const complaintRemarksNewDetails = new ComplaintRemarksModel({
         complaintRemarksId: complaintRemarksCount + 1,
