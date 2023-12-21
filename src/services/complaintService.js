@@ -201,12 +201,6 @@ const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evi
       }
     }); 
 
-  console.log("cleanedComplaintDetails=========>", cleanedComplaintDetails);
-
-// Create a new ComplaintModel instance with the cleaned data
-const cleanedComplaintInstance = new ComplaintModel(cleanedComplaintDetails);
-console.log("cleanedComplaintInstance", cleanedComplaintInstance);
-
 const complaintCreateDetails = await complaintNewDetails.save();
 return complaintCreateDetails;
 }
