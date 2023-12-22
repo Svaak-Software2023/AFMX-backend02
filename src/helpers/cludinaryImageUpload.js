@@ -8,10 +8,10 @@ cloudinary.config({
 });
 
 
-const fileUploadInCloudinary = async (filePath) => {
+const fileUploadInCloudinary = async (filePath, folderName) => {
     try {
         const result = await cloudinary.uploader.upload(filePath, {
-            folder: 'clientImages',
+            folder: folderName,
         });
         console.log("result: " , result);
         return result;

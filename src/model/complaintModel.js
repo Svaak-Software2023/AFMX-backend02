@@ -8,7 +8,7 @@ const complaintSchema = new Schema({
     },
     radioInputType: {
         type: String,
-        required: true
+        default: ""
     },
     customerName: {
         type: String,

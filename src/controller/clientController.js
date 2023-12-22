@@ -9,7 +9,8 @@ const cloudinaryImageUpload = require('../helpers/cludinaryImageUpload');
 
 const registerClient = async (req, res) => {
   try {
-    const uploadedImage =  await cloudinaryImageUpload.fileUploadInCloudinary(req.file.path);
+    const clientImagePath = req.file.path;
+    const uploadedImage =  await cloudinaryImageUpload.fileUploadInCloudinary(clientImagePath, 'clientImages');
     console.log("Uploaded image", uploadedImage);
 
     // Handle the register client response.

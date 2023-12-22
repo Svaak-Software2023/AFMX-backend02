@@ -6,7 +6,6 @@ const complaintStatusModel = require('../model/complaintStatusModel');
 const existingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     try {
         const {
-            radioInputType,
             customerName,
             customerPhone,
             customerEmail,
@@ -96,7 +95,6 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
         // Create new ComplaintModel instance
         const complaintNewDetails = new ComplaintModel({
             complaintId: complaintCount + 1,
-            radioInputType,
             customerName: existingClientName,
             customerPhone: customerPhone || clientIds.clientPhone,
             customerEmail: customerEmail || clientIds.clientEmail,
