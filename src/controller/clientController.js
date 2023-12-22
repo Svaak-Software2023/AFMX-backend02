@@ -4,13 +4,18 @@ const path = require("path");
 const fs = require("fs");
 const { errorMsg, infoMsg, pathMsg } = require("../const/errorHelper");
 
+const cloudinaryImageUpload = require('../helpers/cludinaryImageUpload');
+
 
 const registerClient = async (req, res) => {
   try {
+    const uploadedImage =  await cloudinaryImageUpload.fileUploadInCloudinary(req.file.path);
+    console.log("Uploaded image", uploadedImage);
+
     // Handle the register client response.
     const signUpResponse = await clientService.registerClient(
       req.body,
-      req.file.filename
+      uploadedImage
     );
 
     // After API execution succeeds, perform the file upload

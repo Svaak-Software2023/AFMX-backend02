@@ -1,6 +1,6 @@
 const { errorMsg } = require("../const/errorHelper.js");
 const AdvertiseModel = require("../model/advertiseModel.js");
-const clientModel = require("../model/clientModel.js");
+const ClientModel = require("../model/clientModel.js");
 
 const registerAdvertise = async (advertiseDetails, fileName) => {
   const {
@@ -20,7 +20,7 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
   } = advertiseDetails;
 
   // Check if the client exists
-  const client = await clientModel.findOne({ clientId });
+  const client = await ClientModel.findOne({ clientId });
 
   if (!client) {
     throw new Error(errorMsg.CLIENT_NOT_FOUND);

@@ -1,31 +1,32 @@
-const ClientModel = require('../model/clientModel');
+const ClientModel = require('../model/clientModel')
 const ComplaintModel = require('../model/complaintModel');
 const ComplaintRemarksModel = require('../model/complaintRemarksModel');
+const RoleModel = require('../model/roleModel');
 
 
 const createComplaintRemarks = async (complaintRemarksDetails) => {
 
-    console.log("complaintRemarksDetails", complaintRemarksDetails);
+    const { complaintId, adminId, complaintAssigneeId, remarks } = complaintRemarksDetails;
 
-    const {
-        complaintId,
-        adminId,
-        complaintAssigneeId,
-        remarks,
-        remarksCreatedBy
-    } = complaintRemarksDetails;
+    // Fetching complaint and client details concurrently using Promise.all
+    const [complaintIds, clientIds] = await Promise.all([
+        ComplaintModel.findOne({ complaintId }).select("-_id complaintId"),
+        ClientModel.findOne({ clientId: complaintAssigneeId, isActive: true }).select("-_id clientId isActive roleId")
+    ]);
 
-    const complaintIds = await ComplaintModel.findOne({ complaintId }).select("-_id complaintId");
-    console.log("complaint", complaintIds);
-    if(!complaintIds) {
+    if (!complaintIds) {
         throw new Error("Complaint ids doesn't Match");
     }
-    const clientIds = await ClientModel.findOne({ clientId: complaintAssigneeId, isActive: true })
-    .select("-_id clientId isActive");
-    console.log("client", clientIds);
 
-    if(!clientIds) {
+    if (!clientIds) {
         throw new Error("Neither assignee exists nor is active");
+    }
+
+    const roleIds = await RoleModel.findOne({ roleId: clientIds.roleId, isActive: true })
+        .select('-_id roleId roleName');
+
+    if (!roleIds) {
+        throw new Error("Neither role exists nor is active");
     }
 
     const complaintRemarksCount = await ComplaintRemarksModel.countDocuments();
@@ -36,13 +37,12 @@ const createComplaintRemarks = async (complaintRemarksDetails) => {
         adminId,
         complaintAssigneeId,
         remarks,
-        remarksCreatedBy
+        remarksCreatedBy: roleIds.roleName,
     })
     const complaintRemarksCreateDetails = await complaintRemarksNewDetails.save();
     return complaintRemarksCreateDetails;
 
 }
-
 
 module.exports = {
     createComplaintRemarks,

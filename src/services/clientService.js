@@ -32,7 +32,7 @@ const client_url = process.env.CLIENT_URL;
  * @returns New client created object
  */
 
-const registerClient = async (signUpDetails, filename) => {
+const registerClient = async (signUpDetails, uploadedImage) => {
   const hashedPassword = await securePassword(signUpDetails.clientPassword);
 
   const {
@@ -92,7 +92,7 @@ const registerClient = async (signUpDetails, filename) => {
     clientMiddleName,
     clientLastName,
     clientSuffix,
-    clientProfileImage: filename,
+    clientProfileImage: uploadedImage.secure_url,
     clientSSN,
     clientAddress1,
     clientAddress2,

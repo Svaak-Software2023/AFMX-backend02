@@ -2,7 +2,6 @@ const express = require("express");
 const productDeliveryAdress_route = express.Router();
 
 const productDeliveryAdress_controller = require("../controller/productDeliveryAddressController");
-const productcategory_route = require("./productCategoryRoute");
 
 productDeliveryAdress_route.post(
   "/create-delivery-address",

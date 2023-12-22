@@ -24,8 +24,8 @@ const complaintRemarksSchema = new Schema({
     },
     remarksCreatedBy: {
         type: String,
-        default: 'A',
-        enum: ['A', 'E', 'C']
+        default: 'Admin',
+        enum: ['Admin', 'Empolyee', 'Client']
     },
     createdDate: {
         type: Date,

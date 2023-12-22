@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const clientSchema = mongoose.Schema({
+const clientSchema = new Schema({
   clientId: {
     type: Number,
     required: true,
@@ -98,5 +99,6 @@ const clientSchema = mongoose.Schema({
     default: "",
   },
 });
+const ClientModel = mongoose.model("Client", clientSchema);
 
-module.exports = mongoose.model("Client", clientSchema);
+module.exports = ClientModel;
