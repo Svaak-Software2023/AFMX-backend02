@@ -296,7 +296,14 @@ const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evi
 
 const updateExistingComplaint = async (complaintId, updateExistingComplaintDetail) => {
     try {
-        // Find and update the complaint
+        // Find the existing complaint
+        const existingComplaint = await ComplaintModel.findOne({ complaintId });
+        console.log("existingComplaint", existingComplaint);
+
+        // Check if the complaint status is being updated
+        if (existingComplaint.complaintStatusId !== updateExistingComplaintDetail.complaintStatusId) {
+            console.log("in the if statement");
+            // Update the complaint status
         const dataToUpdate = await ComplaintModel.findOneAndUpdate(
             { complaintId },
             {
@@ -306,7 +313,7 @@ const updateExistingComplaint = async (complaintId, updateExistingComplaintDetai
                 new: true,
             }
         );
-
+         
         // Prepare the remark to be saved
         const remark = updateExistingComplaintDetail.remarks;
         remark.complaintId = complaintId;
@@ -324,6 +331,24 @@ const updateExistingComplaint = async (complaintId, updateExistingComplaintDetai
 
          // Return the updated remarks and complaintStatusId only
          return { complaintStatusId: dataToUpdate.complaintStatusId, remarks: dataToUpdate.remarks };
+    } else {
+        console.log("in the else statement");
+        // Prepare the remark to be saved
+        const remark = updateExistingComplaintDetail.remarks;
+        remark.complaintId = complaintId;
+
+        // Save the remark and get the saved remark object
+        const savedRemark = await validateAndSaveRemark(remark);
+
+        // Add the saved remark to the existing complaint's remarks array
+        existingComplaint.remarks.push(savedRemark);
+
+        // // Save the updated complaint with added remark
+        // await existingComplaint.save();
+
+        // Return the existing complaint's remarks and status
+        return { remarks: existingComplaint.remarks };
+    } 
     } catch (error) {
         // Throw an error if any occurs
         throw new Error(error.message);
