@@ -4,7 +4,8 @@ const ComplaintRemarksModel = require('../model/complaintRemarksModel');
 const RoleModel = require('../model/roleModel');
 
 
-const createComplaintRemarks = async (complaintRemarksDetails) => {
+const validateAndSaveRemark = async (complaintRemarksDetails) => {
+    console.log("validate and insert called");
 
     const { complaintId, adminId, complaintAssigneeId, remarks } = complaintRemarksDetails;
 
@@ -45,5 +46,5 @@ const createComplaintRemarks = async (complaintRemarksDetails) => {
 }
 
 module.exports = {
-    createComplaintRemarks,
-}
+    validateAndSaveRemark
+} 

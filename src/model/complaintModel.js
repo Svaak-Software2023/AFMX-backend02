@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const complaintSchema = new Schema({
     complaintId: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     },
     radioInputType: {
         type: String,
@@ -92,7 +93,7 @@ const complaintSchema = new Schema({
     },
     complaintStatusId: {
         type: Number,
-        default: 1
+        default: 1  // Whenever new complaint is created status would be always 1 for Open
     },
     adminId: {
         type: Number,
@@ -105,7 +106,8 @@ const complaintSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now
-    }
+    },
+    remarks: [{ type: Schema.Types.Number, ref: 'ComplaintRemarks' }]   
 });
 
 const ComplaintModel = mongoose.model("complaint", complaintSchema);

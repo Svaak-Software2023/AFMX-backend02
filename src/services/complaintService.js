@@ -2,6 +2,9 @@ const ComplaintModel = require('../model/complaintModel');
 const ClientModel = require('../model/clientModel');
 const ServiceModel = require('../model/servicesModel');
 const complaintStatusModel = require('../model/complaintStatusModel');
+const ComplaintRemarksModel = require('../model/complaintRemarksModel');
+// const sendEmail = require('../utility/sendEmail');
+const { validateAndSaveRemark } = require('../services/complaintRemarksService')
 
 const existingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     try {
@@ -22,8 +25,6 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
             createdDate,
             updatedDate,
         } = complaintDetails
-
-        console.log("complaintDetails", complaintDetails);
 
         const clientIds = await ClientModel.findOne({ clientId: loggedInIds, isActive: true })
             .select('-_id clientId clientFirstName clientMiddleName clientLastName clientEmail clientPhone clientAddress1 clientAddress2 clientPostalCode');
@@ -89,8 +90,12 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
             }
         });
 
+        const Statuses = getAllStatusesWithValueAndCode();
+
+
         // Fetch the count of the complaint
         const complaintCount = await ComplaintModel.countDocuments();
+        // complaintCount.map(complaint => complaint.complaintId).
 
         // Create new ComplaintModel instance
         const complaintNewDetails = new ComplaintModel({
@@ -113,8 +118,94 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
             adminId,
             createdDate,
             updatedDate,
-        })
+        });
+
         const complaintCreateDetails = await complaintNewDetails.save();
+        console.log("complaintCreateDetails", complaintCreateDetails.complaintType);
+
+        // switch (complaintCreateDetails.complaintType) {
+        //     case 'Driver/Fleet Vehicle Complaint': {
+        //         const subject = `Urgent: Driver Behaviour Complaint`;
+        //         const data = `
+        //     <p>Dear Administrator,</p>
+        //     <p>I hope this email finds you well. I am writing to express my concern and dissatisfaction</p>
+        //     <p>with the behaviour of one of your drivers during my recent interaction with your service.</p>
+
+        //     <p>On ${dateOfIncedent}, I had an encounter with a driver named ${complaintCreateDetails.dynamicFields.driverName},</p> 
+
+        //     <p>${complaintCreateDetails.dynamicFields.badgeNo}, ${complaintCreateDetails.dynamicFields.licensePlateNo} and I found their conduct to be ${complaintMessage}.</p>
+
+        //     <p>This behaviour is not in line with the level of service I have come to expect from AFMX.</p>
+
+        //     <p>I believe you must be aware of this incident, and I hope you will take the necessary steps</p> 
+        //     <p>to address and rectify the situation. I value the services your company provides, and I </p> 
+        //     <p>believe that prompt action on your part can help maintain the positive image of your brand.</p>
+
+        //    <p>I look forward to your investigation and a swift resolution to this matter.</p>
+
+        //     <p>Sincerely,</p>
+        //     <p>${customerName}</p>
+        //     <p>${customerPhone}</p>
+        //     <p>${customerEmail}</p>
+        //     `
+        //         sendEmail(process.env.ADMIN_EMAIL, subject, data)
+        //         break;
+        //     }
+        //     case 'Employee Complaint': {
+        //         const subject = `Urgent: Employee Behaviour Complaint`;
+        //         const data = `
+        //     <p>Dear Administrator,</p>
+        //     <p>I hope this email finds you well. I am writing to express my concern and dissatisfaction</p>
+        //     <p>with the behaviour of one of your employeers during my recent interaction with your service.</p>
+
+        //     <p>On ${dateOfIncedent}, I had an encounter with a employee named ${complaintCreateDetails.dynamicFields.employeeName},</p> 
+
+        //     <p>${complaintCreateDetails.dynamicFields.badgeNo}, and I found their conduct to be ${complaintMessage}.</p>
+
+        //     <p>This behaviour is not in line with the level of service I have come to expect from AFMX.</p>
+
+        //     <p>I believe you must be aware of this incident, and I hope you will take the necessary steps</p> 
+        //     <p>to address and rectify the situation. I value the services your company provides, and I </p> 
+        //     <p>believe that prompt action on your part can help maintain the positive image of your brand.</p>
+
+        //    <p>I look forward to your investigation and a swift resolution to this matter.</p>
+
+        //     <p>Sincerely,</p>
+        //     <p>${customerName}</p>
+        //     <p>${customerPhone}</p>
+        //     <p>${customerEmail}</p>
+        //     `
+        //         sendEmail(process.env.ADMIN_EMAIL, subject, data)
+        //         break;
+        //     }
+        //     case 'Billing Help': {
+        //         const subject = `Urgent: Billing Behaviour Complaint`;
+        //         const data = `
+        //     <p>Dear Administrator,</p>
+        //     <p>I hope this email finds you well. I am writing to express my concern and dissatisfaction</p>
+        //     <p>with the behaviour of one of your billings during my recent interaction with your service.</p>
+
+        //     <p>On ${dateOfIncedent}, I had an encounter with a billings help named ${complaintCreateDetails.dynamicFields.billingHelp},</p> 
+
+        //     <p>${complaintCreateDetails.dynamicFields.other}, and I found their conduct to be ${complaintMessage}.</p>
+
+        //     <p>This behaviour is not in line with the level of service I have come to expect from AFMX.</p>
+
+        //     <p>I believe you must be aware of this incident, and I hope you will take the necessary steps</p> 
+        //     <p>to address and rectify the situation. I value the services your company provides, and I </p> 
+        //     <p>believe that prompt action on your part can help maintain the positive image of your brand.</p>
+
+        //    <p>I look forward to your investigation and a swift resolution to this matter.</p>
+
+        //     <p>Sincerely,</p>
+        //     <p>${customerName}</p>
+        //     <p>${customerPhone}</p>
+        //     <p>${customerEmail}</p>
+        //     `
+        //         sendEmail(process.env.ADMIN_EMAIL, subject, data)
+        //         break;
+        //     }
+        // }
         return complaintCreateDetails;
     } catch (error) {
         // Handle and re-throw any encountered errors
@@ -200,10 +291,53 @@ const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evi
     }
 }
 
+const updateExistingComplaint = async (complaintId, updateExistingComplaintDetail) => {
+    console.log("complaint", complaintId);
+    // console.log("updateExistingCompl", updateExistingComplaintDetail.remarks);
+    try {
+        // const existingComplaint = await ComplaintModel.findOne( { complaintId } );
+
+        const dataToUpdate = await ComplaintModel.findOneAndUpdate(
+            { complaintId },
+            {
+                $set: { complaintStatusId: updateExistingComplaintDetail.complaintStatusId }
+            },
+            {
+                new: true,
+            }
+        )
+
+        const remark = updateExistingComplaintDetail.remarks
+        remark.complaintId = complaintId
+
+        console.log("created object: ", remark);
+
+        // const preparedRemark = new ComplaintRemarksModel(remark)
+        // console.log("preparedRemark object: ", preparedRemark);
+        validateAndSaveRemark(remark);
+
+        // // Save the new remark to the database
+        // const insertedData = await preparedRemark.save();
+
+        console.log("Found existingComplaint", dataToUpdate);
+        return dataToUpdate;
+    } catch (error) {
+        console.log("errpr", error.message);
+        throw new Error(error.message);
+    }
+}
+
 // Get API's
 const getAllCreateComplaintPortalService = async (complaineeId) => {
 
-    const complaintPortalData = await ComplaintModel.find({ complaineeId: complaineeId });
+    const complaints = await ComplaintModel.find({ complaineeId: complaineeId });
+    // console.log("complaint", complaintPortalData);
+    complaints.forEach(async complaint => {
+        const remarks = await ComplaintRemarksModel.findOne({ complaintId: complaint.complaintId });
+        console.log("remarks", remarks);
+        complaint.remarks.push(remarks);
+    });
+
 
     if (!complaintPortalData) {
         throw new Error(errorMsg.FETCH_USERS_FAILED);
@@ -215,5 +349,6 @@ const getAllCreateComplaintPortalService = async (complaineeId) => {
 module.exports = {
     existingComplaintPortal,
     nonExistingComplaintPortal,
-    getAllCreateComplaintPortalService
+    getAllCreateComplaintPortalService,
+    updateExistingComplaint
 }

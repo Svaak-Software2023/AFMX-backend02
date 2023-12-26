@@ -51,6 +51,16 @@ const nonExistingComplaintPortal = async (req, res) => {
     }
 }
 
+const updateExistingComplaint = async (req, res) => {
+    try {
+        const { complaintId } = req.params;
+        const updateComplaintResponse = await complaintService.updateExistingComplaint(complaintId, req.body);
+        return res.status(201).json({ message: "Complaint updated successfully", updateComplaintResponse}) 
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
 
 const getAllCreateComplaintPortalService = async (req, res) => {
     try {
@@ -68,5 +78,6 @@ const getAllCreateComplaintPortalService = async (req, res) => {
 module.exports = {
     existingComplaintPortal,
     nonExistingComplaintPortal,
-    getAllCreateComplaintPortalService
+    getAllCreateComplaintPortalService,
+    updateExistingComplaint
 }
