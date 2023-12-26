@@ -5,7 +5,6 @@ const RoleModel = require('../model/roleModel');
 
 
 const validateAndSaveRemark = async (complaintRemarksDetails) => {
-    console.log("validate and insert called");
 
     const { complaintId, adminId, complaintAssigneeId, remarks } = complaintRemarksDetails;
 

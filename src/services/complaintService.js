@@ -6,6 +6,7 @@ const ComplaintRemarksModel = require('../model/complaintRemarksModel');
 // const sendEmail = require('../utility/sendEmail');
 const { validateAndSaveRemark } = require('../services/complaintRemarksService')
 
+
 const existingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     try {
         const {
@@ -213,6 +214,7 @@ const existingComplaintPortal = async (complaintDetails, evidencePicture, eviden
     }
 };
 
+
 const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evidenceVideo) => {
     try {
         const {
@@ -291,12 +293,10 @@ const nonExistingComplaintPortal = async (complaintDetails, evidencePicture, evi
     }
 }
 
-const updateExistingComplaint = async (complaintId, updateExistingComplaintDetail) => {
-    console.log("complaint", complaintId);
-    // console.log("updateExistingCompl", updateExistingComplaintDetail.remarks);
-    try {
-        // const existingComplaint = await ComplaintModel.findOne( { complaintId } );
 
+const updateExistingComplaint = async (complaintId, updateExistingComplaintDetail) => {
+    try {
+        // Find and update the complaint
         const dataToUpdate = await ComplaintModel.findOneAndUpdate(
             { complaintId },
             {
@@ -305,45 +305,53 @@ const updateExistingComplaint = async (complaintId, updateExistingComplaintDetai
             {
                 new: true,
             }
-        )
+        );
 
-        const remark = updateExistingComplaintDetail.remarks
-        remark.complaintId = complaintId
+        // Prepare the remark to be saved
+        const remark = updateExistingComplaintDetail.remarks;
+        remark.complaintId = complaintId;
 
-        console.log("created object: ", remark);
+        // Save the remark and get the saved remark object
+        const savedRemark = await validateAndSaveRemark(remark);
 
-        // const preparedRemark = new ComplaintRemarksModel(remark)
-        // console.log("preparedRemark object: ", preparedRemark);
-        validateAndSaveRemark(remark);
+        // Ensure dataToUpdate.remarks is initialized as an array
+        if (!dataToUpdate.remarks) {
+            dataToUpdate.remarks = [];
+        }
 
-        // // Save the new remark to the database
-        // const insertedData = await preparedRemark.save();
+        // Append the saved remark to dataToUpdate.remarks array
+        dataToUpdate.remarks.push(savedRemark);
 
-        console.log("Found existingComplaint", dataToUpdate);
-        return dataToUpdate;
+         // Return the updated remarks and complaintStatusId only
+         return { complaintStatusId: dataToUpdate.complaintStatusId, remarks: dataToUpdate.remarks };
     } catch (error) {
-        console.log("errpr", error.message);
+        // Throw an error if any occurs
         throw new Error(error.message);
     }
-}
-
-// Get API's
-const getAllCreateComplaintPortalService = async (complaineeId) => {
-
-    const complaints = await ComplaintModel.find({ complaineeId: complaineeId });
-    // console.log("complaint", complaintPortalData);
-    complaints.forEach(async complaint => {
-        const remarks = await ComplaintRemarksModel.findOne({ complaintId: complaint.complaintId });
-        console.log("remarks", remarks);
-        complaint.remarks.push(remarks);
-    });
-
-
-    if (!complaintPortalData) {
-        throw new Error(errorMsg.FETCH_USERS_FAILED);
-    }
-    return complaintPortalData;
 };
+
+
+const getAllCreateComplaintPortalService = async (complaineeId) => {
+    try {
+        const complaints = await ComplaintModel.find({ complaineeId: complaineeId });
+
+        for (const complaint of complaints) {
+            console.log("complaint------->", complaint);
+            const remarks = await ComplaintRemarksModel.find({ complaintId: complaint.complaintId });
+            console.log("remarks", remarks);
+            complaint.remarks = remarks; // Assign remarks to complaint.remarks
+        }
+
+        if (!complaints) {
+            throw new Error(errorMsg.FETCH_USERS_FAILED);
+        }
+
+        return complaints;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 
 // Get API's
 const getAllExistingAndNonExistingComplaintsService = async () => {

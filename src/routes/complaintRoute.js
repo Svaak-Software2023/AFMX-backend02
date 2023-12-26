@@ -23,7 +23,7 @@ complaint_route.post(
   complaint_controller.nonExistingComplaintPortal
 );
 
-complaint_route.patch('/update-complaint/:complaintId', complaint_controller.updateExistingComplaint);
+complaint_route.put('/update-complaint/:complaintId', complaint_controller.updateExistingComplaint);
 
 complaint_route.get('/all-complaint-portal/:complaineeId', complaint_controller.getAllCreateComplaintPortalService);
 
