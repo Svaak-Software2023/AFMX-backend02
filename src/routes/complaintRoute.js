@@ -27,4 +27,7 @@ complaint_route.patch('/update-complaint/:complaintId', complaint_controller.upd
 
 complaint_route.get('/all-complaint-portal/:complaineeId', complaint_controller.getAllCreateComplaintPortalService);
 
+
+complaint_route.get('/all-complaints', complaint_controller.getAllExistingAndNonExistingComplaintsService);
+
 module.exports = complaint_route;

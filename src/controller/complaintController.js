@@ -75,9 +75,24 @@ const getAllCreateComplaintPortalService = async (req, res) => {
     }
 };
 
+
+
+const getAllExistingAndNonExistingComplaintsService = async (req, res) => {
+    try {
+        const getResponse = await complaintService.getAllExistingAndNonExistingComplaintsService();
+        return res.json({
+            message: "Fetch all created existing complaint and non existing complaint details successfully ",
+            getResponse,
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     existingComplaintPortal,
     nonExistingComplaintPortal,
+    updateExistingComplaint,
     getAllCreateComplaintPortalService,
-    updateExistingComplaint
+    getAllExistingAndNonExistingComplaintsService
 }

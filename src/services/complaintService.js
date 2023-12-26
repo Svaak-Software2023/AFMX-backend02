@@ -345,10 +345,21 @@ const getAllCreateComplaintPortalService = async (complaineeId) => {
     return complaintPortalData;
 };
 
+// Get API's
+const getAllExistingAndNonExistingComplaintsService = async () => {
+
+    const complaints = await ComplaintModel.find({});
+
+    if (!complaints) {
+        throw new Error(errorMsg.FETCH_USERS_FAILED);
+    }
+    return complaints;
+};
 
 module.exports = {
     existingComplaintPortal,
     nonExistingComplaintPortal,
+    updateExistingComplaint,
     getAllCreateComplaintPortalService,
-    updateExistingComplaint
+    getAllExistingAndNonExistingComplaintsService
 }
