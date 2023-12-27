@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const productCategorySchema = mongoose.Schema({
+const productCategorySchema = new Schema({
     productCategoryId: {
         type: Number,
         required: true
@@ -27,4 +28,6 @@ const productCategorySchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("productcategory", productCategorySchema);
+const ProductCategoryModel = mongoose.model("productcategory", productCategorySchema);
+
+module.exports = ProductCategoryModel;

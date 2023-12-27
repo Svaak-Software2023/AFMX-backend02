@@ -9,7 +9,7 @@ const addProduct = async (req, res) => {
       req.body,
       req.files
     );
-
+      console.log("product response: " , productResponse);
     // Assuming req.files is an array of files
     const uploadedFiles = req.files.map((file) => file.path);
     const targetDirectories = Array(req.files.length).fill(
@@ -33,6 +33,17 @@ const addProduct = async (req, res) => {
   }
 };
 
+const getProduct = async (req, res) => {
+  try {
+    const productResponse = await productService.getProduct();
+    return res.status(200).json({ message: "Product retrieved successfully", productResponse });
+    
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   addProduct,
+  getProduct
 };
