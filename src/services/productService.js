@@ -81,9 +81,15 @@ const addProduct = async (productDetails, fileName) => {
   return newProduct;
 };
 
-const getProduct = async () => {
-  const products = await ProductModel.find({});
+const getProduct = async (productCategoryId) => {
 
+  const productCategory = await ProductCategoryModel.findOne({ productCategoryId: productCategoryId })
+
+  if(!productCategory) {
+    throw new Error(`Product Category does not exist`);
+  }
+  const products = await ProductModel.find({ productCategoryId: productCategory.productCategoryId });
+ 
   if(!products) {
     throw new Error(errorMsg.FETCH_USERS_FAILED);
   }
