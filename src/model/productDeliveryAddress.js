@@ -17,13 +17,9 @@ const productDeliveryAddressSchema = mongoose.Schema({
         type: String,
         default: "",
     },
-    clientAddress1: {
+    clientAddress: {
         type: String,
         required: true,
-    },
-    clientAddress2: {
-        type: String,
-        default: "",
     },
     clientCity: {
         type: String,

@@ -36,7 +36,7 @@ const existingComplaintPortal = async (
       clientId: loggedInIds,
       isActive: true,
     }).select(
-      "-_id clientId clientFirstName clientMiddleName clientLastName clientEmail clientPhone clientAddress1 clientAddress2 clientPostalCode"
+      "-_id clientId clientFirstName clientLastName clientEmail clientPhone clientAddress clientPostalCode"
     );
 
     if (!clientIds) {
@@ -44,9 +44,9 @@ const existingComplaintPortal = async (
     }
 
     // Function to construct full name
-    const constructName = (firstName, middleName, lastName) => {
-      if (firstName && middleName && lastName) {
-        return `${firstName} ${middleName} ${lastName}`;
+    const constructName = (firstName, lastName) => {
+      if (firstName && lastName) {
+        return `${firstName} ${lastName}`;
       }
       return null;
     };
@@ -58,7 +58,6 @@ const existingComplaintPortal = async (
     } else {
       existingClientName = constructName(
         clientIds.clientFirstName,
-        clientIds.clientMiddleName,
         clientIds.clientLastName
       );
     }
@@ -112,11 +111,9 @@ const existingComplaintPortal = async (
       }
     });
 
-    const Statuses = getAllStatusesWithValueAndCode();
 
     // Fetch the count of the complaint
     const complaintCount = await ComplaintModel.countDocuments();
-    // complaintCount.map(complaint => complaint.complaintId).
 
     // Create new ComplaintModel instance
     const complaintNewDetails = new ComplaintModel({
@@ -131,7 +128,7 @@ const existingComplaintPortal = async (
       evidenceVideo: evidenceVideo,
       complaintAddress:
         complaintAddress ||
-        `${clientIds.clientAddress1} ${clientIds.clientAddress2} ${clientIds.clientPostalCode}`,
+        `${clientIds.clientAddress} ${clientIds.clientPostalCode}`,
       dateOfIncedent,
       createdBy,
       desireOutcome,

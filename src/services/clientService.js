@@ -40,22 +40,16 @@ const registerClient = async (signUpDetails, clientImagePath) => {
 
     const {
       roleName,
-      clientPrifix,
       clientFirstName,
-      clientMiddleName,
       clientLastName,
-      clientSuffix,
       clientSSN,
-      clientAddress1,
-      clientAddress2,
+      clientAddress,
       clientPostalCode,
       clientCity,
       stateId,
       countryId,
       clientPhone,
       clientEmail,
-      clientLinkedInProfile,
-      clientWebsite,
       createdDate,
       updatedDate,
       isActive,
@@ -97,15 +91,11 @@ const registerClient = async (signUpDetails, clientImagePath) => {
     const newClientDetails = new ClientModel({
       clientId: clientCount + 1,
       roleId: role.roleId,
-      clientPrifix,
       clientFirstName,
-      clientMiddleName,
       clientLastName,
-      clientSuffix,
       clientProfileImage: uploadedImage[0].url,
       clientSSN,
-      clientAddress1,
-      clientAddress2,
+      clientAddress,
       clientPostalCode,
       clientCity,
       stateId,
@@ -113,8 +103,6 @@ const registerClient = async (signUpDetails, clientImagePath) => {
       clientPassword: hashedPassword,
       clientPhone,
       clientEmail,
-      clientLinkedInProfile,
-      clientWebsite,
       createdDate,
       updatedDate,
       isActive,
@@ -131,8 +119,8 @@ const registerClient = async (signUpDetails, clientImagePath) => {
 
     // Prepare the data to send an email to users.
     const subject = emailContentInfo.WELCOME_RESPONSE_SUBJECT;
-    const middleName = clientMiddleName ? ` ${clientMiddleName},` : ",";
-    const emailContent = `<p>Dear ${clientFirstName} ${middleName}</p> ${emailContentInfo.WELCOME_RESPONSE_CONTENT}`;
+    const lastName = clientLastName ? ` ${clientLastName},` : ",";
+    const emailContent = `<p>Dear ${clientFirstName} ${lastName}</p> ${emailContentInfo.WELCOME_RESPONSE_CONTENT}`;
 
     //Sending the email to client Users.
     sendEmail(clientEmail, subject, emailContent);
@@ -181,15 +169,11 @@ const LoginClient = async (loginDetails) => {
 
       const userDetails = {
         clientId: user.clientId,
-        clientPrifix: user.clientPrifix,
         clientFirstName: user.clientFirstName,
-        clientMiddleName: user.clientMiddleName,
         clientLastName: user.clientLastName,
-        clientSuffix: user.clientSuffix,
         clientProfileImage: user.clientProfileImage,
         clientSSN: user.clientSSN,
-        clientAddress1: user.clientAddress1,
-        clientAddress2: user.clientAddress2,
+        clientAddress: user.clientAddress,
         clientPostalCode: user.clientPostalCode,
         clientCity: user.clientCity,
         stateId: user.stateId,
@@ -197,8 +181,6 @@ const LoginClient = async (loginDetails) => {
         clientPassword: user.clientPassword,
         clientPhone: user.clientPhone,
         clientEmail: user.clientEmail,
-        clientLinkedInProfile: user.clientLinkedInProfile,
-        clientWebsite: user.clientWebsite,
         isActive: user.isActive,
         token: tokenData,
       };
@@ -238,7 +220,7 @@ const forgetPassword = async (forgetDetails) => {
   const subject = forgetPassContentInfo.FORGET_PASSWORD_SUBJECT;
 
   const resetContentAndLink = `
-  <p>Dear ${user.clientFirstName} ${user.clientMiddleName},</p>
+  <p>Dear ${user.clientFirstName} ${user.clientLastName},</p>
   ${forgetPassContentInfo.FORGET_PASSWORD_CONTENT_ONE}
   <a href="${client_url}/api/reset-password?&token=${randomBytesString}&id=${user._id}">${infoMsg.PASSWORD_RESET_LINK}</a>. 
   ${forgetPassContentInfo.FORGET_PASSWORD_CONTENT_TWO}
@@ -281,7 +263,7 @@ const resetPassword = async (userId, token, clientPassword) => {
   const subject = resetPassContentInfo.RESET_PASSWORD_SUCCESS_SUBJECT;
 
   const resetSuccssContentAndLink = `
-  <p>Dear ${user.clientFirstName} ${user.clientMiddleName},</p>
+  <p>Dear ${user.clientFirstName} ${user.clientLastName},</p>
   ${resetPassContentInfo.RESET_PASSWORD_SUCCESS_CONTENT}
   `;
 

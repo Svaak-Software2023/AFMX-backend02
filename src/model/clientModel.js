@@ -10,23 +10,11 @@ const clientSchema = new Schema({
     type: Number,
     required: true,
   },
-  clientPrifix: {
-    type: String,
-    default: "",
-  },
   clientFirstName: {
     type: String,
     required: true,
   },
-  clientMiddleName: {
-    type: String,
-    default: "",
-  },
   clientLastName: {
-    type: String,
-    default: "",
-  },
-  clientSuffix: {
     type: String,
     default: "",
   },
@@ -38,13 +26,9 @@ const clientSchema = new Schema({
     type: String,
     required: true,
   },
-  clientAddress1: {
+  clientAddress: {
     type: String,
     required: true,
-  },
-  clientAddress2: {
-    type: String,
-    default: "",
   },
   clientPostalCode: {
     type: String,
@@ -73,14 +57,6 @@ const clientSchema = new Schema({
   clientEmail: {
     type: String,
     required: true,
-  },
-  clientLinkedInProfile: {
-    type: String,
-    default: "",
-  },
-  clientWebsite: {
-    type: String,
-    default: "",
   },
   createdDate: {
     type: Date,
