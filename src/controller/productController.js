@@ -5,11 +5,15 @@ const fs = require("fs");
 
 const addProduct = async (req, res) => {
   try {
+    // To handle the multiple image path
+    const productImagePath = req.files.map((file) => file.path);
+
+    // Recieved the product respose
     const productResponse = await productService.addProduct(
       req.body,
-      req.files
+      productImagePath
     );
-      console.log("product response: " , productResponse);
+
     // Assuming req.files is an array of files
     const uploadedFiles = req.files.map((file) => file.path);
     const targetDirectories = Array(req.files.length).fill(
@@ -37,8 +41,9 @@ const getProduct = async (req, res) => {
   try {
     const { productCategoryId } = req.body;
     const productResponse = await productService.getProduct(productCategoryId);
-    return res.status(200).json({ message: "Product retrieved successfully", productResponse });
-    
+    return res
+      .status(200)
+      .json({ message: "Product retrieved successfully", productResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -46,5 +51,5 @@ const getProduct = async (req, res) => {
 
 module.exports = {
   addProduct,
-  getProduct
+  getProduct,
 };

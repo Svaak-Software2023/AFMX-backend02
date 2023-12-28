@@ -4,19 +4,14 @@ const path = require("path");
 const fs = require("fs");
 const { errorMsg, infoMsg, pathMsg } = require("../const/errorHelper");
 
-const cloudinaryImageUpload = require('../helpers/cludinaryImageUpload');
-
-
 const registerClient = async (req, res) => {
   try {
     const clientImagePath = req.file.path;
-    const uploadedImage =  await cloudinaryImageUpload.fileUploadInCloudinary(clientImagePath, 'clientImages');
-    console.log("Uploaded image", uploadedImage);
 
     // Handle the register client response.
     const signUpResponse = await clientService.registerClient(
       req.body,
-      uploadedImage
+      clientImagePath
     );
 
     // After API execution succeeds, perform the file upload
@@ -45,11 +40,13 @@ const LoginClient = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message:infoMsg.LOGIN_SUCCESSFUL, signInResponse });
+      .json({ message: infoMsg.LOGIN_SUCCESSFUL, signInResponse });
   } catch (error) {
-    console.log("error: " + error.message)
+    console.log("error: " + error.message);
     if (error.message === errorMsg.INVALID_PASSWORD) {
-      return res.status(401).json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
+      return res
+        .status(401)
+        .json({ error: errorMsg.INVALID_CREDENTIALS_PASSWORD });
     } else {
       if (error.message === errorMsg.NOT_FOUND_USER) {
         return res.status(401).json({ error: errorMsg.UNAUTHORIZED_USER });

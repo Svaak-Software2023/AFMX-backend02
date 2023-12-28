@@ -88,7 +88,7 @@ const clientSchema = new Schema({
   },
   updatedDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   isActive: {
     type: Boolean,
