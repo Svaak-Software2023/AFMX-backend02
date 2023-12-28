@@ -81,7 +81,7 @@ const existingComplaintPortal = async (
       ],
       "Employee Complaint": ["employeeName", "badgeNo", "other"],
       "Billing Help": ["billingHelp", "other"],
-      Other: ["other"], // No expected fields for 'Other' type
+      "Other": ["other"], // No expected fields for 'Other' type
     };
 
     // Check for invalid complaint type
