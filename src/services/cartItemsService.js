@@ -35,7 +35,7 @@ const addCartItems = async(cartItemsDetails) => {
         productPrice
     });
 
-    const newCartItemsDetails = cartItemsData.save();
+    const newCartItemsDetails = await cartItemsData.save();
     return newCartItemsDetails;
 }
 

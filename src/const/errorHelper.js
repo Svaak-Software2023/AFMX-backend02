@@ -54,11 +54,6 @@ const errorMsg = {
 }
 
 const infoMsg = {
-
-
-
-
-
     CLIENT_CREATION_SUCCESS: "Client Created Successfully",
     FETCH_CLIENT_SUCCESS:    "Fetch all client register details successfully",
     LOGIN_SUCCESSFUL:        "Login Successfully",
@@ -66,12 +61,11 @@ const infoMsg = {
     PASSWORD_RESET_SUCCESS:  "Password reset was successful",
     PASSWORD_RESET_LINK:     "Password Reset Link",
     RESET_LINK_SENT:         "Link has been sent in your email",
-
-
 }
 
 const pathMsg = { 
-    CLIENT_IMAGES_PATH: "../public/clientImages"
+    CLIENT_IMAGES_PATH: "../public/clientImages",
+    RESUME_PDF_PATH: "../public/resumePdf"
 }
 
 module.exports = {

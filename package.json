@@ -4,9 +4,10 @@
   "description": "This is afmx backend code using node express and mongoDB",
   "main": "app.js",
   "scripts": {
-    "start": "node ./app.js",
-    "dev": "nodemon app.js"
+    "start": "nodemon -r dotenv/config --experimental-json-modules ./app.js",
+    "dev": "nodemon -r dotenv/config app.js"
   },
+  
   "author": "Svaak Software",
   "license": "ISC",
   "dependencies": {

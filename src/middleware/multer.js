@@ -21,7 +21,12 @@ const destinationPathEvidenceVideo = path.join(
   __dirname,
   "../public/evidenceVideos"
 );
-const destinationPathProductImage = path.join(__dirname, "../public/productImages");
+const destinationPathProductImage = path.join(
+  __dirname, "../public/productImages"
+);
+const destinationPathResumePdf = path.join(
+  __dirname, "../public/resumePdf"
+);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -40,6 +45,8 @@ const storage = multer.diskStorage({
       destinationPath = destinationPathEvidencePicture;
     } else if(file.fieldname === "evidenceVideo") {
       destinationPath = destinationPathEvidenceVideo;
+    } else if(file.fieldname === "resume") {
+      destinationPath = destinationPathResumePdf;
     }
 
     if (destinationPath) {

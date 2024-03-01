@@ -25,6 +25,7 @@ const role_route = require("./src/routes/roleRoute.js");
 const state_route = require("./src/routes/stateRoute.js");
 const service_department_route = require("./src/routes/serviceDepartmentRoute.js");
 const services_route = require("./src/routes/servicesRoute.js");
+const career_route = require("./src/routes/careerAndEmploymentRoute.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -65,6 +66,7 @@ app.use("/api", role_route);
 app.use("/api", state_route);
 app.use("/api", service_department_route);
 app.use("/api", services_route);
+app.use("/api", career_route);
 
 // // Json data routes
 // const industries_route = require("./src/routes/industriesRoute.js");

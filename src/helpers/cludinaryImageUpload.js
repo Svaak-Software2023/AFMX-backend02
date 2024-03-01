@@ -1,5 +1,5 @@
-const cloudinary = require("cloudinary").v2;
 
+const cloudinary = require("cloudinary").v2;
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
@@ -21,7 +21,6 @@ const fileUploadInCloudinary = async (filePath, folderName) => {
       const uploadResult = await cloudinary.uploader.upload(file, {
         folder: folderName, // Specify the folder
       });
-
       // Save the uploaded image details (URL, public ID, etc.)
       uploadedImages.push({
         url: uploadResult.secure_url,
