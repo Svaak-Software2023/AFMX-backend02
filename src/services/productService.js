@@ -1,5 +1,5 @@
 const ProductModel = require("../model/productModel");
-const ProductCategoryModel = require("../model/productCategoryModel");
+// const ProductCategoryModel = require("../model/productCategoryModel");
 const { errorMsg } = require("../const/errorHelper");
 
 // Import the Cloudinary image upload helper
