@@ -17,5 +17,5 @@ product_route.post(
   product_controller.addProduct
 );
 
-// product_route.get("/all-product", product_controller.getProduct);
+product_route.get("/all-product", product_controller.getProduct);
 module.exports = product_route;

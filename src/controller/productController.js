@@ -37,19 +37,19 @@ const addProduct = async (req, res) => {
   }
 };
 
-// const getProduct = async (req, res) => {
-//   try {
-//     const { productCategoryId } = req.body;
-//     const productResponse = await productService.getProduct(productCategoryId);
-//     return res
-//       .status(200)
-//       .json({ message: "Product retrieved successfully", productResponse });
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// };
+const getProduct = async (req, res) => {
+  try {
+    const { productCategoryId } = req.body;
+    const productResponse = await productService.getProduct(productCategoryId);
+    return res
+      .status(200)
+      .json({ message: "Product retrieved successfully", productResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   addProduct,
-  // getProduct,
+  getProduct,
 };

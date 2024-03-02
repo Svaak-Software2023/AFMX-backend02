@@ -1,5 +1,5 @@
 const ProductModel = require("../model/productModel");
-// const ProductCategoryModel = require("../model/productCategoryModel");
+const ProductCategoryModel = require("../model/productCategoryModel");
 const { errorMsg } = require("../const/errorHelper");
 
 // Import the Cloudinary image upload helper
@@ -180,24 +180,24 @@ const addProduct = async (productDetails, productImagePath) => {
 //   }
 // };
 
-// const getProduct = async (productCategoryId) => {
-//   const productCategory = await ProductCategoryModel.findOne({
-//     productCategoryId: productCategoryId,
-//   });
+const getProduct = async (productCategoryId) => {
+  const productCategory = await ProductCategoryModel.findOne({
+    productCategoryId: productCategoryId,
+  });
 
-//   if (!productCategory) {
-//     throw new Error(`Product Category does not exist`);
-//   }
-//   const products = await ProductModel.find({
-//     productCategoryId: productCategory.productCategoryId,
-//   });
+  if (!productCategory) {
+    throw new Error(`Product Category does not exist`);
+  }
+  const products = await ProductModel.find({
+    productCategoryId: productCategory.productCategoryId,
+  });
 
-//   if (!products) {
-//     throw new Error(errorMsg.FETCH_USERS_FAILED);
-//   }
-//   return products;
-// };
+  if (!products) {
+    throw new Error(errorMsg.FETCH_USERS_FAILED);
+  }
+  return products;
+};
 module.exports = {
   addProduct,
-  // getProduct,
+  getProduct,
 };
