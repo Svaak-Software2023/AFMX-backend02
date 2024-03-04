@@ -31,7 +31,7 @@ const destinationPathResumePdf = path.join(
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let destinationPath;
-
+console.log("file.fieldname",file.fieldname)
     // check the fieldname to determine the destination path
     if (file.fieldname === "clientProfileImage") {
       destinationPath = destinationPathClientImage;

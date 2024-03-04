@@ -7,6 +7,7 @@ const { pathMsg } = require("../const/errorHelper");
 const createtFormForCareer = async (req, res) => {
   try {
     const resumePdfPath = req.file?.path;
+    console.log("This is the request",resumePdfPath);
     const careerFormResponse = await careerService.createtFormForCareer(
       req.body,
       resumePdfPath

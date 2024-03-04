@@ -39,7 +39,8 @@ const addProduct = async (req, res) => {
 
 const getProduct = async (req, res) => {
   try {
-    const { productCategoryId } = req.body;
+    const productCategoryId  = req.body;
+    console.log("productCategoryId",productCategoryId);
     const productResponse = await productService.getProduct(productCategoryId);
     return res
       .status(200)
