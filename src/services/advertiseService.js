@@ -30,25 +30,34 @@ const registerAdvertise = async (advertiseDetails, fileName) => {
     throw new Error(errorMsg.INACTIVE_CLIENT_ADVERTIES_ERROR);
   }
 
+  // Storing multiple image in arrImages
+  const arrImages = fileName.map((file) => file.filename);
 
-  // Storing multiple image in arrImages   
-  const arrImages = fileName.map(file => file.filename);
+  // Find the largest existing advertiseId
+  const maxAdverties = await AdvertiseModel.findOne(
+    {},
+    { advertiseId: 1 },
+    { sort: { advertiseId: -1 } }
+  );
 
-  // Fetch the count of banners
-  const advertiseCount = await AdvertiseModel.countDocuments();
+  // Calculate the next advertiseId
+  const nextAdvertiseId = maxAdverties ? maxAdverties.advertiseId + 1 : 1;
 
- // Determine the createdDate
-const createdDate = new Date(); // Default to current date
+  // Determine the createdDate
+  const createdDate = new Date(); // Default to current date
 
-// Convert startDate to Date object if it's a string
-const providedStartDate = new Date(startDate);
+  // Convert startDate to Date object if it's a string
+  const providedStartDate = new Date(startDate);
 
-// Check if startDate is provided and greater than or equal to createdDate
-let adjustedStartDate = startDate && providedStartDate >= createdDate ? providedStartDate : createdDate;
+  // Check if startDate is provided and greater than or equal to createdDate
+  let adjustedStartDate =
+    startDate && providedStartDate >= createdDate
+      ? providedStartDate
+      : createdDate;
 
   // Creating banner model based on UI
   const newAdvertiseDetails = new AdvertiseModel({
-    advertiseId: advertiseCount + 1,
+    advertiseId: nextAdvertiseId,
     businessName,
     businessURL,
     advertisePage,
@@ -71,10 +80,10 @@ let adjustedStartDate = startDate && providedStartDate >= createdDate ? provided
 };
 
 const updateAdvertise = async (advertiseId, updateDetails) => {
-
   // check existing bannerId
-  const advertiseData = await AdvertiseModel.findOne({ advertiseId })
-  .select("-_id advertisePage advertiseLocation advertiseImageAltText isActive");
+  const advertiseData = await AdvertiseModel.findOne({ advertiseId }).select(
+    "-_id advertisePage advertiseLocation advertiseImageAltText isActive"
+  );
 
   if (!advertiseData) {
     throw new Error(errorMsg.ADVERTIES_NOT_FOUND);
@@ -95,7 +104,9 @@ const updateAdvertise = async (advertiseId, updateDetails) => {
 
 const deleteAdvertise = async (advertiseId, deleteDetails) => {
   // check existing bannerId
-  const advertiseData = await AdvertiseModel.findOne({ advertiseId }).select("-_id isActive");
+  const advertiseData = await AdvertiseModel.findOne({ advertiseId }).select(
+    "-_id isActive"
+  );
 
   if (!advertiseData) {
     throw new Error(errorMsg.ADVERTIES_NOT_FOUND);

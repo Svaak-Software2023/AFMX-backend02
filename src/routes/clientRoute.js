@@ -8,6 +8,8 @@ const fileUploadMiddleware = require("../middleware/multer");
 
 const client_controller = require("../controller/clientController.js");
 
+// const { verifyToken } = require("../middleware/auth.js")
+
 // Define the all creating api's.
 client_route.post(
   "/signup",

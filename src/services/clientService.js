@@ -85,11 +85,18 @@ const registerClient = async (signUpDetails, clientImagePath) => {
       "clientImages"
     );
 
-    // Fetch the count of client
-    const clientCount = await ClientModel.countDocuments();
+    // Find the largest existing clientId
+    const maxClientCount = await ClientModel.findOne(
+      {},
+      { clientId: 1 },
+      { sort: { clientId: -1 } }
+    );
+
+    // Calculate the next clientId
+    const nextclientId = maxClientCount ? maxClientCount.clientId + 1 : 1;
 
     const newClientDetails = new ClientModel({
-      clientId: clientCount + 1,
+      clientId: nextclientId,
       roleId: role.roleId,
       clientFirstName,
       clientLastName,

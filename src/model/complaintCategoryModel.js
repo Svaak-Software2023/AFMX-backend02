@@ -34,5 +34,5 @@ complaintCategorySchema.pre('findOneAndUpdate', function(next) {
   next();
 });
   
-  module.exports = mongoose.model("complaintCategory", complaintCategorySchema);
+module.exports = mongoose.model("complaintCategory", complaintCategorySchema);
   

@@ -12,41 +12,38 @@ const cludinaryImageUpload = require("../helpers/cludinaryImageUpload");
  * @returns {Promise<Object>} - Newly added product details.
  */
 
-
 const addProduct = async (productDetails, productImagePath) => {
   try {
     const maxImages = 5;
     const requiredFields = [
-      'productCategoryName',
-      'productName',
-      'productDescription',
-      'productBrand',
-      'containerType',
-      'containerSize',
-      'cleanerForm',
-      'readyToUseOrConcentrate',
-      'fragrances',
-      'upcCode',
-      'skuCode',
-      'productMRP',
-      'productPrice',
-      'quantity',
-      'discount',
-      'createdDate',
-      'updatedDate',
-      'isActive',
+      "productCategoryName",
+      "productName",
+      "productDescription",
     ];
 
     // Check if all required fields are present and not empty
-    if (requiredFields.some(field => !productDetails[field] || productDetails[field].trim() === '')) {
-      throw new Error(`Missing required fields: ${requiredFields.filter(field => !productDetails[field] || productDetails[field].trim() === '').join(', ')}`);
+    if (
+      requiredFields.some(
+        (field) => !productDetails[field] || productDetails[field].trim() === ""
+      )
+    ) {
+      throw new Error(
+        `Missing required fields: ${requiredFields
+          .filter(
+            (field) =>
+              !productDetails[field] || productDetails[field].trim() === ""
+          )
+          .join(", ")}`
+      );
     }
 
     if (productImagePath.length > maxImages) {
       throw new Error(`Exceeded the maximum limit of ${maxImages} images.`);
     }
 
-    const productCategory = await ProductCategoryModel.findOne({ productCategoryName: productDetails.productCategoryName });
+    const productCategory = await ProductCategoryModel.findOne({
+      productCategoryName: productDetails.productCategoryName,
+    });
 
     if (!productCategory) {
       throw new Error(errorMsg.CATEGORY_NOT_EXISTS);
@@ -56,19 +53,36 @@ const addProduct = async (productDetails, productImagePath) => {
       throw new Error(errorMsg.PRODUCT_CATEGORY_NOT_ACTIVE);
     }
 
-    const existingProduct = await ProductModel.findOne({ productName: { $regex: new RegExp(`^${productDetails.productName}$`, "i") } });
+    const existingProduct = await ProductModel.findOne({
+      productName: {
+        $regex: new RegExp(`^${productDetails.productName}$`, "i"),
+      },
+    });
 
     if (existingProduct) {
       throw new Error(`Product '${productDetails.productName}' already exists`);
     }
 
     // Upload product images to Cloudinary
-    const uploadProductImage = await cludinaryImageUpload.fileUploadInCloudinary(productImagePath, "productImages");
+    const uploadProductImage =
+      await cludinaryImageUpload.fileUploadInCloudinary(
+        productImagePath,
+        "productImages"
+      );
     const arrImages = uploadProductImage.map((image) => image.url);
 
-    const productCount = await ProductModel.countDocuments();
+    // Find the largest existing productId
+    const maxProductCount = await ProductModel.findOne(
+      {},
+      { productId: 1 },
+      { sort: { productId: -1 } }
+    );
+
+    // Calculate the next productId
+    const nextProductId = maxProductCount ? maxProductCount.productId + 1 : 1;
+
     const productData = new ProductModel({
-      productId: productCount + 1,
+      productId: nextProductId,
       productCategoryId: productCategory.productCategoryId,
       productImage: arrImages,
       ...productDetails,
@@ -80,8 +94,6 @@ const addProduct = async (productDetails, productImagePath) => {
     throw error;
   }
 };
-
-
 
 // const addProduct = async (productDetails, productImagePath) => {
 //   try {

@@ -20,11 +20,20 @@ const addProductCategory = async (categoryDetails) => {
     throw new Error(`Category '${productCategoryName}' already exists`);
   }
 
-  // Fetch count of product category
-  const productCategory = await ProductCategoryModel.countDocuments();
+  // Find the largest existing productCategoryId
+  const maxProductCategoryCount = await ProductCategoryModel.findOne(
+    {},
+    { productCategoryId: 1 },
+    { sort: { productCategoryId: -1 } }
+  );
+
+  // Calculate the next productCategoryId
+  const nextProductCategoryId = maxProductCategoryCount
+    ? maxProductCategoryCount.productCategoryId + 1
+    : 1;
 
   const categoryData = new ProductCategoryModel({
-    productCategoryId: productCategory + 1,
+    productCategoryId: nextProductCategoryId,
     productCategoryName,
     productCategoryDescription,
     createdDate,

@@ -11,13 +11,21 @@ const createComplaintCategory = async (complaintCategoryDetails) => {
     isActive,
   } = complaintCategoryDetails;
 
-  // Check total Number of documents(records) in the complaintCategory collection(table)
-  let complaintCategoryCount = 0;
-  complaintCategoryCount = await complaintCategoryModel.find().count();
+  // Find the largest existing complaintCategoryId
+  const maxComplaintCategoryCount = await complaintCategoryModel.findOne(
+    {},
+    { complaintCategoryId: 1 },
+    { sort: { complaintCategoryId: -1 } }
+  );
+
+  // Calculate the next complaintCategoryId
+  const nextComplaintCategoryId = maxComplaintCategoryCount
+    ? maxComplaintCategoryCount.complaintCategoryId + 1
+    : 1;
 
   const newComplaintCategoryDetails = await complaintCategoryModel({
     //Save in ComplaintCategory Model
-    complaintCategoryId: complaintCategoryCount + 1,
+    complaintCategoryId: nextComplaintCategoryId,
     complaintCategoryName,
     createdDate,
     updatedDate,
@@ -103,5 +111,5 @@ module.exports = {
   createComplaintCategory,
   updateComplaintCategory,
   deleteComplaintCategory,
-  getAllComplaintCategory
+  getAllComplaintCategory,
 };
