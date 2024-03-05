@@ -3,6 +3,8 @@ const cartModel = require("../model/cartModel");
 const CartModel = require("../model/cartModel");
 const ClientModel = require("../model/clientModel");
 
+
+// Create Cart
 const cartAdd = async (cartDetails, loggedInUser) => {
   const {
     clientId: requestedClientId,
@@ -49,6 +51,39 @@ const cartAdd = async (cartDetails, loggedInUser) => {
   return savedCart;
 };
 
+
+const getCart = async (loggedInUser) => {
+
+const cartAggregate = await CartModel.aggregate([
+        {
+          $match: {
+            clientId: loggedInUser.clientId,
+          },
+        },
+        {
+          $lookup: {
+            from: "cartitems",
+            localField: "cartId",
+            foreignField: "cartId",
+            as: "Items",
+          },
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "Items.productId",
+            foreignField: "productId",
+            as: "Products"
+          },
+        },
+  ])
+
+  if(!cartAggregate || cartAggregate.length === 0) {
+    throw new Error("Cart is empty");
+  }
+  return cartAggregate[0];
+}
 module.exports = {
   cartAdd,
+  getCart
 };

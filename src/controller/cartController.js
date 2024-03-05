@@ -11,6 +11,19 @@ const cartAdd = async(req, res) => {
     }
 }
 
+
+const getCart = async(req, res) => {
+    try {
+        const loggedInUser = req.decoded
+        // Handle the cart response
+        const cartResponse = await cartService.getCart(loggedInUser);
+        return res.json({ message: "Cart fetched Successfully", cartResponse});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
-    cartAdd
+    cartAdd,
+    getCart
 }
