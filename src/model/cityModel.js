@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const citySchema = mongoose.Schema({
+const citySchema = new Schema({
   cityId: {
     type: Number,
     required: true,
@@ -37,4 +38,6 @@ citySchema.pre('findOneAndUpdate', function(next) {
   next();
 });
 
-module.exports = mongoose.model("City", citySchema);
+const cityModel = mongoose.model("City", citySchema);
+
+module.exports = cityModel;

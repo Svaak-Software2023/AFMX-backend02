@@ -1,5 +1,5 @@
 const { errorMsg } = require("../const/errorHelper.js");
-const countryModel = require("../model/countryModel.js");
+const CountryModel = require("../model/countryModel.js");
 const StateModel = require("../model/stateModel.js");
 
 const registerState = async (stateDetails) => {
@@ -14,7 +14,7 @@ const registerState = async (stateDetails) => {
 
   // Validate the country based on Id
   if (countryId) {
-    const countryRoleId = await countryModel.findOne({ countryId, isActive: true });
+    const countryRoleId = await CountryModel.findOne({ countryId, isActive: true });
     if (!countryRoleId) {
       throw new Error(errorMsg.VALID_COUNTRY);
     }
@@ -27,12 +27,19 @@ const registerState = async (stateDetails) => {
     throw new Error(errorMsg.STATE_EXISTS);
   }
 
-  // Check total Number of documents in the State collection
-  let stateCount = await StateModel.countDocuments();
+  // Find the largest existing stateId
+  const maxStateCount = await StateModel.findOne(
+    {},
+    { stateId: 1 },
+    { sort: { stateId: -1 } }
+  );
+
+  // Calculate the next stateId
+  const nextStateId = maxStateCount ? maxStateCount.stateId + 1 : 1;
 
   const newStateDetails = new StateModel({
     //Save in State Model
-    stateId: stateCount + 1,
+    stateId: nextStateId,
     stateName,
     countryId,
     createdDate,

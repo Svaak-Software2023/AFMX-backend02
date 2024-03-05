@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const complaintStatusSchema = mongoose.Schema({
+const complaintStatusSchema = new Schema({
   complaintStatusId: {
     type: Number,
     required: true,
@@ -31,4 +32,6 @@ const complaintStatusSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("complaintStatus", complaintStatusSchema);
+const complaintStatusModel = mongoose.model("complaintStatus", complaintStatusSchema);
+
+module.exports = complaintStatusModel;

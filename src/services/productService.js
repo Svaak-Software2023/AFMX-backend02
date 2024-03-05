@@ -95,6 +95,7 @@ const addProduct = async (productDetails, productImagePath) => {
   }
 };
 
+
 // const addProduct = async (productDetails, productImagePath) => {
 //   try {
 //     // Define the maximum number of allowed images
@@ -192,6 +193,28 @@ const addProduct = async (productDetails, productImagePath) => {
 //   }
 // };
 
+
+
+// Get Single Product Details by Product Id
+const getSingleProduct = async (paramsData) => {
+  const { productId } = paramsData;
+
+  if (!productId) {
+    throw new Error(`Product Id is required`);
+  }
+
+  const product = await ProductModel.findOne({ productId, isActive: true });
+
+  if (!product) {
+    throw new Error(`Neither Product exists nor isActive`);
+  }
+  console.log("product found", product);
+
+  return product;
+}
+
+
+// Get a list of products based on the specified the categoryId
 const getProduct = async (productCategoryId) => {
   const productCategory = await ProductCategoryModel.findOne({
     productCategoryId: productCategoryId,
@@ -211,5 +234,6 @@ const getProduct = async (productCategoryId) => {
 };
 module.exports = {
   addProduct,
+  getSingleProduct,
   getProduct,
 };

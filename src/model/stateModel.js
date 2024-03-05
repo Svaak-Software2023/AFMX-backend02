@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const stateSchema = mongoose.Schema({
+const stateSchema = new Schema({
   stateId: {
     type: Number,
     required: true,
@@ -33,4 +34,6 @@ stateSchema.pre('findOneAndUpdate', function(next) {
   next();
 });
 
-module.exports = mongoose.model("State", stateSchema);
+const StateModel = mongoose.model("State", stateSchema);
+
+module.exports = StateModel;

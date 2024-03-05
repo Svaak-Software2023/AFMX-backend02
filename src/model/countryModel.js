@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const countrySchema = mongoose.Schema({
+const countrySchema = new Schema({
   countryId: {
     type: Number,
     required: true,
@@ -41,4 +42,6 @@ countrySchema.pre('findOneAndUpdate', function(next) {
   next();
 });
 
-module.exports = mongoose.model("Country", countrySchema);
+const CountryModel = mongoose.model("Country", countrySchema);
+
+module.exports = CountryModel;

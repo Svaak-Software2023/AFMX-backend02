@@ -20,12 +20,21 @@ const createComplaintStatus = async (complaintStatusDetail) => {
   //   throw new Error(errorMsg.COMPLAINT_STATUS_EXISTS);
   // }
 
-  // Fetch count of complaint status count
-  let complaintStatusCount = await ComplaintStatusModel.countDocuments();
+  // Find the largest existing complaintStatusId
+  const maxComplaintStatusCount = await ComplaintStatusModel.findOne(
+    {},
+    { complaintStatusId: 1 },
+    { sort: { complaintStatusId: -1 } }
+  );
+
+  // Calculate the next complaintStatusId
+  const nextcomplaintStatusId = maxComplaintStatusCount
+    ? maxComplaintStatusCount.complaintStatusId + 1
+    : 1;
 
   const newComplaintStatusDetail = new ComplaintStatusModel({
     //Save in ComplaintStatus Model
-    complaintStatusId: complaintStatusCount + 1,
+    complaintStatusId: nextcomplaintStatusId,
     complaintStatusName,
     createdDate,
     updatedDate,

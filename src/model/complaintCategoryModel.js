@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const complaintCategorySchema = mongoose.Schema({
+const complaintCategorySchema = new Schema({
     complaintCategoryId: {
       type: Number,
       required: true,
@@ -34,5 +35,7 @@ complaintCategorySchema.pre('findOneAndUpdate', function(next) {
   next();
 });
   
-module.exports = mongoose.model("complaintCategory", complaintCategorySchema);
+const complaintCategoryModel = mongoose.model("complaintCategory", complaintCategorySchema);
+
+module.exports = complaintCategoryModel;
   

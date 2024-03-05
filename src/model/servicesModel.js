@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const servicesModel = mongoose.Schema({
+const servicesModel = new Schema({
     serviceId: {
         type: Number,
         required: true,
@@ -35,4 +36,6 @@ const servicesModel = mongoose.Schema({
     },
 })
 
- module.exports = mongoose.model("Services", servicesModel);
+ const ServiceModel = mongoose.model("Services", servicesModel);
+
+ module.exports = ServiceModel;

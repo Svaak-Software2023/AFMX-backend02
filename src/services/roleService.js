@@ -21,12 +21,21 @@ const createRole = async (roleDetail) => {
     throw new Error(errorMsg.ROLE_EXISTS);
   }
 
-  // Fetch count of role
-  let roleCount = await roleModel.countDocuments();
+  // Find the largest existing roleId
+  const maxRoleCount = await roleModel.findOne(
+    {},
+    { roleId: 1 },
+    { sort: { roleId: -1 } }
+  );
+
+  // Calculate the next roleId
+  const nextRoleId = maxRoleCount
+    ? maxRoleCount.roleId + 1
+    : 1;
 
   const newRoleDetail = new roleModel({
     //Save in role Model
-    roleId: roleCount + 1,
+    roleId: nextRoleId,
     roleName,
     roleDescription,
     createdDate,

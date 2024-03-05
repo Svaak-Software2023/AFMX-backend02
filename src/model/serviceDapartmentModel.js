@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const serviceDepartmentSchema = mongoose.Schema({
+const serviceDepartmentSchema = new Schema({
   serviceDepartmentId: {
     type: Number,
     required: true,
@@ -23,4 +24,6 @@ const serviceDepartmentSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("ServiceDepartment", serviceDepartmentSchema);
+const ServiceDepartmentModel = mongoose.model("ServiceDepartment", serviceDepartmentSchema);
+
+module.exports = ServiceDepartmentModel;

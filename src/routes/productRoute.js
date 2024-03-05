@@ -17,5 +17,7 @@ product_route.post(
   product_controller.addProduct
 );
 
+product_route.get("/products/:productId", product_controller.getSingleProduct);
+
 product_route.get("/all-product/:categoryId", product_controller.getProduct);
 module.exports = product_route;

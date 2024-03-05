@@ -81,7 +81,7 @@ const existingComplaintPortal = async (
       ],
       "Employee Complaint": ["employeeName", "badgeNo", "other"],
       "Billing Help": ["billingHelp", "other"],
-      "Other": ["other"], // No expected fields for 'Other' type
+      Other: ["other"], // No expected fields for 'Other' type
     };
 
     // Check for invalid complaint type
@@ -110,7 +110,6 @@ const existingComplaintPortal = async (
         dynamicFields[field] = complaintDetails[field];
       }
     });
-
 
     // Fetch the count of the complaint
     const complaintCount = await ComplaintModel.countDocuments();
@@ -296,11 +295,20 @@ const nonExistingComplaintPortal = async (
       }
     });
 
-    // Fetch the count of the complaint
-    let complaintCount = await ComplaintModel.countDocuments();
+    // Find the largest existing complaintId
+    const maxComplaintCount = await ComplaintModel.findOne(
+      {},
+      { complaintId: 1 },
+      { sort: { complaintId: -1 } }
+    );
+
+    // Calculate the next complaintId
+    const nextComplaintId = maxComplaintCount
+      ? maxComplaintCount.complaintId + 1
+      : 1;
 
     const complaintNewDetails = new ComplaintModel({
-      complaintId: complaintCount + 1,
+      complaintId: nextComplaintId,
       radioInputType,
       customerName,
       customerPhone,

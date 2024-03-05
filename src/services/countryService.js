@@ -20,12 +20,21 @@ const registerCountry = async (countryDetails) => {
     throw new Error(errorMsg.COUNTRY_EXISTS);
   }
 
-  // Check total Number of documents in the Country collection
-  let countryCount = await CountryModel.countDocuments();
+  // Find the largest existing countryId
+  const maxCountryCount = await CountryModel.findOne(
+    {},
+    { countryId: 1 },
+    { sort: { countryId: -1 } }
+  );
+
+  // Calculate the next countryId
+  const nextCountryId = maxCountryCount
+    ? maxCountryCount.countryId + 1
+    : 1;
 
   const newCountryDetails = await CountryModel({
     //Save in Country Model
-    countryId: countryCount + 1,
+    countryId: nextCountryId,
     continent,
     countryName,
     countryShortName,

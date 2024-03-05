@@ -37,10 +37,22 @@ const addProduct = async (req, res) => {
   }
 };
 
+
+const getSingleProduct = async (req, res) => {
+  try {
+
+    const productSingleResponse = await productService.getSingleProduct(req.params);
+    return res
+   .status(200)
+   .json({ message: "Single Product retrieved successfully", productSingleResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 const getProduct = async (req, res) => {
   try {
     const productCategoryId  = req.params.categoryId;
-    console.log("productCategoryId",productCategoryId);
     const productResponse = await productService.getProduct(productCategoryId);
     return res
       .status(200)
@@ -52,5 +64,6 @@ const getProduct = async (req, res) => {
 
 module.exports = {
   addProduct,
+  getSingleProduct,
   getProduct,
 };

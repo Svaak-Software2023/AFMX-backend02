@@ -47,10 +47,20 @@ const validateAndSaveRemark = async (complaintRemarksDetails) => {
     roles = adminRoleIds.roleName;
   }
 
-  const complaintRemarksCount = await ComplaintRemarksModel.countDocuments();
+  // Find the largest existing complaintRemarksId
+  const maxComplaintRemarksCount = await ComplaintRemarksModel.findOne(
+    {},
+    { complaintRemarksId: 1 },
+    { sort: { complaintRemarksId: -1 } }
+  );
+
+  // Calculate the next complaintRemarksId
+  const nextcomplaintRemarksId = maxComplaintRemarksCount
+    ? maxComplaintRemarksCount.complaintRemarksId + 1
+    : 1;
 
   const complaintRemarksNewDetails = new ComplaintRemarksModel({
-    complaintRemarksId: complaintRemarksCount + 1,
+    complaintRemarksId: nextcomplaintRemarksId,
     complaintId,
     adminId,
     complaintAssigneeId,
