@@ -34,11 +34,11 @@ const PORT = process.env.PORT;
 app.use(morgan("dev"));
 // for communicate with cors platform
 app.use(cors());
-// app.use(cors({
-//   origin: "https://f4d4-122-161-51-91.ngrok-free.app",+
-//   methods: ["GET", "POST", "PUT", "DELETE"]
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"]
 
-// }))
+}))
 // To handle the incoming request
 app.use(express.json());
 
