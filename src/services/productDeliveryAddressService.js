@@ -123,11 +123,9 @@ const updateProductDeliveryAddress = async (
   return updatedAddress;
 };
 
-// Get API's for single data
-const getSingleCreateProductDeliveryAddress = async (
-  deliveryAddressSingleDetails
-) => {
-  const { deliveryAddressId } = deliveryAddressSingleDetails;
+// Get API's for single delivery address
+const getSingleProductDeliveryAddress = async (paramsData, loggedInUser) => {
+  const { deliveryAddressId } = paramsData;
 
   // Check existing department
   const deliveryAddressData = await ProductDeliveryAddressModel.findOne({
@@ -135,23 +133,91 @@ const getSingleCreateProductDeliveryAddress = async (
   });
 
   if (!deliveryAddressData) {
-    throw new Error(errorMsg.FETCH_USERS_ID_MISSING_ERROR);
+    throw new Error(errorMsg.PRODUCT_DELIVERY_ADDRESS_NOT_FOUND_ERROR);
   }
+
+  // Find the cart associated with the logged-in user
+  const cart = await CartModel.findOne({
+    clientId: loggedInUser.clientId,
+  }).select("clientId cartId -_id");
+
+  if (!cart) {
+    throw new Error("Cart does not exists");
+  }
+
+  // Validate if the delivery address belongs to the user's cart
+  if (deliveryAddressData.cartId !== cart.cartId) {
+    throw new Error("Only authorized users can access his own address");
+  }
+
   return deliveryAddressData;
 };
 
-const getAllCreateProductDeliveryAddress = async () => {
-  const productDeliveryAddressData = await ProductDeliveryAddressModel.find({});
+// Get all the delivery addresses
+const getAllProductDeliveryAddress = async (loggedInUser) => {
+  // Find the cart associated with the logged-in user
+  const cart = await CartModel.findOne({
+    clientId: loggedInUser.clientId,
+  }).select("clientId cartId -_id");
 
-  if (!productDeliveryAddressData) {
-    throw new Error(errorMsg.FETCH_USERS_FAILED);
+  if (!cart) {
+    throw new Error("Cart does not exists");
   }
-  return productDeliveryAddressData;
+
+  // Find all delivery addresses associated with the cart
+  const productDeliveryAddress = await ProductDeliveryAddressModel.find({
+    cartId: cart.cartId,
+  });
+
+  if (!productDeliveryAddress) {
+    throw new Error("No ProductDeliveryAddress Found");
+  }
+  return productDeliveryAddress;
+};
+
+// Delete the delivery address
+const deleteSingleProductDeliveryAddress = async (loggedInUser, paramsData) => {
+  const { deliveryAddressId } = paramsData;
+
+  // Find the product delivery address data
+  const deliveryAddressData = await ProductDeliveryAddressModel.findOne({
+    deliveryAddressId: deliveryAddressId,
+  }).select("deliveryAddressId cartId -_id");
+
+  if (!deliveryAddressData) {
+    throw new Error(errorMsg.PRODUCT_DELIVERY_ADDRESS_NOT_FOUND_ERROR);
+  }
+
+  // Find the cart associated with the logged-in user
+  const cart = await CartModel.findOne({
+    clientId: loggedInUser.clientId,
+  }).select("clientId cartId -_id");
+
+  if (!cart) {
+    throw new Error("Cart does not exists");
+  }
+
+  // Validate if the delivery address belongs to the user's cart
+  if (deliveryAddressData.cartId !== cart.cartId) {
+    throw new Error("Unauthorized: You can only delete your own address");
+  }
+
+  // Delete the delivery address
+  const deletedAddress = await ProductDeliveryAddressModel.findOneAndDelete({
+    deliveryAddressId,
+  });
+
+  if (!deletedAddress) {
+    throw new Error("Failed to delete address");
+  }
+
+  return deletedAddress;
 };
 
 module.exports = {
   createProductDeliveryAddress,
   updateProductDeliveryAddress,
-  getAllCreateProductDeliveryAddress,
-  getSingleCreateProductDeliveryAddress,
+  getSingleProductDeliveryAddress,
+  getAllProductDeliveryAddress,
+  deleteSingleProductDeliveryAddress,
 };

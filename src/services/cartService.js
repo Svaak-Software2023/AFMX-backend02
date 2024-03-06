@@ -11,7 +11,7 @@ const cartAdd = async (cartDetails, loggedInUser) => {
     deliveryCharges,
     discountPrice,
   } = cartDetails;
-
+console.log("logged in user", loggedInUser);
   // // Check if the client exists and is active
   const client = await ClientModel.findOne({
     clientId: loggedInUser.clientId,
