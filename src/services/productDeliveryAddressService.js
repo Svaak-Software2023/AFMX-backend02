@@ -5,7 +5,6 @@ const { errorMsg } = require("../const/errorHelper");
 // Create a delivery address
 const createProductDeliveryAddress = async (bodyData, loggedInUser) => {
   const {
-    cartId,
     clientPhone,
     clientAddress,
     clientCity,
@@ -15,20 +14,15 @@ const createProductDeliveryAddress = async (bodyData, loggedInUser) => {
   } = bodyData;
 
   // Check if essential fields are provided
-  if (!cartId || !clientAddress || !clientCountry || !clientPostalCode) {
+  if (!clientAddress || !clientCountry || !clientPostalCode) {
     throw new Error("Required fields are missing");
   }
 
   // Check if the cart exists
-  const cart = await CartModel.findOne({ cartId });
+  const cart = await CartModel.findOne({ cartId: loggedInUser.clientId });
 
   if (!cart) {
     throw new Error("Cart not found");
-  }
-
-  // Validate the authorization to add delivery address
-  if (cart.clientId !== loggedInUser.clientId) {
-    throw new Error("Only authorized users can add the delivery address");
   }
 
   // Find the largest existing deliveryAddressId
@@ -46,7 +40,7 @@ const createProductDeliveryAddress = async (bodyData, loggedInUser) => {
   // Create new delivery address data
   const newDeliveryAddress = new ProductDeliveryAddressModel({
     deliveryAddressId: nextDeliveryAddressId,
-    cartId,
+    cartId: cart.cartId,
     clientPhone,
     clientAddress,
     clientCity,
