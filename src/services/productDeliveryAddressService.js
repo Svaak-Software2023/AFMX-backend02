@@ -13,13 +13,14 @@ const createProductDeliveryAddress = async (bodyData, loggedInUser) => {
     clientPostalCode,
   } = bodyData;
 
+  
   // Check if essential fields are provided
   if (!clientAddress || !clientCountry || !clientPostalCode) {
     throw new Error("Required fields are missing");
   }
 
   // Check if the cart exists
-  const cart = await CartModel.findOne({ cartId: loggedInUser.clientId });
+  const cart = await CartModel.findOne({ clientId: loggedInUser.clientId });
 
   if (!cart) {
     throw new Error("Cart not found");
@@ -154,6 +155,7 @@ const getAllProductDeliveryAddress = async (loggedInUser) => {
     clientId: loggedInUser.clientId,
   }).select("clientId cartId -_id");
 
+console.log('cart', cart);
   if (!cart) {
     throw new Error("Cart does not exists");
   }
@@ -162,8 +164,8 @@ const getAllProductDeliveryAddress = async (loggedInUser) => {
   const productDeliveryAddress = await ProductDeliveryAddressModel.find({
     cartId: cart.cartId,
   });
-
-  if (!productDeliveryAddress) {
+  console.log("ProductDeliveryAddress", productDeliveryAddress);
+  if (!productDeliveryAddress || productDeliveryAddress.length === 0) {
     throw new Error("No ProductDeliveryAddress Found");
   }
   return productDeliveryAddress;

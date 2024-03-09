@@ -1,4 +1,5 @@
 const { errorMsg } = require("../const/errorHelper");
+const CartItemsModel = require("../model/cartItemsModel");
 const cartModel = require("../model/cartModel");
 const CartModel = require("../model/cartModel");
 const ClientModel = require("../model/clientModel");
@@ -52,6 +53,7 @@ console.log("logged in user", loggedInUser);
 };
 
 
+// Get the cart
 const getCart = async (loggedInUser) => {
 
 const cartAggregate = await CartModel.aggregate([
@@ -83,7 +85,36 @@ const cartAggregate = await CartModel.aggregate([
   }
   return cartAggregate[0];
 }
+
+
+// Remove the item from the cart
+const removeItemFromCart = async(paramsData, loggedInUser) => {
+  const { cartItemId } = paramsData;
+
+  // Find the cart associated with the logged-in user
+  const cart = await CartModel.findOne({clientId: loggedInUser.clientId});
+  if(!cart) {
+    throw new Error("Cart does not exists");
+  }
+
+  // Find the cart item to remove
+  const cartItems = await CartItemsModel.findOne({cartId: cart.cartId, cartItemId: cartItemId});
+  console.log("cartItems", cartItems);
+  if(!cartItems) {
+    throw new Error("Cart item does not exists");
+  }
+
+  // Remove the cart item
+  const deletedCartItems = await CartItemsModel.findOneAndDelete({ cartItemId: cartItems.cartItemId });
+  if(!deletedCartItems) {
+    throw new Error("Failed to delete cart item");
+  }
+  
+  return deletedCartItems;
+}
+
 module.exports = {
   cartAdd,
-  getCart
+  getCart,
+  removeItemFromCart
 };

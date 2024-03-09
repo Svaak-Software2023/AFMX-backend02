@@ -23,7 +23,19 @@ const getCart = async(req, res) => {
     }
 }
 
+const removeItemFromCart = async(req, res) => {
+    try {
+        const loggedInUser = req.decoded
+        // Handle the cart response
+        const cartResponse = await cartService.removeItemFromCart(req.params, loggedInUser);
+        return res.json({ message: "Cart Items Removed Successfully", cartResponse});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     cartAdd,
-    getCart
+    getCart,
+    removeItemFromCart
 }

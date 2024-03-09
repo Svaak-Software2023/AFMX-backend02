@@ -59,6 +59,7 @@ const addProduct = async (productDetails, productImagePath) => {
       },
     });
 
+    console.log("existingProduct", existingProduct);
     if (existingProduct) {
       throw new Error(`Product '${productDetails.productName}' already exists`);
     }
@@ -196,6 +197,7 @@ const addProduct = async (productDetails, productImagePath) => {
 
 
 // Get Single Product Details by Product Id
+
 const getSingleProduct = async (paramsData) => {
   const { productId } = paramsData;
 
