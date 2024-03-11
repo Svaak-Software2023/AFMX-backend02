@@ -11,6 +11,18 @@ const addCartItems = async(req, res) => {
     }
 }
 
+const addOrUpdateQuantity = async (req, res) => {
+    try {
+        const loggedInUser = req.decoded;
+        // Handle the cart item response
+        const cartItemsResponse = await cartItemsService.addOrUpdateQuantity(loggedInUser, req.params, req.body);
+        return res.json({ message: "Cart Items Quantity Updated", cartItemsResponse});
+    } catch (error) {
+        return res.status(500).json({ error: error.message })
+    }
+}
+
 module.exports = {
     addCartItems,
+    addOrUpdateQuantity
 }

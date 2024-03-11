@@ -6,4 +6,6 @@ const { verifyToken } = require("../middleware/auth")
 
 cartItem_route.post("/add-cart-items", verifyToken, cartItems_controller.addCartItems);
 
+cartItem_route.patch("/cartItems/update-quantity/:cartItemId", verifyToken, cartItems_controller.addOrUpdateQuantity);
+
 module.exports = cartItem_route;

@@ -54,37 +54,103 @@ console.log("logged in user", loggedInUser);
 
 
 // Get the cart
+// const getCart = async (loggedInUser) => {
+
+// const cartAggregate = await CartModel.aggregate([
+//         {
+//           $match: {
+//             clientId: loggedInUser.clientId,
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "cartitems",
+//             localField: "cartId",
+//             foreignField: "cartId",
+//             as: "Items",
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "products",
+//             localField: "Items.productId",
+//             foreignField: "productId",
+//             as: "Products"
+//           },
+//         },
+//         {
+//           $addFields: {
+//             "Items.noOfProducts": { $arrayElemAt: ["$Items.noOfProducts", 0] }
+//           }
+//         },
+//   ])
+
+//   if(!cartAggregate || cartAggregate.length === 0) {
+//     throw new Error("Cart is empty");
+//   }
+//   return cartAggregate[0];
+// }
+
 const getCart = async (loggedInUser) => {
+  const cartAggregate = await CartModel.aggregate([
+    {
+      $match: {
+        clientId: loggedInUser.clientId,
+      },
+    },
+    {
+      $lookup: {
+        from: "cartitems",
+        localField: "cartId",
+        foreignField: "cartId",
+        as: "Items",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "Items.productId",
+        foreignField: "productId",
+        as: "Products"
+      },
+    },
+    {
+      $addFields: {
+        "Products": {
+          $map: {
+            input: "$Products",
+            as: "product",
+            in: {
+              $mergeObjects: [
+                "$$product",
+                {
+                  "noOfProducts": {
+                    $arrayElemAt: [
+                      "$Items.noOfProducts",
+                      { $indexOfArray: ["$Items.productId", "$$product.productId"] }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    // {
+    //   $project: {
+    //     Items: 0 // Exclude Items array from the result
+    //   }
+    // }
+  ]);
 
-const cartAggregate = await CartModel.aggregate([
-        {
-          $match: {
-            clientId: loggedInUser.clientId,
-          },
-        },
-        {
-          $lookup: {
-            from: "cartitems",
-            localField: "cartId",
-            foreignField: "cartId",
-            as: "Items",
-          },
-        },
-        {
-          $lookup: {
-            from: "products",
-            localField: "Items.productId",
-            foreignField: "productId",
-            as: "Products"
-          },
-        },
-  ])
-
-  if(!cartAggregate || cartAggregate.length === 0) {
+  if (!cartAggregate || cartAggregate.length === 0) {
     throw new Error("Cart is empty");
   }
+
   return cartAggregate[0];
 }
+
 
 
 // Remove the item from the cart
