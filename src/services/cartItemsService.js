@@ -8,7 +8,7 @@ const ProductModel = require("../model/productModel");
 const addCartItems = async (cartItemsDetails, loggedInUser) => {
   const { cartId, productId, noOfProducts, productPrice } = cartItemsDetails;
 
-  // Check if the cart exists
+  // Check if the cart exists and the client is authorized
   const existingCart = await CartModel.findOne({ cartId });
   if (!existingCart) {
     throw new Error(errorMsg.CART_ID_NOT_VALID);
@@ -41,6 +41,12 @@ const addCartItems = async (cartItemsDetails, loggedInUser) => {
   // Validate the price of the product
   if (product.productPrice !== productPrice) {
     throw new Error(errorMsg.PRODUCT_PRICE_INVALID);
+  }
+
+  // Check if the product is already in the cart
+  const existingItem = await CartItemsModel.findOne({ cartId, productId });
+  if (existingItem) {
+    throw new Error(errorMsg.PRODUCT_ALREADY_IN_CART);
   }
 
   // Find the largest existing cartItemId

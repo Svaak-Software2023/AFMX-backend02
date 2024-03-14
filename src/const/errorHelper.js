@@ -40,6 +40,7 @@ const errorMsg = {
     PRODUCT_DELIVERY_ADDRESS_NOT_FOUND_ERROR: "Product Delivery Address is not found",
     PRODUCT_CATEGORY_NOT_ACTIVE: "Product Category is not active",
     PRODUCT_PRICE_INVALID: "product price is not valid",
+    PRODUCT_ALREADY_IN_CART: "Product already in the cart items list",
     PRODUCT_ID_INVALID: "product id is not valid",
     REQUIRED_CLIENT_CREDENTIALS: "clientEmail and clientPassword must be compulsory !",
     REQUIRED_TOKEN: "A token is required for authentication",
