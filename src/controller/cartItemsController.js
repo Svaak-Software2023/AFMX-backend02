@@ -22,7 +22,19 @@ const addOrUpdateQuantity = async (req, res) => {
     }
 }
 
+
+const addOrMoveSaveForLater = async (req, res) => {
+    try {
+        const loggedInUser = req.decoded;
+        // Handle the cart item response
+        const addToSaveForLaterResponse = await cartItemsService.addOrMoveSaveForLater(loggedInUser, req.body);
+        return res.json({ message: "Added to save for later", addToSaveForLaterResponse});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
 module.exports = {
     addCartItems,
-    addOrUpdateQuantity
+    addOrUpdateQuantity,
+    addOrMoveSaveForLater
 }

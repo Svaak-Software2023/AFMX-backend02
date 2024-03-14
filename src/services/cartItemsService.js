@@ -4,6 +4,7 @@ const CartModel = require("../model/cartModel");
 const ClientModel = require("../model/clientModel");
 const ProductModel = require("../model/productModel");
 
+// Add the items into the cart
 const addCartItems = async (cartItemsDetails, loggedInUser) => {
   const { cartId, productId, noOfProducts, productPrice } = cartItemsDetails;
 
@@ -42,12 +43,15 @@ const addCartItems = async (cartItemsDetails, loggedInUser) => {
     throw new Error(errorMsg.PRODUCT_PRICE_INVALID);
   }
 
+  // Find the largest existing cartItemId
+  const maxCartItem = await CartItemsModel.findOne(
+    {},
+    { cartItemId: 1 },
+    { sort: { cartItemId: -1 } }
+  );
 
-// Find the largest existing cartItemId
-const maxCartItem = await CartItemsModel.findOne({}, { cartItemId: 1 }, { sort: { cartItemId: -1 } });
-
-// Calculate the next cartItemId
-const nextCartItemId = maxCartItem ? maxCartItem.cartItemId + 1 : 1;
+  // Calculate the next cartItemId
+  const nextCartItemId = maxCartItem ? maxCartItem.cartItemId + 1 : 1;
 
   // Create a new cart item
   const newCartItems = new CartItemsModel({
@@ -63,9 +67,9 @@ const nextCartItemId = maxCartItem ? maxCartItem.cartItemId + 1 : 1;
   return savedCartItems;
 };
 
-
-const addOrUpdateQuantity = async(loggedInUser, paramsData, bodyData) => {
-  const { cartItemId } = paramsData; 
+// Update the cart items quantity
+const addOrUpdateQuantity = async (loggedInUser, paramsData, bodyData) => {
+  const { cartItemId } = paramsData;
 
   const { positiveAndNegativeValue } = bodyData;
   console.log("positive and negative", positiveAndNegativeValue);
@@ -75,62 +79,101 @@ const addOrUpdateQuantity = async(loggedInUser, paramsData, bodyData) => {
   }
 
   // Find the cart associated with the logged-in user
-  const cart = await CartModel.findOne({clientId: loggedInUser.clientId});
+  const cart = await CartModel.findOne({ clientId: loggedInUser.clientId });
   console.log("cart", cart);
   if (!cart) {
     throw new Error("Cart not found");
   }
 
   // Find the cart item to update
-  const cartItems = await CartItemsModel.findOne({cartId: cart.cartId, cartItemId: cartItemId});
-  
-  if(!cartItems) {
+  const cartItems = await CartItemsModel.findOne({
+    cartId: cart.cartId,
+    cartItemId: cartItemId,
+  });
+
+  if (!cartItems) {
     throw new Error("Only authorized user can update the cart items ");
   }
 
-const fetchProduct = await ProductModel.findOne({ productId: cartItems.productId });
-console.log("Fetching product", fetchProduct);
-console.log("Fetching product quantity", fetchProduct.quantity);
+  const fetchProduct = await ProductModel.findOne({
+    productId: cartItems.productId,
+  });
+  console.log("Fetching product", fetchProduct);
+  console.log("Fetching product quantity", fetchProduct.quantity);
 
+  console.log("cartItems", cartItems.cartItemId);
 
+  console.log("cartItems", cartItems);
+  let updateQuantity;
 
-console.log("cartItems", cartItems.cartItemId);
-
-console.log("cartItems", cartItems);
-let updateQuantity;
-
-if(positiveAndNegativeValue) {
-  if(cartItems.noOfProducts < fetchProduct.quantity) {
-    updateQuantity = await CartItemsModel.findOneAndUpdate(
-      { cartItemId: cartItems.cartItemId },
-      { $inc: { noOfProducts: 1 } },
-      { new: true },
-    );
+  if (positiveAndNegativeValue) {
+    if (cartItems.noOfProducts < fetchProduct.quantity) {
+      updateQuantity = await CartItemsModel.findOneAndUpdate(
+        { cartItemId: cartItems.cartItemId },
+        { $inc: { noOfProducts: 1 } },
+        { new: true }
+      );
+    } else {
+      throw new Error("Cannot increase quantity. Maximum quantity reached.");
+    }
   } else {
-    throw new Error("Cannot increase quantity. Maximum quantity reached.");
+    if (cartItems.noOfProducts > 1) {
+      updateQuantity = await CartItemsModel.findOneAndUpdate(
+        { cartItemId: cartItems.cartItemId },
+        { $inc: { noOfProducts: -1 } },
+        { new: true }
+      );
+    } else {
+      updateQuantity = cartItems;
+      console.log("update quantity", updateQuantity);
+      console.log("cartItems--------->", cartItems);
+    }
   }
-} else {
-  if(cartItems.noOfProducts > 1) {
-    updateQuantity = await CartItemsModel.findOneAndUpdate(
-      { cartItemId: cartItems.cartItemId },
-      { $inc: { noOfProducts: -1 } },
+
+  if (!updateQuantity) {
+    throw new Error("Failed to update the quantity");
+  }
+
+  return updateQuantity;
+};
+
+// Add to save for later
+const addOrMoveSaveForLater = async (loggedInUser, bodyData) => {
+  const { cartItemId, saveForLater } = bodyData;
+
+  if (!cartItemId || saveForLater === undefined) {
+    throw new Error("Required fields are missing");
+  }
+
+  const cart = await CartModel.findOne({ clientId: loggedInUser.clientId });
+  if (!cart) {
+    throw new Error("There is no cart exists related to this cart items");
+  }
+
+  let cartItems = await CartItemsModel.findOne({
+    cartId: cart.cartId,
+    cartItemId: cartItemId,
+  });
+
+  if (!cartItems) {
+    throw new Error("Only authorized user can save for later the cart items ");
+  }
+  console.log("saveforlater", saveForLater);
+
+  // Update the save for later into cart items
+  if (cartItems.saveForLater !== saveForLater) {
+    cartItems = await CartItemsModel.findOneAndUpdate(
+      { cartItemId: cartItemId },
+      { $set: { saveForLater: saveForLater } },
       { new: true }
     );
-  } else {
-    updateQuantity = cartItems;
-    console.log("update quantity", updateQuantity);
-    console.log("cartItems--------->", cartItems);
   }
-}
 
-if(!updateQuantity) {
-  throw new Error("Failed to update the quantity");
-}
-
-return updateQuantity;
-}
+  return cartItems;
+};
 
 module.exports = {
   addCartItems,
-  addOrUpdateQuantity
+  addOrUpdateQuantity,
+  addOrMoveSaveForLater,
 };

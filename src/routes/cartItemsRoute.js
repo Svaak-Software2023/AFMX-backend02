@@ -8,4 +8,6 @@ cartItem_route.post("/add-cart-items", verifyToken, cartItems_controller.addCart
 
 cartItem_route.patch("/cartItems/update-quantity/:cartItemId", verifyToken, cartItems_controller.addOrUpdateQuantity);
 
+cartItem_route.patch("/cartItems/addAndMoveSaveLater", verifyToken, cartItems_controller.addOrMoveSaveForLater)
+
 module.exports = cartItem_route;

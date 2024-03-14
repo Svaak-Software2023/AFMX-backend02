@@ -16,6 +16,10 @@ const cartItemsSchema = new Schema({
         ref: "Product",
         required: true
     },
+    saveForLater: {
+        type: Boolean,
+        default: false
+    },
     noOfProducts: {
         type: Number,
         required: true
