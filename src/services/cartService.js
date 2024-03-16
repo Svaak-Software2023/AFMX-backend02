@@ -101,6 +101,19 @@ const getCart = async (loggedInUser, isTrueOrFalse) => {
                   },
                 },
                 {
+                  cartItemId: {
+                    $arrayElemAt: [
+                      "$Items.cartItemId",
+                      {
+                        $indexOfArray: [
+                          "$Items.productId",
+                          "$$product.productId",
+                        ],
+                      },
+                    ],
+                  },
+                },
+                {
                   saveForLater: {
                     $arrayElemAt: [
                       "$Items.saveForLater",
