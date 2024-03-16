@@ -43,11 +43,11 @@ const addCartItems = async (cartItemsDetails, loggedInUser) => {
     throw new Error(errorMsg.PRODUCT_PRICE_INVALID);
   }
 
-  // Check if the product is already in the cart
-  const existingItem = await CartItemsModel.findOne({ cartId, productId });
-  if (existingItem) {
-    throw new Error(errorMsg.PRODUCT_ALREADY_IN_CART);
-  }
+    // Check if the product is already in the cart
+    const existingItem = await CartItemsModel.findOne({ cartId, productId });
+    if (existingItem) {
+      throw new Error(errorMsg.PRODUCT_ALREADY_IN_CART);
+    }
 
   // Find the largest existing cartItemId
   const maxCartItem = await CartItemsModel.findOne(
@@ -72,6 +72,7 @@ const addCartItems = async (cartItemsDetails, loggedInUser) => {
   const savedCartItems = await newCartItems.save();
   return savedCartItems;
 };
+
 
 // Update the cart items quantity
 const addOrUpdateQuantity = async (loggedInUser, paramsData, bodyData) => {
@@ -143,6 +144,7 @@ const addOrUpdateQuantity = async (loggedInUser, paramsData, bodyData) => {
   return updateQuantity;
 };
 
+
 // Add to save for later
 const addOrMoveSaveForLater = async (loggedInUser, bodyData) => {
   const { cartItemId, saveForLater } = bodyData;
@@ -177,6 +179,7 @@ const addOrMoveSaveForLater = async (loggedInUser, bodyData) => {
 
   return cartItems;
 };
+
 
 module.exports = {
   addCartItems,

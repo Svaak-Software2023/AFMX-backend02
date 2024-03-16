@@ -12,7 +12,7 @@ const cartAdd = async (cartDetails, loggedInUser) => {
     discountPrice,
   } = cartDetails;
   console.log("logged in user", loggedInUser);
-  // // Check if the client exists and is active
+  // Check if the client exists and is active
   const client = await ClientModel.findOne({
     clientId: loggedInUser.clientId,
   }).select("clientId isActive -_id");
@@ -54,7 +54,6 @@ const cartAdd = async (cartDetails, loggedInUser) => {
   const savedCart = await newCart.save();
   return savedCart;
 };
-
 
 const getCart = async (loggedInUser, isTrueOrFalse) => {
   const cartAggregate = await CartModel.aggregate([
@@ -147,7 +146,6 @@ const getCart = async (loggedInUser, isTrueOrFalse) => {
 
   return cartAggregate[0];
 };
-
 
 // Remove the items from the cart
 const removeItemFromCart = async (paramsData, loggedInUser) => {
