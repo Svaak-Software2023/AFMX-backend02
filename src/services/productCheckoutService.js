@@ -10,8 +10,8 @@ const createProductCheckout = async(bodyData, paramsData, loggedInUser) => {
     
     const { cartId } = paramsData;
 
-    const { productId, noofProducts, productPrice, productName } = bodyData;    
-    console.log("bodyData", bodyData);
+    const { products } = bodyData;    
+    console.log("products", products);
 
     // Check if the cart is associate with logged-in user
     const cart = await CartModel.findOne({
@@ -24,39 +24,45 @@ const createProductCheckout = async(bodyData, paramsData, loggedInUser) => {
         throw new Error("There is no cart exists for this authenticated user");
     }
 
-    const items = bodyData.map(item => item.productId);
-    console.log("itmes", items);
+    const productIds = products.map(item => item.productId);
+    console.log("productIds", productIds);
 
     // Find the cart item based on the product id
     const cartItems = await CartItemsModel.find({
         cartId: cart.cartId,
-        productId: items,
+        productId: { $in: productIds },
     });
 
-    console.log("cartItems", cartItems);
+    if(cartItems.length === 0) {
+        throw new Error("No cart items");
+    }
 
-    const line_items = bodyData.map((lineItem) => {
+    const lineItems = products.map((product) => {
+        const cartItem = cartItems.find(item => item.productId === product.productId);
+        if (!cartItem) {
+            throw new Error(`Cart item not found for product: ${product.productId}`);
+        }
         return {
             price_data: {
                 currency: "inr",
                 product_data: {
-                    name: lineItem.productName,
+                    name: product.productName,
                 },
-                unit_amount: lineItem.productPrice * 100,
+                unit_amount: product.productPrice * 100, // assuming productPrice is in paise
             },
-            quantity: lineItem.noofProducts,
+            quantity: product.noofProducts,
         };
-    })
-
+    });
    const session = await stripe.checkout.sessions.create({
      payment_method_types: ["card"],
-     line_items: line_items,
+     line_items: lineItems,
      mode: "payment",
-     success_url: "http://localhost:5173/success",
-     cancel_url: "http://localhost:5173/cancel",
+     success_url: "http://localhost:5173/#/success",
+     cancel_url: "http://localhost:5173/#/failed",
    })
    console.log("session", session);
-   return session;
+
+   return session.url;
 };
 
 module.exports = {
