@@ -26,6 +26,8 @@ const state_route = require("./src/routes/stateRoute.js");
 const service_department_route = require("./src/routes/serviceDepartmentRoute.js");
 const services_route = require("./src/routes/servicesRoute.js");
 const career_route = require("./src/routes/careerAndEmploymentRoute.js");
+const whislist_route = require("./src/routes/whislistRoute.js");
+const productCheckout_route = require("./src/routes/productCheckoutRoute.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -62,11 +64,13 @@ app.use("/api", city_route);
 app.use("/api", product_route);
 app.use("/api", productcategory_route);
 app.use("/api", productDeliveryAdress_route);
+app.use("/api", productCheckout_route);
 app.use("/api", role_route);
 app.use("/api", state_route);
 app.use("/api", service_department_route);
 app.use("/api", services_route);
 app.use("/api", career_route);
+app.use("/api", whislist_route);
 
 // // Json data routes
 // const industries_route = require("./src/routes/industriesRoute.js");
