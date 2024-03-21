@@ -96,10 +96,9 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
       });
 
       // Save the new productCheckout
-      const savedProductCheckout = await newProductCheckout.save();
-      console.log("savedProductCheckout", savedProductCheckout);;
+    //   const savedProductCheckout = await newProductCheckout.save();
 
-  return session.url;
+  return {sessionId: session.id }
 };
 
 module.exports = {
