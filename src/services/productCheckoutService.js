@@ -45,18 +45,21 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
     );
     if (!cartItem) {
       throw new Error(`Cart item not found for product: ${product.productId}`);
-    }
+    }  
     return {
       price_data: {
         currency: "usd",
         product_data: {
           name: product.productName,
+          description: product.productDescription,
         },
-        unit_amount: product.productPrice * 100, // assuming productPrice is in cents
+        unit_amount: product.productPrice * 100, 
       },
       quantity: product.noofProducts,
     };
   });
+
+  const finalPrice = Math.abs(cart.deliveryCharges - cart.discountPrice);
 
   // Calculate total price
   const totalPrice = lineItems.reduce(
@@ -64,14 +67,29 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
     0
   ); 
 
+
+   // Add delivery charges as a separate line item
+   const deliveryChargesLineItem = {
+    price_data: {
+      currency: "usd",
+      product_data: {
+        name: "Add Delivery Charges Amount After Discount",
+      },
+      unit_amount:  finalPrice * 100, // Assuming deliveryCharges is in cents
+    },
+    quantity: 1,
+  };
+
+   // Combine product line items with delivery charges
+   const combinedLineItems = [...lineItems, deliveryChargesLineItem];
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    line_items: lineItems,
+    line_items: combinedLineItems,
     mode: "payment",
-    success_url: "http://localhost:5173/#/success",
-    cancel_url: "http://localhost:5173/#/failed",
+    success_url: "https://americasfinestmaintenance.com/#/success",
+    cancel_url: "https://americasfinestmaintenance.com/#/cancel",
   });
-  console.log("session", session);
 
     // Find the largest existing productCheckoutId
     const maxProductCheckoutCount = await ProductCheckoutModel.findOne(
@@ -90,15 +108,19 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
         productCheckoutId: nextproductCheckoutId,
         cartId: cart.cartId,
         products: products,
-        totalPrice: totalPrice,
+        totalPrice:( totalPrice + finalPrice) / 100,
         payment_status: session.payment_status
     
       });
 
       // Save the new productCheckout
-    //   const savedProductCheckout = await newProductCheckout.save();
+      // const savedProductCheckout = await newProductCheckout.save();
+      // console.log("saved productCheckout", savedProductCheckout);
 
-  return {sessionId: session.id }
+
+
+     return {sessionId: session.id }
+  
 };
 
 module.exports = {
