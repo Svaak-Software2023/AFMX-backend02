@@ -4,8 +4,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
+const stripe = require("stripe")(
+  "sk_test_51Ow4TtJKdTIDd26gUcvvzGTGImrNv7JqE5jOWkbJgG6WweAHEFmSO1L0DHWPT3UP8mUpzc3LRyJKbUcOuEpmCk0E00ZS3VxDy3"
+);
 
 // Define all the routes
+const ProductCheckoutModel = require("./src/model/productCheckOutModel.js");
 const advertise_route = require("./src/routes/advertiseRoute.js");
 const admin_route = require('./src/routes/superAdminRoute.js');
 const client_route = require("./src/routes/clientRoute.js");
@@ -32,6 +36,7 @@ const rXMemberShip_route = require("./src/routes/rXMembershipRoute.js");
 
 
 
+
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
 
@@ -50,6 +55,20 @@ app.use(express.json());
 app.get("/", (req, res) => {
   return res.send("fetching the data");
 });
+
+app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
+  try {
+    const cartId = req.query.cartId;
+    const sessionId = req.params.CHECKOUT_SESSION_ID;
+   const session = await stripe.checkout.sessions.retrieve(sessionId);
+   if ((session.payment_status === 'paid') && (session.status === 'complete')) {
+      await ProductCheckoutModel.updateMany({cartId,sessionId},{$set:{payment_status:session.payment_status}})
+    return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
+   }
+  } catch (error) {
+    return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
+  }
+ });
 
 // To pass and handle the routes
 app.use("/api", admin_route);

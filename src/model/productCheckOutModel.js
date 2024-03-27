@@ -7,6 +7,14 @@ const productCheckoutSchema = new Schema(
       type: Number,
       required: true,
     },
+    sessionId: {
+      type: String,
+      required: true,
+    },
+    payment_method_types: {
+      type: Array,
+      required: true,
+    },
     cartId: {
       type: Schema.Types.Number,
       ref: "Cart",

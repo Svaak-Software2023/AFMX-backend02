@@ -9,7 +9,7 @@ const stripe = require("stripe")(
 );
 
 // Checkout Methods
-const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
+const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => {
   console.log("logged in user", loggedInUser);
 
   const { cartId } = paramsData;
@@ -55,7 +55,7 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
           name: product.productName,
           description: product.productDescription,
         },
-        unit_amount: product.productPrice * 100, 
+        unit_amount: +(product.productPrice * 100).toFixed(2), 
       },
       quantity: product.noofProducts,
     };
@@ -77,22 +77,21 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
       product_data: {
         name: "Add Delivery Charges Amount After Discount",
       },
-      unit_amount:  finalPrice * 100, // Assuming deliveryCharges is in cents
+      unit_amount:  +(finalPrice * 100).toFixed(2), // Assuming deliveryCharges is in cents
     },
     quantity: 1,
   };
 
    // Combine product line items with delivery charges
    const combinedLineItems = [...lineItems, deliveryChargesLineItem];
-
   const session = await stripe.checkout.sessions.create({
+    ui_mode: 'embedded',
     payment_method_types: ["card"],
     line_items: combinedLineItems,
     mode: "payment",
-    success_url: "https://americasfinestmaintenance.com/#/success",
-    cancel_url: "https://americasfinestmaintenance.com/#/cancel",
+    return_url: `https://api.americasfinestmaintenance.com/api/session-status/{CHECKOUT_SESSION_ID}?cartId=${cart.cartId}`,
   });
-
+  
     // Find the largest existing productCheckoutId
     const maxProductCheckoutCount = await ProductCheckoutModel.findOne(
         {},
@@ -111,20 +110,19 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
         cartId: cart.cartId,
         products: products,
         totalPrice:( totalPrice + finalPrice) / 100,
-        payment_status: session.payment_status
-    
+        payment_status: session.payment_status,
+        sessionId:session.id,
+        payment_method_types: session.payment_method_types
       });
 
       // Save the new productCheckout
-      const savedProductCheckout = await newProductCheckout.save();
-      console.log("saved productCheckout", savedProductCheckout);
+      await newProductCheckout.save();
 
       // Here's where you update payment_status after successful payment
 
-      console.log("seession", session);
-
-      const recievedUpdatedPaymentStatus = await updatePaymentStatus(session.id)
-        console.log("recievedUpdatedPaymentStatus", recievedUpdatedPaymentStatus);
+      const productCheckout = {sessionId:session.id}
+      return res.status(201).json({ message: "Product Checkout Created", productCheckout });
+      
 };
 
 module.exports = {
