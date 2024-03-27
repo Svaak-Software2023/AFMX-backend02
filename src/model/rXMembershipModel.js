@@ -35,13 +35,22 @@ const RxMemberShipeSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    customerId: {
+    stripeSessionId: {
+        type: String,
+        required: true
+    },
+    paymentStatus: {
         type: String,
         required: true
     }
-})
+});
 
+// Define pre hook to update updatedDate before findOneAndUpdate
+RxMemberShipeSchema.pre('findOneAndUpdate', function(next) {
+    this._update.updatedDate = new Date(); // Set updatedDate to current date/time
+    next();
+});
 
-const RxMemberShipeModel = mongoose.model('RxMemberShipe', RxMemberShipeSchema);
+const RxMemberShipeModel = mongoose.model('RxMemberShip', RxMemberShipeSchema);
 
 module.exports = RxMemberShipeModel;

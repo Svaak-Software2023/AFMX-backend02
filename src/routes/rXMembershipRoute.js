@@ -11,4 +11,10 @@ rXMemberShip_route.post(
   verifyToken,
   rXMemberShip_controller.createMembershipSubscription);
 
+
+  rXMemberShip_route.get(
+    '/subscription/get-membership-subscription',
+    verifyToken,
+    rXMemberShip_controller.getMembershipSubscription);
+
 module.exports = rXMemberShip_route;

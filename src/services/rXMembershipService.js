@@ -46,7 +46,7 @@
                 }
             ],
             customer: customerId,
-            success_url: "https://americasfinestmaintenance.com/#/success?sessionId=${sessionId}",
+            success_url: "https://americasfinestmaintenance.com/#/success",
             cancel_url: "https://americasfinestmaintenance.com/#/cancel",
         });
         console.log("sessions: " , session);
@@ -109,17 +109,57 @@
             memberShipPlan: priceId, // Store the created price ID
             createdDate: new Date(),
             expireDate: null, // Membership expiration date will be set by Stripe
-            customerId: customerId, // Store the Stripe customer ID in the subscription model
+            stripeSessionId: session.id, // Store the Stripe customer ID in the subscription model
+            paymentStatus: session.payment_status
         });
 
         // Save the membership in your database
         await newMembership.save();
 
         // Send the user to the Stripe checkout page
-        return session.url;
+        return{
+            sessionUrl : session.url
+        };
     }
 
+  /****************** Get Subscription Membership *************************/
+  
+   const getMembershipSubscription = async(loggedInUser) => {
+
+    console.log("logged in user", loggedInUser);
+
+    const fetchSubscribeUser = await RxMemberShipeModel.findOne({ user: loggedInUser.clientId});
+    console.log("fetched subscription", fetchSubscribeUser);
+
+     if(!fetchSubscribeUser || !fetchSubscribeUser.stripeSessionId) {
+        throw new Error('No subscription found');
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(fetchSubscribeUser.stripeSessionId);
+    console.log("session", session);
+
+    if(session && session.status === "complete") {
+        let updatePaymentStatus = await RxMemberShipeModel.findOneAndUpdate(
+            { user: loggedInUser.clientId},
+            {
+                $set: {
+                    paymentStatus: session.payment_status
+                }
+            },
+            {
+                new: true
+            }
+        )
+
+      if(!updatePaymentStatus) {
+        throw new Error("While updating payment status some error occurred")
+      }  
+
+      return updatePaymentStatus;
+    }
+   } 
 
     module.exports = {
         createMembershipSubscription,
+        getMembershipSubscription
     }
