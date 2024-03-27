@@ -1,6 +1,8 @@
 const CartModel = require("../model/cartModel");
 const CartItemsModel = require("../model/cartItemsModel");
 const ProductCheckoutModel = require("../model/productCheckOutModel");
+
+const { updatePaymentStatus } = require("../helpers/helperFunction");
 // const stripe = require('stripe')('sk_test_51OvvBkSCcnOJOCL2VesTfIkOS15UNTWxDTaCEa7iGO0sP3XsZf4T2yO1pflVC5SmDLBXatEaNZnj19Zp0qGNvwOy00vuqE8FoQ');
 const stripe = require("stripe")(
   "sk_test_51Ow4TtJKdTIDd26gUcvvzGTGImrNv7JqE5jOWkbJgG6WweAHEFmSO1L0DHWPT3UP8mUpzc3LRyJKbUcOuEpmCk0E00ZS3VxDy3"
@@ -114,13 +116,15 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser) => {
       });
 
       // Save the new productCheckout
-      // const savedProductCheckout = await newProductCheckout.save();
-      // console.log("saved productCheckout", savedProductCheckout);
+      const savedProductCheckout = await newProductCheckout.save();
+      console.log("saved productCheckout", savedProductCheckout);
 
+      // Here's where you update payment_status after successful payment
 
+      console.log("seession", session);
 
-     return {sessionId: session.id }
-  
+      const recievedUpdatedPaymentStatus = await updatePaymentStatus(session.id)
+        console.log("recievedUpdatedPaymentStatus", recievedUpdatedPaymentStatus);
 };
 
 module.exports = {
