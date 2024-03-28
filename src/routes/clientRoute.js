@@ -21,4 +21,6 @@ client_route.post("/forget-password", client_controller.forgetPassword);
 client_route.post("/reset-password", client_controller.resetPassword);
 client_route.get("/all-signup", client_controller.getAllRegistersClient);
 
+client_route.patch("/update-membershipfield",  client_controller.updateAllClients)
+
 module.exports = client_route;

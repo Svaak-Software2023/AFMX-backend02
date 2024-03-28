@@ -4,6 +4,8 @@ const path = require("path");
 const fs = require("fs");
 const { errorMsg, infoMsg, pathMsg } = require("../const/errorHelper");
 
+const ClientModel = require("../model/clientModel.js")
+
 const registerClient = async (req, res) => {
   try {
     const clientImagePath = req.file.path;
@@ -95,10 +97,23 @@ const getAllRegistersClient = async (req, res) => {
   }
 };
 
+
+const updateAllClients = async (req, res) => {
+  try {
+    const result = await ClientModel.updateMany({}, { $set: { isRxRestRoomMember: "Non-Member" } });
+    console.log(`${result.modifiedCount} documents updated successfully.`);
+    res.status(200).json({ message: `${result.modifiedCount} documents updated successfully.` });
+  } catch (error) {
+    console.error("Error updating documents:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   registerClient,
   LoginClient,
   forgetPassword,
   resetPassword,
   getAllRegistersClient,
+  updateAllClients
 };

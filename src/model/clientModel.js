@@ -58,6 +58,10 @@ const clientSchema = new Schema({
     type: String,
     required: true,
   },
+  isRxRestRoomMember: {
+    type : String,
+    default: "Non-Member",
+    },
   createdDate: {
     type: Date,
     default: Date.now,

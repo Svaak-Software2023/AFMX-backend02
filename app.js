@@ -10,6 +10,7 @@ const stripe = require("stripe")(
 
 // Define all the routes
 const ProductCheckoutModel = require("./src/model/productCheckOutModel.js");
+const RxMemberShipeModel = require("./src/model/rXMembershipModel.js");
 const advertise_route = require("./src/routes/advertiseRoute.js");
 const admin_route = require('./src/routes/superAdminRoute.js');
 const client_route = require("./src/routes/clientRoute.js");
@@ -70,6 +71,29 @@ app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
   }
  });
 
+ 
+ app.get('/payment/success',  async (req, res) => {
+  try {
+    const sessionId = req.query.session_id;
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+      console.log("session", session);
+      const sessionPaymentStatus = session.payment_status; 
+
+      if((session.paymentStatus === 'paid') && (session.status === 'complete')) {
+         // Update payment status in the database based on session ID
+        await RxMemberShipeModel.findOneAndUpdate(
+          { stripeSessionId: sessionId },
+          { $set: { paymentStatus: sessionPaymentStatus } },
+          { new: true }
+         ) 
+         return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
+      }
+
+  }catch (error) {
+    return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
+  }
+ });
 // To pass and handle the routes
 app.use("/api", admin_route);
 app.use("/api", advertise_route);
