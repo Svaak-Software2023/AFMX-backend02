@@ -89,7 +89,7 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
     payment_method_types: ["card"],
     line_items: combinedLineItems,
     mode: "payment",
-    return_url: `https://afmx.madextube700.com/api/session-status/{CHECKOUT_SESSION_ID}?cartId=${cart.cartId}`,
+    return_url: `https://afmx.madextube700.com/session-status/{CHECKOUT_SESSION_ID}?cartId=${cart.cartId}`,
   });
   
     // Find the largest existing productCheckoutId
