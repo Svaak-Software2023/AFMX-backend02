@@ -4,13 +4,16 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
-const stripe = require("stripe")(
-  "sk_test_51Ow4TtJKdTIDd26gUcvvzGTGImrNv7JqE5jOWkbJgG6WweAHEFmSO1L0DHWPT3UP8mUpzc3LRyJKbUcOuEpmCk0E00ZS3VxDy3"
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const MONGO_URL = process.env.MONGO_URL;
+const PORT = process.env.PORT;
 
-// Define all the routes
+// Import Model 
 const ProductCheckoutModel = require("./src/model/productCheckOutModel.js");
 const RxMemberShipeModel = require("./src/model/rXMembershipModel.js");
+const ClientModel = require("./src/model/clientModel.js");
+
+// Define all the routes
 const advertise_route = require("./src/routes/advertiseRoute.js");
 const admin_route = require('./src/routes/superAdminRoute.js');
 const client_route = require("./src/routes/clientRoute.js");
@@ -35,12 +38,6 @@ const career_route = require("./src/routes/careerAndEmploymentRoute.js");
 const productCheckout_route = require("./src/routes/productCheckoutRoute.js");
 const rXMemberShip_route = require("./src/routes/rXMembershipRoute.js");
 
-
-
-
-const MONGO_URL = process.env.MONGO_URL;
-const PORT = process.env.PORT;
-
 // for http request
 app.use(morgan("dev"));
 // for communicate with cors platform
@@ -57,6 +54,8 @@ app.get("/", (req, res) => {
   return res.send("fetching the data");
 });
 
+
+// Define a route handler for handling successful payments for shoping center
 app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
   try {
     const cartId = req.query.cartId;
@@ -69,31 +68,39 @@ app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
   } catch (error) {
     return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
   }
- });
+});
 
- 
- app.get('/payment/success',  async (req, res) => {
+// Define a route handler for handling successful payments rx membership
+ app.get('/payment/success/:CHECKOUT_SESSION_ID', async (req, res) => {
   try {
-    const sessionId = req.query.session_id;
+      const sessionId = req.params.CHECKOUT_SESSION_ID;
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-      console.log("session", session);
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
       const sessionPaymentStatus = session.payment_status; 
 
-      if((session.paymentStatus === 'paid') && (session.status === 'complete')) {
-         // Update payment status in the database based on session ID
-        await RxMemberShipeModel.findOneAndUpdate(
-          { stripeSessionId: sessionId },
-          { $set: { paymentStatus: sessionPaymentStatus } },
-          { new: true }
-         ) 
-         return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
+      if (sessionPaymentStatus === 'paid' && session.status === 'complete') {
+          // Update payment status in the database based on session ID
+          const updatedData = await RxMemberShipeModel.findOneAndUpdate(
+              { stripeSessionId: sessionId },
+              { $set: { paymentStatus: sessionPaymentStatus } },
+              { new: true }
+          );
+          // Update isRxRestRoomMember in the database based on session ID and user id
+          await ClientModel.findOneAndUpdate(
+            {clientId: updatedData.user},
+            { $set: { isRxRestRoomMember: updatedData.memberShipName } },
+            { new: true }
+            )
+          return res.redirect('https://americasfinestmaintenance.com/#/success');
+      } else {
+          throw new Error("Payment not completed or session status is not 'complete'");
       }
-
-  }catch (error) {
-    return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
+  } catch (error) {
+      console.error("Error handling success URL:", error);
+      return res.redirect('https://americasfinestmaintenance.com/#/cancel');
   }
- });
+});
+
 // To pass and handle the routes
 app.use("/api", admin_route);
 app.use("/api", advertise_route);
