@@ -188,9 +188,11 @@ const LoginClient = async (loginDetails) => {
         clientPassword: user.clientPassword,
         clientPhone: user.clientPhone,
         clientEmail: user.clientEmail,
+        isRxRestRoomMember: user.isRxRestRoomMember,
         isActive: user.isActive,
         token: tokenData,
       };
+
       return userDetails;
     } else {
       throw new Error(errorMsg.INVALID_PASSWORD);
