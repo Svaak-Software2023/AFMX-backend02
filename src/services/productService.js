@@ -21,6 +21,17 @@ const addProduct = async (productDetails, productImagePath) => {
       "productDescription",
     ];
 
+    // Check if product images are provided and do not exceed the maximum limit
+    if (!productImagePath || productImagePath.length === 0) {
+      throw new Error("No images uploaded. Please upload at least one image.");
+    }
+
+    // Check if product images exceed the maximum limit
+    if (productImagePath.length > maxImages) {
+      throw new Error(`Exceeded the maximum limit of ${maxImages} images.`);
+    }
+
+    console.log("productDetails", productDetails);
     // Check if all required fields are present and not empty
     if (
       requiredFields.some(
@@ -37,32 +48,38 @@ const addProduct = async (productDetails, productImagePath) => {
       );
     }
 
-    if (productImagePath.length > maxImages) {
-      throw new Error(`Exceeded the maximum limit of ${maxImages} images.`);
-    }
-
+    // Validate product category
     const productCategory = await ProductCategoryModel.findOne({
       productCategoryName: productDetails.productCategoryName,
     });
-
     if (!productCategory) {
       throw new Error(errorMsg.CATEGORY_NOT_EXISTS);
     }
-
     if (!productCategory.isActive) {
       throw new Error(errorMsg.PRODUCT_CATEGORY_NOT_ACTIVE);
     }
 
+    // Check for existing product with the same name
     const existingProduct = await ProductModel.findOne({
       productName: {
         $regex: new RegExp(`^${productDetails.productName}$`, "i"),
       },
     });
-
-    console.log("existingProduct", existingProduct);
     if (existingProduct) {
       throw new Error(`Product '${productDetails.productName}' already exists`);
     }
+// Constant for converting percentage to decimal
+const PERCENTAGE_TO_DECIMAL = 0.01;
+
+// Calculate final product MRP after discount
+let discountedProductMRP;
+if (typeof Number(productDetails.discount) === 'number' && productDetails.discount >= 0 && productDetails.discount <= 100) {
+    discountedProductMRP = productDetails.productMRP * (1 - productDetails.discount * PERCENTAGE_TO_DECIMAL);
+} else {
+    // Handle invalid discount input
+    throw new Error('Invalid discount value. Discount must be a number between 0 and 100.');
+}
+
 
     // Upload product images to Cloudinary
     const uploadProductImage =
@@ -85,8 +102,21 @@ const addProduct = async (productDetails, productImagePath) => {
     const productData = new ProductModel({
       productId: nextProductId,
       productCategoryId: productCategory.productCategoryId,
+      productDescription: productDetails.productDescription,
+      productName: productDetails.productName,
       productImage: arrImages,
-      ...productDetails,
+      productBrand: productDetails.productBrand,
+      containerType: productDetails.containerType,
+      containerSize: productDetails.containerSize,
+      cleanerForm: productDetails.cleanerForm,
+      readyToUseOrConcentrate: productDetails.readyToUseOrConcentrate,
+      fragrances: productDetails.fragrances,
+      upcCode: productDetails.upcCode,
+      skuCode: productDetails.skuCode,
+      productMRP: discountedProductMRP,
+      productPrice: productDetails.productPrice,
+      quantity: productDetails.quantity,
+      discount: productDetails.discount,
     });
 
     const newProduct = await productData.save();
@@ -96,107 +126,6 @@ const addProduct = async (productDetails, productImagePath) => {
   }
 };
 
-
-// const addProduct = async (productDetails, productImagePath) => {
-//   try {
-//     // Define the maximum number of allowed images
-//     const maxImages = 5;
-
-//     // Check if the number of uploaded images exceeds the set limit
-//     if (productImagePath.length > maxImages) {
-//       throw new Error(`Exceeded the maximum limit of ${maxImages} images.`);
-//     }
-
-//     const {
-//       productCategoryName,
-//       productName,
-//       productDescription,
-//       productBrand,
-//       containerType,
-//       containerSize,
-//       cleanerForm,
-//       readyToUseOrConcentrate,
-//       fragrances,
-//       upcCode,
-//       skuCode,
-//       productMRP,
-//       productPrice,
-//       quantity,
-//       discount,
-//       createdDate,
-//       updatedDate,
-//       isActive,
-//     } = productDetails;
-
-//     // Check if department with the same name already exists
-//     const productCategory = await ProductCategoryModel.findOne({
-//       productCategoryName,
-//     });
-
-//     if (!productCategory) {
-//       throw new Error(errorMsg.CATEGORY_NOT_EXISTS);
-//     }
-
-//     if (!productCategory.isActive) {
-//       throw new Error(errorMsg.PRODUCT_CATEGORY_NOT_ACTIVE);
-//     }
-
-//     // check if the product name already exists
-//     const existingProduct = await ProductModel.findOne({
-//       productName: { $regex: new RegExp(`^${productName}$`, "i") },
-//     });
-
-//     if (existingProduct) {
-//       throw new Error(`Product '${productName}' already exists`);
-//     }
-
-//     // Upload product images to Cloudinary
-//     const uploadProductImage =
-//       await cludinaryImageUpload.fileUploadInCloudinary(
-//         productImagePath,
-//         "productImages"
-//       );
-
-//     // Extract URLs from the uploaded images
-//     const arrImages = uploadProductImage.map((image) => image.url);
-
-//     // Fetch count of the product
-//     const productCount = await ProductModel.find().countDocuments();
-
-//     const productData = new ProductModel({
-//       productId: productCount + 1,
-//       productCategoryId: productCategory.productCategoryId,
-//       productImage: arrImages,
-//       productName,
-//       productDescription,
-//       productBrand,
-//       containerType,
-//       containerSize,
-//       cleanerForm,
-//       readyToUseOrConcentrate,
-//       fragrances,
-//       upcCode,
-//       skuCode,
-//       productMRP,
-//       productPrice,
-//       quantity,
-//       discount,
-//       createdDate,
-//       updatedDate,
-//       isActive,
-//     });
-
-//     const newProduct = await productData.save();
-//     return newProduct;
-//   } catch (error) {
-//     // Handle and re-throw any encountered errors
-//     throw new Error(error.message);
-//   }
-// };
-
-
-
-// Get Single Product Details by Product Id
 
 const getSingleProduct = async (paramsData) => {
   const { productId } = paramsData;
@@ -213,7 +142,7 @@ const getSingleProduct = async (paramsData) => {
   console.log("product found", product);
 
   return product;
-}
+};
 
 
 // Get a list of products based on the specified the categoryId

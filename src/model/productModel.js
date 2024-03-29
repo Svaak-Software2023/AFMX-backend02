@@ -67,7 +67,7 @@ const productSchema = new Schema({
     default: 0,
   },
   discount: {
-    type: String,
+    type: Number,
     default: 0,
   },
   createdDate: {
