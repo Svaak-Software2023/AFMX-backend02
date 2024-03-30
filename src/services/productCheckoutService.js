@@ -88,7 +88,7 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
     payment_method_types: ["card"],
     line_items: combinedLineItems,
     mode: "payment",
-    return_url: `https://afmx.madextube700.com/session-status/{CHECKOUT_SESSION_ID}?cartId=${cart.cartId}`,
+    return_url: `http://localhost:5000/session-status/{CHECKOUT_SESSION_ID}?cartId=${cart.cartId}`,
   });
   
     // Find the largest existing productCheckoutId
@@ -115,10 +115,9 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
       });
 
       // Save the new productCheckout
-      // await newProductCheckout.save();
+      await newProductCheckout.save();
 
       // Here's where you update payment_status after successful payment
-
       const productCheckout = {sessionId:session.id}
       return res.status(201).json({ message: "Product Checkout Created", productCheckout });
       

@@ -12,6 +12,7 @@ const PORT = process.env.PORT;
 const ProductCheckoutModel = require("./src/model/productCheckOutModel.js");
 const RxMemberShipeModel = require("./src/model/rXMembershipModel.js");
 const ClientModel = require("./src/model/clientModel.js");
+const CartItemsModel = require("./src/model/cartItemsModel.js");
 
 // Define all the routes
 const advertise_route = require("./src/routes/advertiseRoute.js");
@@ -59,11 +60,26 @@ app.get("/", (req, res) => {
 app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
   try {
     const cartId = req.query.cartId;
+    console.log("cartId: " , cartId);
     const sessionId = req.params.CHECKOUT_SESSION_ID;
+    console.log("sessionId: " , sessionId);
    const session = await stripe.checkout.sessions.retrieve(sessionId);
+   console.log("session: " , session);
    if ((session.payment_status === 'paid') && (session.status === 'complete')) {
-      await ProductCheckoutModel.updateMany({cartId,sessionId},{$set:{payment_status:session.payment_status}})
-    return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
+       // Update payment status in the database 
+      const updatedDocument = await ProductCheckoutModel.findOneAndUpdate({cartId,sessionId},{$set:{payment_status:session.payment_status}},  { new: true } // Return the modified document after update
+      )
+        console.log("updatedDocument", updatedDocument);
+
+        // Get the list of product IDs checked out in the session
+      const productIds = updatedDocument.products.map(product => product.productId);
+      
+        console.log("productIds", productIds);
+
+        // Delete cart items associated with the checked out products
+      await CartItemsModel.deleteMany({ cartId, productId: { $in: productIds } });
+      
+      return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
    }
   } catch (error) {
     return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
