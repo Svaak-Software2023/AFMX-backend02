@@ -57,6 +57,7 @@ const createMembershipSubscription = async (
     memberShipPlan,
   } = memberShipDetails;
 
+   console.log("member", memberShipDetails);
   if (!memberShipName || !memberShipType || !memberShipPlan) {
     throw new Error(
       "Required memberShipName and memberShipType and memshiplan must be specified"
@@ -83,12 +84,21 @@ const createMembershipSubscription = async (
 
   const customerId = customer.id;
 
+   // Calculate the price based on the membership type
+   let priceMultiplier = 1; // Default multiplier
+
+  // Calculate the price based on the membership type
+  if(memberShipType.toLowerCase() === "year") {
+    priceMultiplier = 12;
+  }
+
+  const effectivePrice = priceMultiplier * memberShipPlan;
+  
   const createdPrice = await createPrices(
-    memberShipPlan,
+    effectivePrice,
     memberShipType,
     memberShipName
   );
-
   // Extract the created price ID
   const priceId = createdPrice.id;
 

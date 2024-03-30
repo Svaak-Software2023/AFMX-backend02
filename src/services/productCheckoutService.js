@@ -2,8 +2,6 @@ const CartModel = require("../model/cartModel");
 const CartItemsModel = require("../model/cartItemsModel");
 const ProductCheckoutModel = require("../model/productCheckOutModel");
 
-const { updatePaymentStatus } = require("../helpers/helperFunction");
-// const stripe = require('stripe')('sk_test_51OvvBkSCcnOJOCL2VesTfIkOS15UNTWxDTaCEa7iGO0sP3XsZf4T2yO1pflVC5SmDLBXatEaNZnj19Zp0qGNvwOy00vuqE8FoQ');
 const stripe = require("stripe")(
   "sk_test_51Ow4TtJKdTIDd26gUcvvzGTGImrNv7JqE5jOWkbJgG6WweAHEFmSO1L0DHWPT3UP8mUpzc3LRyJKbUcOuEpmCk0E00ZS3VxDy3"
 );
@@ -69,6 +67,7 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
     0
   ); 
 
+    console.log("Total price: " + totalPrice);
 
    // Add delivery charges as a separate line item
    const deliveryChargesLineItem = {
@@ -116,7 +115,7 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
       });
 
       // Save the new productCheckout
-      await newProductCheckout.save();
+      // await newProductCheckout.save();
 
       // Here's where you update payment_status after successful payment
 
