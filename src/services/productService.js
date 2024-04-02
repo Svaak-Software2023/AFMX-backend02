@@ -68,18 +68,25 @@ const addProduct = async (productDetails, productImagePath) => {
     if (existingProduct) {
       throw new Error(`Product '${productDetails.productName}' already exists`);
     }
-// Constant for converting percentage to decimal
-const PERCENTAGE_TO_DECIMAL = 0.01;
+    // Constant for converting percentage to decimal
+    const PERCENTAGE_TO_DECIMAL = 0.01;
 
-// Calculate final product MRP after discount
-let discountedProductMRP;
-if (typeof Number(productDetails.discount) === 'number' && productDetails.discount >= 0 && productDetails.discount <= 100) {
-    discountedProductMRP = productDetails.productMRP * (1 - productDetails.discount * PERCENTAGE_TO_DECIMAL);
-} else {
-    // Handle invalid discount input
-    throw new Error('Invalid discount value. Discount must be a number between 0 and 100.');
-}
-
+    // Calculate final product MRP after discount
+    let discountedProductMRP;
+    if (
+      typeof Number(productDetails.discount) === "number" &&
+      productDetails.discount >= 0 &&
+      productDetails.discount <= 100
+    ) {
+      discountedProductMRP =
+        productDetails.productMRP *
+        (1 - productDetails.discount * PERCENTAGE_TO_DECIMAL);
+    } else {
+      // Handle invalid discount input
+      throw new Error(
+        "Invalid discount value. Discount must be a number between 0 and 100."
+      );
+    }
 
     // Upload product images to Cloudinary
     const uploadProductImage =
@@ -126,7 +133,100 @@ if (typeof Number(productDetails.discount) === 'number' && productDetails.discou
   }
 };
 
+// Update the product details with the exiting product
+const updateProduct = async (productDetails, paramsData) => {
+  const { productId } = paramsData;
 
+  if (!productId) {
+    throw new Error(`Product Id is required`);
+  }
+
+  const {
+    productName,
+    productDescription,
+    productBrand,
+    containerType,
+    containerSize,
+    cleanerForm,
+    readyToUseOrConcentrate,
+    fragrances,
+    upcCode,
+    skuCode,
+    productMRP,
+    productPrice,
+    quantity,
+    discount,
+  } = productDetails;
+
+  const product = await ProductModel.findOne({ productId, isActive: true });
+  if (!product) {
+    throw new Error(
+      `Product with ID ${productId} does not exist or is not active`
+    );
+  }
+
+  //Update the product
+  const updatedProduct = await ProductModel.findOneAndUpdate(
+    { productId: productId },
+    {
+      $set: {
+        productName: productName,
+        productDescription: productDescription,
+        productBrand: productBrand,
+        containerType: containerType,
+        containerSize: containerSize,
+        cleanerForm: cleanerForm,
+        readyToUseOrConcentrate: readyToUseOrConcentrate,
+        fragrances: fragrances,
+        upcCode: upcCode,
+        skuCode: skuCode,
+        productMRP: productMRP,
+        productPrice: productPrice,
+        quantity: quantity,
+        discount: discount,
+        updatedDate: new Date(),
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!updatedProduct) {
+    throw new Error("Failed to update product");
+  }
+
+  return updatedProduct;
+};
+
+// Update the product active true or false
+const deleteProduct = async (bodyData, paramsData) => {
+  const { productId } = paramsData;
+
+  const { isActive } = bodyData;
+
+  const updatedProduct = await ProductModel.findOneAndUpdate(
+    { productId: productId },
+    {
+      $set: {
+        isActive,
+        updatedDate: new Date(),
+      },
+    },
+    {
+      new: true,
+      upsert: false,
+    }
+  );
+
+  if (!updatedProduct) {
+    throw new Error("Cannot delete product or it does not exist");
+  }
+
+  return updatedProduct;
+};
+
+// Get a single product based on the specified the productId
 const getSingleProduct = async (paramsData) => {
   const { productId } = paramsData;
 
@@ -143,7 +243,6 @@ const getSingleProduct = async (paramsData) => {
 
   return product;
 };
-
 
 // Get a list of products based on the specified the categoryId
 const getProduct = async (productCategoryId) => {
@@ -163,8 +262,11 @@ const getProduct = async (productCategoryId) => {
   }
   return products;
 };
+
 module.exports = {
   addProduct,
+  updateProduct,
+  deleteProduct,
   getSingleProduct,
   getProduct,
 };

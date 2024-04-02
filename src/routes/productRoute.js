@@ -17,7 +17,18 @@ product_route.post(
   product_controller.addProduct
 );
 
+product_route.put(
+  "/update-product/:productId",
+  product_controller.updateProduct
+);
+
+product_route.patch(
+  "/delete-product/:productId",
+  product_controller.deleteProduct
+);
+
 product_route.get("/products/:productId", product_controller.getSingleProduct);
 
 product_route.get("/all-product/:categoryId", product_controller.getProduct);
+
 module.exports = product_route;

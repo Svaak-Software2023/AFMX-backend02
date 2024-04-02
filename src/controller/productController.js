@@ -37,37 +37,51 @@ const addProduct = async (req, res) => {
   }
 };
 
-
 const updateProduct = async (req, res) => {
   try {
-    // Handle the product update response 
+    // Handle the product update response
     const productUpdateResponse = await productService.updateProduct(
-      req.params.productId,
-      req.body
+      req.body,
+      req.params
     );
     return res.json({ message: "Product updated!", productUpdateResponse });
-    
-  } catch (error) {
-     return res.status(500).json({ error: error.message});
-  }
-}
-
-const getSingleProduct = async (req, res) => {
-  try {
-
-    const productSingleResponse = await productService.getSingleProduct(req.params);
-    return res
-   .status(200)
-   .json({ message: "Single Product retrieved successfully", productSingleResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
 
+const deleteProduct = async (req, res) => {
+  try {
+    // Handle the product  response.
+    const productDeleteResponse = await productService.deleteProduct(
+      req.body,
+      req.params
+    );
+    return res.json({ message: " Product Deleted !", productDeleteResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getSingleProduct = async (req, res) => {
+  try {
+    const productSingleResponse = await productService.getSingleProduct(
+      req.params
+    );
+    return res
+      .status(200)
+      .json({
+        message: "Single Product retrieved successfully",
+        productSingleResponse,
+      });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const getProduct = async (req, res) => {
   try {
-    const productCategoryId  = req.params.categoryId;
+    const productCategoryId = req.params.categoryId;
     const productResponse = await productService.getProduct(productCategoryId);
     return res
       .status(200)
@@ -77,9 +91,10 @@ const getProduct = async (req, res) => {
   }
 };
 
-
 module.exports = {
   addProduct,
+  updateProduct,
+  deleteProduct,
   getSingleProduct,
   getProduct,
 };

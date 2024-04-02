@@ -45,7 +45,6 @@ const addProductCategory = async (categoryDetails) => {
   return newProductCategory;
 };
 
-
 const updateProductCategory = async (categoryDetails, paramsData) => {
   const { productCategoryId } = paramsData;
 
@@ -84,7 +83,6 @@ const updateProductCategory = async (categoryDetails, paramsData) => {
   return dataToUpdate;
 };
 
-
 const deleteProductCategory = async (bodyData, paramsData) => {
   const { productCategoryId } = paramsData;
 
@@ -100,7 +98,7 @@ const deleteProductCategory = async (bodyData, paramsData) => {
     },
     {
       new: true,
-      upsert: false 
+      upsert: false,
     }
   );
 
@@ -108,9 +106,8 @@ const deleteProductCategory = async (bodyData, paramsData) => {
     throw new Error("Cannot delete product category or it does not exist");
   }
 
-  return dataToDelete;
+  return updatedProductCategory;
 };
-
 
 const getProductCategory = async () => {
   const category = await ProductCategoryModel.find({});
