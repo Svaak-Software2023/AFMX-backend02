@@ -47,10 +47,9 @@ const addProductCategory = async (categoryDetails) => {
 
 
 const updateProductCategory = async (categoryDetails, paramsData) => {
+  const { productCategoryId } = paramsData;
 
-  const { productCategoryId } = paramsData; 
-
-  if(!productCategoryId) {
+  if (!productCategoryId) {
     throw new Error("Product Category Id is required");
   }
 
@@ -63,6 +62,7 @@ const updateProductCategory = async (categoryDetails, paramsData) => {
   if (!existingCategory) {
     throw new Error("Neither category exists nor is active");
   }
+
   const dataToUpdate = await ProductCategoryModel.findOneAndUpdate(
     { productCategoryId: productCategoryId },
     {
@@ -70,7 +70,7 @@ const updateProductCategory = async (categoryDetails, paramsData) => {
         productCategoryName,
         productCategoryDescription,
         updatedDate: new Date(),
-      },    
+      },
     },
     {
       new: true,
@@ -78,11 +78,38 @@ const updateProductCategory = async (categoryDetails, paramsData) => {
   );
 
   if (!dataToUpdate) {
-    throw new Error('Cannot update product category');
+    throw new Error("Cannot update product category");
   }
 
   return dataToUpdate;
-}
+};
+
+
+const deleteProductCategory = async (bodyData, paramsData) => {
+  const { productCategoryId } = paramsData;
+
+  const { isActive } = bodyData;
+
+  const updatedProductCategory = await ProductCategoryModel.findOneAndUpdate(
+    { productCategoryId: productCategoryId },
+    {
+      $set: {
+        isActive,
+        updatedDate: new Date(),
+      },
+    },
+    {
+      new: true,
+      upsert: false 
+    }
+  );
+
+  if (!updatedProductCategory) {
+    throw new Error("Cannot delete product category or it does not exist");
+  }
+
+  return dataToDelete;
+};
 
 
 const getProductCategory = async () => {
@@ -98,5 +125,6 @@ const getProductCategory = async () => {
 module.exports = {
   addProductCategory,
   updateProductCategory,
+  deleteProductCategory,
   getProductCategory,
 };

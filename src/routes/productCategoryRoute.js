@@ -13,6 +13,11 @@ productcategory_route.put(
   productcategory_controller.updateProductCategory
 );
 
+productcategory_route.patch(
+  "/delete-product-category/:productCategoryId",
+  productcategory_controller.deleteProductCategory
+);
+
 productcategory_route.get(
   "/all-product-category",
   productcategory_controller.getProductCategory

@@ -27,6 +27,20 @@ const updateProductCategory = async (req, res) => {
   }
 };
 
+
+const deleteProductCategory = async (req, res) => {
+  try {
+    // Handle the product category response.
+    const categoryDeleteResponse = await productCategoryService.deleteProductCategory(
+      req.body,
+      req.params
+    );
+    return res.json({ message: "Category Deleted !", categoryDeleteResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 const getProductCategory = async (req, res) => {
   try {
     const productCategoryResponse =
@@ -46,5 +60,6 @@ const getProductCategory = async (req, res) => {
 module.exports = {
   addProductCategory,
   updateProductCategory,
+  deleteProductCategory,
   getProductCategory,
 };
