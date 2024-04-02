@@ -13,6 +13,20 @@ const addProductCategory = async (req, res) => {
   }
 };
 
+
+const updateProductCategory = async (req, res) => {
+  try {
+    // Handle the product category response.
+    const categoryUpdateResponse = await productCategoryService.updateProductCategory(
+      req.body,
+      req.params
+    );
+    return res.json({ message: "Category Updated !", categoryUpdateResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const getProductCategory = async (req, res) => {
   try {
     const productCategoryResponse =
@@ -28,7 +42,9 @@ const getProductCategory = async (req, res) => {
   }
 };
 
+
 module.exports = {
   addProductCategory,
+  updateProductCategory,
   getProductCategory,
 };

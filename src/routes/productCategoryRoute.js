@@ -8,6 +8,11 @@ productcategory_route.post(
   productcategory_controller.addProductCategory
 );
 
+productcategory_route.put(
+  "/update-product-category/:productCategoryId",
+  productcategory_controller.updateProductCategory
+);
+
 productcategory_route.get(
   "/all-product-category",
   productcategory_controller.getProductCategory

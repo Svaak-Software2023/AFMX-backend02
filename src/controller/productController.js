@@ -38,6 +38,20 @@ const addProduct = async (req, res) => {
 };
 
 
+const updateProduct = async (req, res) => {
+  try {
+    // Handle the product update response 
+    const productUpdateResponse = await productService.updateProduct(
+      req.params.productId,
+      req.body
+    );
+    return res.json({ message: "Product updated!", productUpdateResponse });
+    
+  } catch (error) {
+     return res.status(500).json({ error: error.message});
+  }
+}
+
 const getSingleProduct = async (req, res) => {
   try {
 
@@ -50,6 +64,7 @@ const getSingleProduct = async (req, res) => {
   }
 }
 
+
 const getProduct = async (req, res) => {
   try {
     const productCategoryId  = req.params.categoryId;
@@ -61,6 +76,7 @@ const getProduct = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 module.exports = {
   addProduct,

@@ -45,6 +45,46 @@ const addProductCategory = async (categoryDetails) => {
   return newProductCategory;
 };
 
+
+const updateProductCategory = async (categoryDetails, paramsData) => {
+
+  const { productCategoryId } = paramsData; 
+
+  if(!productCategoryId) {
+    throw new Error("Product Category Id is required");
+  }
+
+  const { productCategoryName, productCategoryDescription } = categoryDetails;
+
+  const existingCategory = await ProductCategoryModel.findOne({
+    productCategoryId,
+    isActive: true,
+  });
+  if (!existingCategory) {
+    throw new Error("Neither category exists nor is active");
+  }
+  const dataToUpdate = await ProductCategoryModel.findOneAndUpdate(
+    { productCategoryId: productCategoryId },
+    {
+      $set: {
+        productCategoryName,
+        productCategoryDescription,
+        updatedDate: new Date(),
+      },    
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!dataToUpdate) {
+    throw new Error('Cannot update product category');
+  }
+
+  return dataToUpdate;
+}
+
+
 const getProductCategory = async () => {
   const category = await ProductCategoryModel.find({});
 
@@ -57,5 +97,6 @@ const getProductCategory = async () => {
 
 module.exports = {
   addProductCategory,
+  updateProductCategory,
   getProductCategory,
 };
