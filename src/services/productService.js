@@ -143,6 +143,7 @@ const updateProduct = async (productDetails, paramsData) => {
 
   const {
     productName,
+    productCategoryName,
     productDescription,
     productBrand,
     containerType,
@@ -155,7 +156,7 @@ const updateProduct = async (productDetails, paramsData) => {
     productMRP,
     productPrice,
     quantity,
-    discount,
+    discount
   } = productDetails;
 
   const product = await ProductModel.findOne({ productId, isActive: true });
@@ -165,11 +166,15 @@ const updateProduct = async (productDetails, paramsData) => {
     );
   }
 
+  // Validate product category
+  const productCategory = await ProductCategoryModel.findOne({ productCategoryName: productCategoryName, isActive: true});
+
   //Update the product
   const updatedProduct = await ProductModel.findOneAndUpdate(
     { productId: productId },
     {
       $set: {
+        productCategoryId: productCategory.productCategoryId,
         productName: productName,
         productDescription: productDescription,
         productBrand: productBrand,
@@ -198,6 +203,7 @@ const updateProduct = async (productDetails, paramsData) => {
 
   return updatedProduct;
 };
+
 
 // Update the product active true or false
 const deleteProduct = async (bodyData, paramsData) => {
