@@ -5,9 +5,12 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 /******************* Create Prices ********************/
 const createPrices = async (planPrice, planType, planName) => {
   try {
+    // Convert planPrice to integer cents
+    const unitAmount = Math.round(parseFloat(planPrice) * 100);
+
     const price = await stripe.prices.create({
       currency: "usd",
-      unit_amount: planPrice * 100,
+      unit_amount: unitAmount,
       recurring: {
         interval: planType,
       },
@@ -57,7 +60,6 @@ const createMembershipSubscription = async (
     memberShipPlan,
   } = memberShipDetails;
 
-   console.log("member", memberShipDetails);
   if (!memberShipName || !memberShipType || !memberShipPlan) {
     throw new Error(
       "Required memberShipName and memberShipType and memshiplan must be specified"
@@ -84,16 +86,16 @@ const createMembershipSubscription = async (
 
   const customerId = customer.id;
 
-   // Calculate the price based on the membership type
-   let priceMultiplier = 1; // Default multiplier
+  // Calculate the price based on the membership type
+  let priceMultiplier = 1; // Default multiplier
 
   // Calculate the price based on the membership type
-  if(memberShipType.toLowerCase() === "year") {
+  if (memberShipType.toLowerCase() === "year") {
     priceMultiplier = 12;
   }
 
   const effectivePrice = priceMultiplier * memberShipPlan;
-  
+
   const createdPrice = await createPrices(
     effectivePrice,
     memberShipType,
@@ -131,7 +133,7 @@ const createMembershipSubscription = async (
   });
 
   // Save the membership in your database
-  await newMembership.save();
+  // await newMembership.save();
 
   return res.status(201).json({
     message: "Membership Subscription Created !",
