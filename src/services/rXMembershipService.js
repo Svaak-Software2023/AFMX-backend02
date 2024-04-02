@@ -39,7 +39,7 @@ const stripeSession = async (planId, customerId) => {
         },
       ],
       customer: customerId,
-      return_url: `http://localhost:5000/payment/success/{CHECKOUT_SESSION_ID}`,
+      return_url: `https://madextube700.com/payment/success/{CHECKOUT_SESSION_ID}`,
     });
     return session;
   } catch (error) {
@@ -133,7 +133,7 @@ const createMembershipSubscription = async (
   });
 
   // Save the membership in your database
-  // await newMembership.save();
+  await newMembership.save();
 
   return res.status(201).json({
     message: "Membership Subscription Created !",
