@@ -39,7 +39,7 @@ const stripeSession = async (planId, customerId) => {
         },
       ],
       customer: customerId,
-      return_url: `https://madextube700.com/payment/success/{CHECKOUT_SESSION_ID}`,
+      return_url: `https://afmx.madextube700.com/payment/success/{CHECKOUT_SESSION_ID}`,
     });
     return session;
   } catch (error) {
