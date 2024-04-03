@@ -51,7 +51,7 @@ const deleteMiniTv = async (bodyData, paramsData) => {
   
     const { isActive } = bodyData;
   
-    const updatedMiniTv = await ProductModel.findOneAndUpdate(
+    const updatedMiniTv = await MiniTvModel.findOneAndUpdate(
       { miniTvId: miniTvId },
       {
         $set: {
