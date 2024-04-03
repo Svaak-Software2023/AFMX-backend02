@@ -59,6 +59,7 @@ const createMembershipSubscription = async (
     memberShipType,
     memberShipPlan,
   } = memberShipDetails;
+  console.log("memberShipDetails", memberShipDetails);
 
   if (!memberShipName || !memberShipType || !memberShipPlan) {
     throw new Error(
@@ -90,7 +91,7 @@ const createMembershipSubscription = async (
   let priceMultiplier = 1; // Default multiplier
 
   // Calculate the price based on the membership type
-  if (memberShipType.toLowerCase() === "year") {
+  if (memberShipType.toLowerCase() === "yearly") {
     priceMultiplier = 12;
   }
 
