@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const RxMemberShipeSchema = new Schema({
-  rxMemberShipeId: {
+  rxMemberShipId: {
     type: Number,
     required: true,
   },

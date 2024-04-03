@@ -4,6 +4,16 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 /******************* Create Prices ********************/
 const createPrices = async (planPrice, planType, planName) => {
+  let interval;
+  if (planType === "oneTimeService") {
+    // For one-time services, set the interval to 'day'
+    interval = "day";
+  } else {
+    // For subscription plans, set the appropriate interval based on your requirement
+    // For example, if you want to charge monthly, set the interval to 'month'
+    interval = "month";
+  }
+
   try {
     // Convert planPrice to integer cents
     const unitAmount = Math.round(parseFloat(planPrice) * 100);
@@ -12,18 +22,25 @@ const createPrices = async (planPrice, planType, planName) => {
       currency: "usd",
       unit_amount: unitAmount,
       recurring: {
-        interval: planType,
+        interval: interval,
       },
       product_data: {
         name: planName,
+        // Include other details as necessary for your subscription product
+        // For example, you might include a description or metadata
+        // description: "Description of the subscription product",
+        // metadata: {
+        //   key: "value"
+        // }
       },
     });
     return price;
   } catch (error) {
     console.error("Error creating price:", error);
-    throw error; // Re-throw the error to propagate it to the calling function
+    throw error;
   }
 };
+
 
 /******************* Create Session ********************/
 const stripeSession = async (planId, customerId) => {
@@ -87,18 +104,18 @@ const createMembershipSubscription = async (
 
   const customerId = customer.id;
 
-  // Calculate the price based on the membership type
-  let priceMultiplier = 1; // Default multiplier
+ // Calculate the price based on the membership type
+ let oneTimeServicePrice;
 
-  // Calculate the price based on the membership type
-  if (memberShipType.toLowerCase() === "yearly") {
-    priceMultiplier = 12;
+ // Calculate the price based on the membership type
+ if (memberShipType === "oneTimeService") {
+    oneTimeServicePrice = parseFloat(memberShipPlan); // Convert to float if necessary
+  } else {
+    oneTimeServicePrice = parseFloat(memberShipPlan); // Convert to float if necessary
   }
 
-  const effectivePrice = priceMultiplier * memberShipPlan;
-
   const createdPrice = await createPrices(
-    effectivePrice,
+    oneTimeServicePrice,
     memberShipType,
     memberShipName
   );
@@ -107,22 +124,25 @@ const createMembershipSubscription = async (
 
   // Create the session for the subscription
   const session = await stripeSession(priceId, customerId);
+  if(!session) {
+    throw new Error("Failed to create the session");
+  }
 
-  // Find the largest existing rxMemberShipeId
+  // Find the largest existing rxMemberShipId
   const maxRxMemeberCount = await RxMemberShipeModel.findOne(
     {},
-    { rxMemberShipeId: 1 },
-    { sort: { rxMemberShipeId: -1 } }
+    { rxMemberShipId: 1 },
+    { sort: { rxMemberShipId: -1 } }
   );
 
-  // Calculate the next rxMemberShipeId
-  const nextrxMemberShipeId = maxRxMemeberCount
-    ? maxRxMemeberCount.rxMemberShipeId + 1
+  // Calculate the next rxMemberShipId
+  const nextrxMemberShipId = maxRxMemeberCount
+    ? maxRxMemeberCount.rxMemberShipId + 1
     : 1;
 
   // Record the membership in your database
   const newMembership = new RxMemberShipeModel({
-    rxMemberShipeId: nextrxMemberShipeId,
+    rxMemberShipId: nextrxMemberShipId,
     user: loggedInUser.clientId,
     memberShipName,
     memberShipType,
@@ -134,11 +154,12 @@ const createMembershipSubscription = async (
   });
 
   // Save the membership in your database
-  await newMembership.save();
+  const savedUser = await newMembership.save();
 
   return res.status(201).json({
     message: "Membership Subscription Created !",
     sessionId: session.id,
+    savedUser
   });
 };
 
