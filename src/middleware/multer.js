@@ -1,6 +1,10 @@
 const multer = require("multer");
 const path = require("path");
 
+
+// Define your file size limit in bytes
+const FILE_SIZE_LIMIT = 30 * 1024 * 1024; // 30 MB in bytes
+
 const destinationPathClientImage = path.join(
   __dirname,
   "../public/clientImages"
@@ -27,6 +31,10 @@ const destinationPathProductImage = path.join(
 const destinationPathResumePdf = path.join(
   __dirname, "../public/resumePdf"
 );
+const destinationPathMiniTvMedia = path.join(
+  __dirname, "../public/miniTvMedia"
+);
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -47,6 +55,8 @@ console.log("file.fieldname",file.fieldname)
       destinationPath = destinationPathEvidenceVideo;
     } else if(file.fieldname === "resume") {
       destinationPath = destinationPathResumePdf;
+    } else if(file.fieldname === "miniTvMedia") {
+      destinationPath = destinationPathMiniTvMedia;
     }
 
     if (destinationPath) {
@@ -64,7 +74,7 @@ console.log("file.fieldname",file.fieldname)
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 50000000, // File size limit (50MB in bytes)
+    fileSize: FILE_SIZE_LIMIT, // File size limit (2MB in bytes)
   },
 });
 

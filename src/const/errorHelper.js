@@ -66,7 +66,8 @@ const infoMsg = {
 
 const pathMsg = { 
     CLIENT_IMAGES_PATH: "../public/clientImages",
-    RESUME_PDF_PATH: "../public/resumePdf"
+    RESUME_PDF_PATH: "../public/resumePdf",
+    MINI_TV_PATH: "../public/miniTvMedia"
 }
 
 module.exports = {

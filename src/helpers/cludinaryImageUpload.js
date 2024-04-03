@@ -19,7 +19,8 @@ const fileUploadInCloudinary = async (filePath, folderName) => {
   for (const file of filePath) {
     try {
       const uploadResult = await cloudinary.uploader.upload(file, {
-        folder: folderName, // Specify the folder
+        folder: folderName, // Specify the folder,
+        resource_type: 'auto'
       });
       // Save the uploaded image details (URL, public ID, etc.)
       uploadedImages.push({

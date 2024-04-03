@@ -1,7 +1,6 @@
 const ComplaintModel = require("../model/complaintModel");
 const ClientModel = require("../model/clientModel");
 const ServiceModel = require("../model/servicesModel");
-const complaintStatusModel = require("../model/complaintStatusModel");
 const ComplaintRemarksModel = require("../model/complaintRemarksModel");
 // const sendEmail = require('../utility/sendEmail');
 const {

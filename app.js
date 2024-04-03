@@ -38,6 +38,7 @@ const career_route = require("./src/routes/careerAndEmploymentRoute.js");
 // const whislist_route = require("./src/routes/whislistRoute.js");
 const productCheckout_route = require("./src/routes/productCheckoutRoute.js");
 const rXMemberShip_route = require("./src/routes/rXMembershipRoute.js");
+const miniTv_route = require("./src/routes/miniTvRoute.js");
 
 // for http request
 app.use(morgan("dev"));
@@ -60,17 +61,12 @@ app.get("/", (req, res) => {
 app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
   try {
     const cartId = req.query.cartId;
-    console.log("cartId: " , cartId);
     const sessionId = req.params.CHECKOUT_SESSION_ID;
-    console.log("sessionId: " , sessionId);
    const session = await stripe.checkout.sessions.retrieve(sessionId);
-   console.log("session: " , session);
    if ((session.payment_status === 'paid') && (session.status === 'complete')) {
        // Update payment status in the database 
       const updatedDocument = await ProductCheckoutModel.findOneAndUpdate({cartId,sessionId},{$set:{payment_status:session.payment_status}},  { new: true } // Return the modified document after update
       )
-        console.log("updatedDocument", updatedDocument);
-
         // Get the list of product IDs checked out in the session
       const productIds = updatedDocument.products.map(product => product.productId);
       
@@ -141,6 +137,7 @@ app.use("/api", services_route);
 app.use("/api", career_route);
 // app.use("/api", whislist_route);
 app.use("/api", rXMemberShip_route);
+app.use("/api", miniTv_route);
 
 // // Json data routes
 // const industries_route = require("./src/routes/industriesRoute.js");
