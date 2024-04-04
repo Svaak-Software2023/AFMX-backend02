@@ -17,5 +17,11 @@ miniTv_route.patch(
   miniTv_controller.deleteMiniTv
 );
 
+
+miniTv_route.get(
+  "/mini-tv/get-media",
+  miniTv_controller.getAllAndSingleMiniTv
+);
+
 module.exports = miniTv_route;
 
