@@ -13,8 +13,8 @@ miniTv_route.post(
 
 
 miniTv_route.patch(
-  "/mini-tv/delete-media/:miniTvId",
-  miniTv_controller.deleteMiniTv
+  "/mini-tv/updateAndDelete-media",
+  miniTv_controller.deleteAndUpdateMiniTv
 );
 
 

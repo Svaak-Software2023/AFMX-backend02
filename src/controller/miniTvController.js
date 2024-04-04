@@ -31,12 +31,11 @@ const createMiniTv = async (req, res) => {
 };
 
 
-const deleteMiniTv = async (req, res) => {
+const deleteAndUpdateMiniTv = async (req, res) => {
   try {
     // Handle The Mini Tv Response.
-    const miniTvDeleteResponse = await miniTvService.deleteMiniTv(
-      req.body,
-      req.params
+    const miniTvDeleteResponse = await miniTvService.deleteAndUpdateMiniTv(
+      req.body
     );
     return res.json({ message: " Mini Tv Deleted !", miniTvDeleteResponse });
   } catch (error) {
@@ -59,6 +58,6 @@ const getAllAndSingleMiniTv = async (req, res) => {
 
 module.exports = {
   createMiniTv,
-  deleteMiniTv,
+  deleteAndUpdateMiniTv,
   getAllAndSingleMiniTv
 };

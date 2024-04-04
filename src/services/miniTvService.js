@@ -45,29 +45,51 @@ const createMiniTv = async (miniDetails, miniTvMediaPath) => {
   return savedMiniTv;
 };
 
-const deleteMiniTv = async (bodyData, paramsData) => {
-  const { miniTvId } = paramsData;
+const deleteAndUpdateMiniTv = async (bodyData) => {
+  const { isActive, miniTvId, mediaUrl } = bodyData;
 
-  const { isActive } = bodyData;
-
-  const updatedMiniTv = await MiniTvModel.findOneAndUpdate(
-    { miniTvId: miniTvId },
-    {
-      $set: {
-        isActive,
-        updatedDate: new Date(),
-      },
-    },
-    {
-      new: true,
-      upsert: false,
+  let updatedMiniTv;
+  if (isActive !== undefined) {
+    if (!miniTvId) {
+      throw new Error("Mini Tv Id is required");
     }
-  );
-
-  if (!updatedMiniTv) {
-    throw new Error("Cannot delete miniTv or it does not exist");
+    updatedMiniTv = await MiniTvModel.findOneAndUpdate(
+      { miniTvId: miniTvId },
+      {
+        $set: {
+          isActive,
+          updatedDate: new Date(),
+        },
+      },
+      {
+        new: true,
+        upsert: false,
+      }
+    );
+    if (!updatedMiniTv) {
+      throw new Error("Cannot delete miniTv or it does not exist");
+    }
+  } else {
+    if (!miniTvId || !mediaUrl) {
+      throw new Error("Mini Tv Id and Media Url are required");
+    }
+    updatedMiniTv = await MiniTvModel.findOneAndUpdate(
+      { miniTvId: miniTvId },
+      {
+        $set: {
+          mediaUrl,
+          updatedDate: new Date(),
+        },
+      },
+      {
+        new: true,
+        upsert: false,
+      }
+    );
+    if (!updatedMiniTv) {
+      throw new Error("Cannot delete miniTv or it does not exist");
+    }
   }
-
   return updatedMiniTv;
 };
 
@@ -94,6 +116,6 @@ const getAllAndSingleMiniTv = async (bodyData) => {
 
 module.exports = {
   createMiniTv,
-  deleteMiniTv,
+  deleteAndUpdateMiniTv,
   getAllAndSingleMiniTv,
 };
