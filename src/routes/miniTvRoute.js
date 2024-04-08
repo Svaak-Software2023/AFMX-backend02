@@ -14,7 +14,14 @@ miniTv_route.post(
 
 miniTv_route.patch(
   "/mini-tv/updateAndDelete-media",
+  uploadMiniTvMedia.single('miniTvMedia'),
   miniTv_controller.deleteAndUpdateMiniTv
+);
+
+miniTv_route.patch(
+  "/mini-tv/updated-miniVideo",
+  uploadMiniTvMedia.single('miniTvMedia'),
+  miniTv_controller.deleteAndUpdateMiniMedia
 );
 
 

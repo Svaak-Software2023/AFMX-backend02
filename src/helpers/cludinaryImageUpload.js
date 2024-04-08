@@ -1,5 +1,5 @@
-
 const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
@@ -9,18 +9,19 @@ cloudinary.config({
 
 // Function to upload multiple images
 const fileUploadInCloudinary = async (filePath, folderName) => {
+  if (!filePath) return null;
+
   const uploadedImages = [];
 
   if (!Array.isArray(filePath)) {
     filePath = [filePath]; // Convert to an array if it's not already
-    console.log("filePath: ", filePath);
   }
 
   for (const file of filePath) {
     try {
       const uploadResult = await cloudinary.uploader.upload(file, {
         folder: folderName, // Specify the folder,
-        resource_type: 'auto'
+        resource_type: "auto",
       });
       // Save the uploaded image details (URL, public ID, etc.)
       uploadedImages.push({
@@ -31,12 +32,61 @@ const fileUploadInCloudinary = async (filePath, folderName) => {
     } catch (error) {
       // Handle errors during upload
       console.error(`Error uploading image: ${error.message}`);
+      fs.unlinkSync(filePath); //remove the locally saved temp file as the upload operation got failed
+      return null;
     }
   }
 
   return uploadedImages;
 };
 
+// Function to delete the video and images from the cloudinary
+const fileDeleteInCloudinary = async (publicIds, resource_type = "video") => {
+  if (!publicIds) return null;
+  const deletedImages = [];
+
+  if (!Array.isArray(publicIds)) {
+    publicIds = [publicIds]; // Convert to an array if it's not already
+  }
+
+  for (const publicId of publicIds) {
+    try {
+      const deletionResponse = await cloudinary.uploader.destroy(publicId, {
+        resource_type: resource_type,
+      });
+      // Check if the deletion was successful
+      if (deletionResponse.result === "ok") {
+        // Save the uploaded image details (URL, public ID, etc.)
+        deletedImages.push({
+          publicId: publicId,
+          resourceType: resource_type, // Add resource type to the deleted media details
+          // Add more details as needed
+        });
+      } else {
+        console.error(`Error deleting image: ${deletionResponse.result}`);
+      }
+    } catch (error) {
+      // Handle errors during upload
+      console.error(`Error deleting image: ${error.message}`);
+      throw error; // Rethrow the error to handle it in the calling function
+    }
+  }
+  return deletedImages;
+};
+
+// Function to extract public ID from Cloudinary URL
+const getPublicIdFromCloudinaryUrl = (url) => {
+  // const publicId = url.split("/").pop().split('.')[0];
+  // return publicId;
+
+  const pathSegments = url.split("/"); // Split the URL by '/'
+  const desiredPath = pathSegments.slice(-2).join("/").split(".")[0]; // Get the last two segments and join them with '/'
+
+  return desiredPath;
+};
+
 module.exports = {
   fileUploadInCloudinary,
+  fileDeleteInCloudinary,
+  getPublicIdFromCloudinaryUrl,
 };

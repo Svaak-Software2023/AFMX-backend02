@@ -33,15 +33,43 @@ const createMiniTv = async (req, res) => {
 
 const deleteAndUpdateMiniTv = async (req, res) => {
   try {
+    // const miniTvMediaPath = req.file?.path;
     // Handle The Mini Tv Response.
     const miniTvDeleteResponse = await miniTvService.deleteAndUpdateMiniTv(
-      req.body
+      req.body,
+      // miniTvMediaPath
     );
     return res.json({ message: " Mini Tv Deleted !", miniTvDeleteResponse });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+const deleteAndUpdateMiniMedia = async (req, res) => {
+  try {
+    const miniTvMediaPath = req?.file?.path;
+    // Handle The Mini Tv Response.
+    const miniTvResponse = await miniTvService.deleteAndUpdateMiniMedia(
+      req.body,
+      miniTvMediaPath
+    );
+
+    // After API execution succeeds, perform the file upload
+    const uploadedFilePath = req.file.path;
+    const targetDirectory = path.join(__dirname, pathMsg.MINI_TV_PATH);
+
+    await uploadToVSCode(uploadedFilePath, targetDirectory);
+
+    return res.json({ message: "Mini Tv Updated Successfully!", miniTvResponse });
+  } catch (error) {
+     // If an error occurs, delete the uploaded file
+     if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    return res.status(500).json({ error: error.message });
+  }
+}
 
 
 const getAllAndSingleMiniTv = async (req, res) => {
@@ -59,5 +87,6 @@ const getAllAndSingleMiniTv = async (req, res) => {
 module.exports = {
   createMiniTv,
   deleteAndUpdateMiniTv,
+  deleteAndUpdateMiniMedia,
   getAllAndSingleMiniTv
 };

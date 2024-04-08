@@ -75,6 +75,13 @@ const deleteAndUpdateMiniTv = async (bodyData) => {
     if (!miniTvId || !mediaUrl) {
       throw new Error("Mini Tv Id and Media Url are required");
     }
+    // if(miniTvMediaPath) {
+    //   const uploadedMedia = await cloudinaryImageUpload.fileUploadInCloudinary(
+    //     miniTvMediaPath,
+    //     "miniTvMedia"
+    //   )
+
+    // }
     updatedMiniTv = await MiniTvModel.findOneAndUpdate(
       { miniTvId: miniTvId },
       {
@@ -93,6 +100,73 @@ const deleteAndUpdateMiniTv = async (bodyData) => {
     }
   }
   return updatedMiniTv;
+};
+
+
+const deleteAndUpdateMiniMedia = async (bodyData, miniTvMediaPath) => {
+  const { miniTvId } = bodyData;
+
+  if (!miniTvId) {
+    throw new Error("Mini Tv Id is required");
+  }
+
+  const existingMiniTv = await MiniTvModel.findOne({
+    miniTvId: miniTvId,
+    isActive: true,
+  }).select("-_id");
+
+  if (!existingMiniTv) {
+    throw new Error("Mini Tv does not exist");
+  }
+  if (!miniTvMediaPath) {
+    throw new Error("miniMediaTv is missing");
+  }
+  try {
+    const extractPublicId = cloudinaryImageUpload.getPublicIdFromCloudinaryUrl(
+      existingMiniTv.miniTvMedia
+    );
+
+    // Delete existing media from Cloudinary
+    const deletedOnCloudinary =
+      await cloudinaryImageUpload.fileDeleteInCloudinary(extractPublicId);
+
+    // Upload new media to Cloudinary
+    const uploadToCloudinary =
+      await cloudinaryImageUpload.fileUploadInCloudinary(
+        miniTvMediaPath,
+        "miniTvMedia"
+      );
+
+    if (deletedOnCloudinary.length === 0 || uploadToCloudinary.length === 0) {
+      throw new Error(
+        "Media deletion or upload failed, or uploaded media file size too large"
+      );
+    }
+
+    // Update MiniTvModel with new media URL
+    const updatedMiniTvMedia = await MiniTvModel.findOneAndUpdate(
+      { miniTvId: miniTvId },
+      {
+        $set: {
+          miniTvMedia: uploadToCloudinary[0].url,
+          updatedDate: new Date(),
+        },
+      },
+      {
+        new: true,
+        upsert: false,
+      }
+    );
+
+    if (!updatedMiniTvMedia) {
+      throw new Error("Cannot update miniTv or it does not exist");
+    }
+
+    return updatedMiniTvMedia;
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw error;
+  }
 };
 
 
@@ -121,5 +195,6 @@ const getAllAndSingleMiniTv = async (bodyData) => {
 module.exports = {
   createMiniTv,
   deleteAndUpdateMiniTv,
+  deleteAndUpdateMiniMedia,
   getAllAndSingleMiniTv,
 };
