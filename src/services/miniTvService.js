@@ -75,13 +75,6 @@ const deleteAndUpdateMiniTv = async (bodyData) => {
     if (!miniTvId || !mediaUrl) {
       throw new Error("Mini Tv Id and Media Url are required");
     }
-    // if(miniTvMediaPath) {
-    //   const uploadedMedia = await cloudinaryImageUpload.fileUploadInCloudinary(
-    //     miniTvMediaPath,
-    //     "miniTvMedia"
-    //   )
-
-    // }
     updatedMiniTv = await MiniTvModel.findOneAndUpdate(
       { miniTvId: miniTvId },
       {
@@ -192,9 +185,37 @@ const getAllAndSingleMiniTv = async (bodyData) => {
 };
 
 
+const deleteSingleMiniTv = async (queryParams) => {
+  const { miniTvId } = queryParams;
+
+  // Check if the MiniTv exists
+  const miniTv = await MiniTvModel.findOneAndDelete({ miniTvId: miniTvId });
+  console.log("Mini Tv deleted", miniTv);
+
+  // If MiniTv does not exist, throw an error
+  if (!miniTv) {
+      throw new Error("Mini Tv does not exist");
+  }
+
+  // Extract the public ID from the Cloudinary URL
+  const extractPublicId = cloudinaryImageUpload.getPublicIdFromCloudinaryUrl(miniTv.miniTvMedia);
+
+  // Delete the media from Cloudinary
+  const deletedOnCloudinary = await cloudinaryImageUpload.fileDeleteInCloudinary(extractPublicId);
+
+  // If media deletion failed, throw an error
+  if (deletedOnCloudinary.length === 0) {
+      throw new Error("Media deletion failed");
+  }
+
+  return miniTv;
+};
+
+
 module.exports = {
   createMiniTv,
   deleteAndUpdateMiniTv,
   deleteAndUpdateMiniMedia,
   getAllAndSingleMiniTv,
+  deleteSingleMiniTv
 };

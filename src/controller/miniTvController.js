@@ -33,11 +33,9 @@ const createMiniTv = async (req, res) => {
 
 const deleteAndUpdateMiniTv = async (req, res) => {
   try {
-    // const miniTvMediaPath = req.file?.path;
     // Handle The Mini Tv Response.
     const miniTvDeleteResponse = await miniTvService.deleteAndUpdateMiniTv(
-      req.body,
-      // miniTvMediaPath
+      req.body
     );
     return res.json({ message: " Mini Tv Deleted !", miniTvDeleteResponse });
   } catch (error) {
@@ -84,9 +82,23 @@ const getAllAndSingleMiniTv = async (req, res) => {
   }
 };
 
+
+const deleteSingleMiniTv = async (req, res) => {
+  try {
+    // Handle The Mini Tv Response.
+    const miniTvDeleteResponse = await miniTvService.deleteSingleMiniTv(
+      req.query
+    );
+    return res.json({ message: " Mini Tv Deleted !", miniTvDeleteResponse });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createMiniTv,
   deleteAndUpdateMiniTv,
   deleteAndUpdateMiniMedia,
-  getAllAndSingleMiniTv
+  getAllAndSingleMiniTv,
+  deleteSingleMiniTv
 };
