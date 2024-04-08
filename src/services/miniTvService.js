@@ -3,6 +3,7 @@ const MiniTvModel = require("../model/miniTvModel");
 // Import the Cloudinary image upload helper
 const cloudinaryImageUpload = require("../helpers/cludinaryImageUpload");
 
+
 const createMiniTv = async (miniDetails, miniTvMediaPath) => {
   const {
     //Field values from UI
@@ -44,6 +45,7 @@ const createMiniTv = async (miniDetails, miniTvMediaPath) => {
   console.log("Mini Tv Media Saved", savedMiniTv);
   return savedMiniTv;
 };
+
 
 const deleteAndUpdateMiniTv = async (bodyData) => {
   const { isActive, miniTvId, mediaUrl } = bodyData;
@@ -93,6 +95,7 @@ const deleteAndUpdateMiniTv = async (bodyData) => {
   return updatedMiniTv;
 };
 
+
 const getAllAndSingleMiniTv = async (bodyData) => {
   const { miniTvId } = bodyData;
 
@@ -106,13 +109,14 @@ const getAllAndSingleMiniTv = async (bodyData) => {
       throw new Error(`Neither Mini Tv exists nor isActive`);
     }
   } else {
-    miniTv = await MiniTvModel.find({ isActive: true });
+    miniTv = await MiniTvModel.find({});
     if (!miniTv || miniTv.length === 0) {
       throw new Error(`Neither Mini Tv exists nor isActive`);
     }
   }
   return miniTv;
 };
+
 
 module.exports = {
   createMiniTv,
