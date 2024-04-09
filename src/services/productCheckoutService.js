@@ -2,9 +2,7 @@ const CartModel = require("../model/cartModel");
 const CartItemsModel = require("../model/cartItemsModel");
 const ProductCheckoutModel = require("../model/productCheckOutModel");
 
-const stripe = require("stripe")(
-  "sk_test_51Ow4TtJKdTIDd26gUcvvzGTGImrNv7JqE5jOWkbJgG6WweAHEFmSO1L0DHWPT3UP8mUpzc3LRyJKbUcOuEpmCk0E00ZS3VxDy3"
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Checkout Methods
 const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => {
@@ -66,8 +64,6 @@ const createProductCheckout = async (bodyData, paramsData, loggedInUser,res) => 
     (total, item) => total + item.price_data.unit_amount * item.quantity,
     0
   ); 
-
-    console.log("Total price: " + totalPrice);
 
    // Add delivery charges as a separate line item
    const deliveryChargesLineItem = {

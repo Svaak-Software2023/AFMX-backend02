@@ -42,7 +42,6 @@ const fileUploadInCloudinary = async (filePath, folderName) => {
 
 // Function to delete the video and images from the cloudinary
 const videoDeleteInCloudinary = async (publicIds, resource_type = "video") => {
-
   if (!publicIds) return null;
   const deletedImages = [];
 
@@ -53,7 +52,7 @@ const videoDeleteInCloudinary = async (publicIds, resource_type = "video") => {
   for (const publicId of publicIds) {
     try {
       const deletionResponse = await cloudinary.uploader.destroy(publicId, {
-        resource_type: resource_type
+        resource_type: resource_type,
       });
       // Check if the deletion was successful
       if (deletionResponse.result === "ok") {
@@ -77,7 +76,6 @@ const videoDeleteInCloudinary = async (publicIds, resource_type = "video") => {
 
 // Function to delete the video and images from the cloudinary
 const imageDeleteInCloudinary = async (publicIds, resource_type = "image") => {
-
   if (!publicIds) return null;
   const deletedImages = [];
 
@@ -88,7 +86,7 @@ const imageDeleteInCloudinary = async (publicIds, resource_type = "image") => {
   for (const publicId of publicIds) {
     try {
       const deletionResponse = await cloudinary.uploader.destroy(publicId, {
-        resource_type: resource_type
+        resource_type: resource_type,
       });
       // Check if the deletion was successful
       if (deletionResponse.result === "ok") {
@@ -110,16 +108,25 @@ const imageDeleteInCloudinary = async (publicIds, resource_type = "image") => {
   return deletedImages;
 };
 
-
 // Function to extract public ID from Cloudinary URL
 const getPublicIdFromCloudinaryUrl = (url) => {
   // const publicId = url.split("/").pop().split('.')[0];
   // return publicId;
 
-  const pathSegments = url.split("/"); // Split the URL by '/'
-  const desiredPath = pathSegments.slice(-2).join("/"); // Get the last two segments and join them with '/'
-
-  return desiredPath;
+  // Check if the url is an array
+  if (Array.isArray(url)) {
+    // If it's an array, process each URL and extract public IDs
+    return url.map((singleUrl) => {
+      const pathSegments = singleUrl.split("/"); // Split the URL by '/'
+      const desiredPath = pathSegments.slice(-2).join("/"); // Get the last two segments and join them with '/'
+      return desiredPath;
+    });
+  } else {
+    // If it's a single URL, extract public ID directly
+    const pathSegments = url.split("/"); // Split the URL by '/'
+    const desiredPath = pathSegments.slice(-2).join("/"); // Get the last two segments and join them with '/'
+    return desiredPath;
+  }
 };
 
 module.exports = {

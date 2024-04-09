@@ -22,6 +22,12 @@ const addProduct = async (req, res) => {
 
     await uploadToVSCode(uploadedFiles, targetDirectories);
 
+    // If upload succeeds, delete the uploaded file
+    if (fs.existsSync(uploadedFiles)) {
+      fs.unlinkSync(uploadedFiles);
+      console.log("Deleted file", uploadedFiles);
+    }
+
     return res.json({ message: "Products created!", productResponse });
   } catch (error) {
     // If an error occurs, delete the uploaded files
@@ -39,13 +45,41 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
+    // To handle the multiple image path
+    const productImagePath = req.files.map((file) => file?.path);
+
     // Handle the product update response
     const productUpdateResponse = await productService.updateProduct(
       req.body,
-      req.params
+      req.query,
+      productImagePath
     );
+
+    // Assuming req.files is an array of files
+    const uploadedFiles = req.files.map((file) => file.path);
+    const targetDirectories = Array(req.files.length).fill(
+      path.join(__dirname, "../public/productImages")
+    );
+
+    await uploadToVSCode(uploadedFiles, targetDirectories);
+
+    // If upload succeeds, delete the uploaded file
+    if (fs.existsSync(uploadedFiles)) {
+      fs.unlinkSync(uploadedFiles);
+      console.log("Deleted file", uploadedFiles);
+    }
+
     return res.json({ message: "Product updated!", productUpdateResponse });
   } catch (error) {
+    // If an error occurs, delete the uploaded files
+    if (req.files) {
+      req.files.forEach((file) => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
+    }
+
     return res.status(500).json({ error: error.message });
   }
 };

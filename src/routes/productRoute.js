@@ -18,7 +18,8 @@ product_route.post(
 );
 
 product_route.put(
-  "/update-product/:productId",
+  "/update-product",
+  filesUpload.array("productImage"),
   product_controller.updateProduct
 );
 

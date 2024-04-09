@@ -2,8 +2,11 @@ const ProductModel = require("../model/productModel");
 const ProductCategoryModel = require("../model/productCategoryModel");
 const { errorMsg } = require("../const/errorHelper");
 
+// Import the Replace Image helpers
+const { replaceExistingImages } = require("../helpers/helperFunction")
+
 // Import the Cloudinary image upload helper
-const cludinaryImageUpload = require("../helpers/cludinaryImageUpload");
+const cloudinaryImageUpload = require("../helpers/cludinaryImageUpload");
 
 /**
  * Adds a new product to the database with the provided details and image path.
@@ -90,7 +93,7 @@ const addProduct = async (productDetails, productImagePath) => {
 
     // Upload product images to Cloudinary
     const uploadProductImage =
-      await cludinaryImageUpload.fileUploadInCloudinary(
+      await cloudinaryImageUpload.fileUploadInCloudinary(
         productImagePath,
         "productImages"
       );
@@ -134,67 +137,46 @@ const addProduct = async (productDetails, productImagePath) => {
 };
 
 // Update the product details with the exiting product
-const updateProduct = async (productDetails, paramsData) => {
-  const { productId } = paramsData;
-
+const updateProduct = async (productDetails, queryParams, productImagePath) => {
+  const { productId } = queryParams;
   if (!productId) {
     throw new Error(`Product Id is required`);
   }
 
-  const {
-    productName,
-    productCategoryName,
-    productDescription,
-    productBrand,
-    containerType,
-    containerSize,
-    cleanerForm,
-    readyToUseOrConcentrate,
-    fragrances,
-    upcCode,
-    skuCode,
-    productMRP,
-    productPrice,
-    quantity,
-    discount
-  } = productDetails;
-
+  const maxImages = 5;
   const product = await ProductModel.findOne({ productId, isActive: true });
   if (!product) {
-    throw new Error(
-      `Product with ID ${productId} does not exist or is not active`
-    );
+    throw new Error(`Product with ID ${productId} does not exist or is not active`);
+  }
+
+  if (productImagePath.length > maxImages) {
+    throw new Error(`Exceeded the maximum limit of ${maxImages} images.`);
+  }
+
+  let updatedProductImages;
+  if (productImagePath.length) {
+    updatedProductImages = await replaceExistingImages(product.productImage, productImagePath);
   }
 
   // Validate product category
-  const productCategory = await ProductCategoryModel.findOne({ productCategoryName: productCategoryName, isActive: true});
+  const productCategory = await ProductCategoryModel.findOne({
+    productCategoryName: productDetails.productCategoryName,
+    isActive: true
+  });
 
-  //Update the product
+  // Prepare update object for the product
+  const updateObject = {
+    productCategoryId: productCategory?.productCategoryId,
+    ...productDetails,
+    productImage: updatedProductImages,
+    updatedDate: new Date()
+  };
+
+  // Update the product
   const updatedProduct = await ProductModel.findOneAndUpdate(
-    { productId: productId },
-    {
-      $set: {
-        productCategoryId: productCategory.productCategoryId,
-        productName: productName,
-        productDescription: productDescription,
-        productBrand: productBrand,
-        containerType: containerType,
-        containerSize: containerSize,
-        cleanerForm: cleanerForm,
-        readyToUseOrConcentrate: readyToUseOrConcentrate,
-        fragrances: fragrances,
-        upcCode: upcCode,
-        skuCode: skuCode,
-        productMRP: productMRP,
-        productPrice: productPrice,
-        quantity: quantity,
-        discount: discount,
-        updatedDate: new Date(),
-      },
-    },
-    {
-      new: true,
-    }
+    { productId },
+    { $set: updateObject },
+    { new: true }
   );
 
   if (!updatedProduct) {
