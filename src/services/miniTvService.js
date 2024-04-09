@@ -97,6 +97,7 @@ const deleteAndUpdateMiniTv = async (bodyData) => {
 
 
 const deleteAndUpdateMiniMedia = async (bodyData, miniTvMediaPath) => {
+  try {
   const { miniTvId } = bodyData;
 
   if (!miniTvId) {
@@ -114,14 +115,25 @@ const deleteAndUpdateMiniMedia = async (bodyData, miniTvMediaPath) => {
   if (!miniTvMediaPath) {
     throw new Error("miniMediaTv is missing");
   }
-  try {
-    const extractPublicId = cloudinaryImageUpload.getPublicIdFromCloudinaryUrl(
-      existingMiniTv.miniTvMedia
-    );
 
-    // Delete existing media from Cloudinary
-    const deletedOnCloudinary =
-      await cloudinaryImageUpload.fileDeleteInCloudinary(extractPublicId);
+    // Extracting public id, media name, and extension
+    const extractPublicId = cloudinaryImageUpload.getPublicIdFromCloudinaryUrl(existingMiniTv.miniTvMedia);
+    const extractMediaName = extractPublicId.split('.')[0];
+    const extractExtension = extractPublicId.split('.')[1];
+
+
+    // Delete existing media from Cloudinary  
+    let deletedMediaOnCloudinary;
+    if(extractExtension === 'jpeg' || extractExtension === 'jpg') {
+       deletedMediaOnCloudinary = await cloudinaryImageUpload.imageDeleteInCloudinary(extractMediaName);
+    } else if(extractExtension === 'mp4') {
+       deletedMediaOnCloudinary = await cloudinaryImageUpload.videoDeleteInCloudinary(extractMediaName);
+    }
+
+     // Validating deletion
+     if (!deletedMediaOnCloudinary || deletedMediaOnCloudinary.length === 0) {
+      throw new Error(`Media ${extractExtension} deletion failed on Cloudinary`);
+    }
 
     // Upload new media to Cloudinary
     const uploadToCloudinary =
@@ -130,7 +142,7 @@ const deleteAndUpdateMiniMedia = async (bodyData, miniTvMediaPath) => {
         "miniTvMedia"
       );
 
-    if (deletedOnCloudinary.length === 0 || uploadToCloudinary.length === 0) {
+    if (!uploadToCloudinary || uploadToCloudinary.length === 0) {
       throw new Error(
         "Media deletion or upload failed, or uploaded media file size too large"
       );
