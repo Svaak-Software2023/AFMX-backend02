@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require("fs");
 const { pathMsg } = require("../const/errorHelper");
 
-
 const createMiniTv = async (req, res) => {
   try {
     const miniTvMediaPath = req.file?.path;
@@ -20,6 +19,12 @@ const createMiniTv = async (req, res) => {
 
     await uploadToVSCode(uploadedFilePath, targetDirectory);
 
+    // If upload succeeds, delete the uploaded file
+    if (fs.existsSync(uploadedFilePath)) {
+      fs.unlinkSync(uploadedFilePath);
+      console.log("Deleted file", uploadedFilePath);
+    }
+
     return res.status(201).json({ message: "Mini Tv created", miniTvResponse });
   } catch (error) {
     // If an error occurs, delete the uploaded file
@@ -29,7 +34,6 @@ const createMiniTv = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 
 const deleteAndUpdateMiniTv = async (req, res) => {
   try {
@@ -42,7 +46,6 @@ const deleteAndUpdateMiniTv = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 
 const deleteAndUpdateMiniMedia = async (req, res) => {
   try {
@@ -59,16 +62,24 @@ const deleteAndUpdateMiniMedia = async (req, res) => {
 
     await uploadToVSCode(uploadedFilePath, targetDirectory);
 
-    return res.json({ message: "Mini Tv Updated Successfully!", miniTvResponse });
+    // If upload succeeds, delete the uploaded file
+    if (fs.existsSync(uploadedFilePath)) {
+      fs.unlinkSync(uploadedFilePath);
+      console.log("Deleted file", uploadedFilePath);
+    }
+
+    return res.json({
+      message: "Mini Tv Updated Successfully!",
+      miniTvResponse,
+    });
   } catch (error) {
-     // If an error occurs, delete the uploaded file
-     if (req.file && fs.existsSync(req.file.path)) {
+    // If an error occurs, delete the uploaded file
+    if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
     return res.status(500).json({ error: error.message });
   }
-}
-
+};
 
 const getAllAndSingleMiniTv = async (req, res) => {
   try {
@@ -81,7 +92,6 @@ const getAllAndSingleMiniTv = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 
 const deleteSingleMiniTv = async (req, res) => {
   try {
@@ -100,5 +110,5 @@ module.exports = {
   deleteAndUpdateMiniTv,
   deleteAndUpdateMiniMedia,
   getAllAndSingleMiniTv,
-  deleteSingleMiniTv
+  deleteSingleMiniTv,
 };

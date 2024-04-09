@@ -202,7 +202,6 @@ const deleteSingleMiniTv = async (queryParams) => {
 
   // Check if the MiniTv exists
   const miniTv = await MiniTvModel.findOneAndDelete({ miniTvId: miniTvId });
-  console.log("Mini Tv deleted", miniTv);
 
   // If MiniTv does not exist, throw an error
   if (!miniTv) {
@@ -211,12 +210,19 @@ const deleteSingleMiniTv = async (queryParams) => {
 
   // Extract the public ID from the Cloudinary URL
   const extractPublicId = cloudinaryImageUpload.getPublicIdFromCloudinaryUrl(miniTv.miniTvMedia);
+  const extractMediaName = extractPublicId.split('.')[0];
+  const extractExtension = extractPublicId.split('.')[1];
 
-  // Delete the media from Cloudinary
-  const deletedOnCloudinary = await cloudinaryImageUpload.fileDeleteInCloudinary(extractPublicId);
+  // Delete existing media from Cloudinary  
+  let deletedMediaOnCloudinary;
+  if(extractExtension === 'jpeg' || extractExtension === 'jpg') {
+     deletedMediaOnCloudinary = await cloudinaryImageUpload.imageDeleteInCloudinary(extractMediaName);
+  } else if(extractExtension === 'mp4') {
+     deletedMediaOnCloudinary = await cloudinaryImageUpload.videoDeleteInCloudinary(extractMediaName);
+  }
 
   // If media deletion failed, throw an error
-  if (deletedOnCloudinary.length === 0) {
+  if (!deletedMediaOnCloudinary || deletedMediaOnCloudinary.length === 0) {
       throw new Error("Media deletion failed");
   }
 
