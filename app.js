@@ -99,6 +99,7 @@ app.get("/session-status/:CHECKOUT_SESSION_ID", async (req, res) => {
 app.get("/payment/success/:CHECKOUT_SESSION_ID", async (req, res) => {
   try {
     const sessionId = req.params.CHECKOUT_SESSION_ID;
+    console.log("Session ID: " , sessionId);
 
     // Retrieve session data from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -121,29 +122,53 @@ app.get("/payment/success/:CHECKOUT_SESSION_ID", async (req, res) => {
         { new: true }
       );
       // Retrieve the  
-      const retrieveInvoice = await stripe.invoices.retrieve(session.invoice);
-      console.log("retrieveInvoice", retrieveInvoice);
+      // const retrieveInvoice = await stripe.invoices.retrieve(session.invoice);
+      const retrieveInvoice = session.invoice ? await stripe.invoices.retrieve(session.invoice) : null;
 
-      const url = retrieveInvoice.hosted_invoice_url;
-
-      // Send email to the customer with invoice as attachment
-      const customerEmail = retrieveInvoice.customer_email;
-      const subject = "Payment Successful - Invoice";
-      const data = `Your payment was successful. Thank you for your purchase!
-                    <p>Click <a href="${url}">here</a> to view the invoice and reciept if you download the reciept to see the actual invoice.</p>
-                `;
-
-      await sendEmail(customerEmail, subject, data);
-
-      return res.redirect("https://americasfinestmaintenance.com/#/success");
+      console.log("retrieveInvoice", retrieveInvoice);  
+      if (retrieveInvoice) {
+        console.log("retrieveInvoice", retrieveInvoice);
+    
+        const url = retrieveInvoice.hosted_invoice_url;
+    
+        const customerEmail = retrieveInvoice.customer_email;
+        const subject = "Payment Successful - Invoice";
+        const data = `Your payment was successful. Thank you for your purchase!
+                      <p>Click <a href="${url}">here</a> to view the invoice and receipt. If you download the receipt, you can see the actual invoice.</p>
+                  `;
+    
+        await sendEmail(customerEmail, subject, data);
+    
+        return res.redirect("https://americasfinestmaintenance.com/#/success");
+      } else {
+        console.error("No invoice found for session:", sessionId);
+        return res.redirect("https://americasfinestmaintenance.com/#/success");
+      }
     } else {
-      throw new Error(
-        "Payment not completed or session status is not 'complete'"
-      );
+      throw new Error("Payment not completed or session status is not 'complete'");
     }
+
+    //   const url = retrieveInvoice.hosted_invoice_url;
+    //   // Send email to the customer with invoice as attachment
+    //   const customerEmail = retrieveInvoice.customer_email;
+    //   const subject = "Payment Successful - Invoice";
+    //   const data = `Your payment was successful. Thank you for your purchase!
+    //                 <p>Click <a href="${url}">here</a> to view the invoice and reciept if you download the reciept to see the actual invoice.</p>
+    //             `;
+
+    //   await sendEmail(customerEmail, subject, data);
+
+    //   return res.redirect("https://americasfinestmaintenance.com/#/success");
+    //   // return res.redirect("http://localhost:5173/#/success")
+    // } else {
+    //   throw new Error(
+    //     "Payment not completed or session status is not 'complete'"
+    //   );
+    // }
   } catch (error) {
     console.error("Error handling success URL:", error);
     return res.redirect("https://americasfinestmaintenance.com/#/cancel");
+    // return res.redirect("http://localhost:5173/#/cancel")
   }
 });
 

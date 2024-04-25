@@ -40,11 +40,11 @@ const stripeSession = async (priceId, customerId) => {
           quantity: 1
         },
       ],
-      mode: 'payment',
+      mode: "payment",
       ui_mode: "embedded",
       customer: customerId,
-      // return_url: `https://afmx.madextube700.com/payment/success/{CHECKOUT_SESSION_ID}`,
-      return_url: `http://localhost:5000/payment/success/{CHECKOUT_SESSION_ID}`,
+      return_url: `https://afmx.madextube700.com/payment/success/{CHECKOUT_SESSION_ID}`,
+      // return_url: `http://localhost:5000/payment/success/{CHECKOUT_SESSION_ID}`,
     });
     console.log("created session ", session);
     return session;
@@ -100,7 +100,7 @@ const createMembershipSubscription = async (
  let subscriptionPrice;
 
 if (memberShipType === "year") {
-  subscriptionPrice = parseFloat(memberShipPlan); // Convert to float if necessary
+  subscriptionPrice = parseFloat(memberShipPlan) * 12; // Convert to float if necessary
 } else if (memberShipType === "month") {
     subscriptionPrice = parseFloat(memberShipPlan); // Convert to float if necessary
 } else {
