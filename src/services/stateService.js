@@ -7,6 +7,7 @@ const registerState = async (stateDetails) => {
     //Field values from UI
     stateName,
     countryId,
+    latLng,
     createdDate,
     updatedDate,
     isActive,
@@ -42,6 +43,7 @@ const registerState = async (stateDetails) => {
     stateId: nextStateId,
     stateName,
     countryId,
+    latLng,
     createdDate,
     updatedDate,
     isActive,
@@ -75,13 +77,21 @@ const updateState = async (stateId, updatedStateDetails) => {
 
 
 // Get Method
-const getAllRegistersState = async () => {
-  const stateData = await StateModel.find({});
-  if (!stateData) {
-    throw new Error(errorMsg.FETCH_USERS_FAILED);
+const getAllRegistersState = async (queryParams) => {
+  const { countryId } = queryParams; 
+  if(!countryId) {
+    throw new Error('Need to specify a country')
   }
+  const stateData = await StateModel.find({ countryId: countryId });
+  
+  if (stateData.length === 0) {
+    // No states found for the given countryId
+    return [];
+  }
+  
   return stateData;
 };
+
 
 module.exports = {
   registerState,

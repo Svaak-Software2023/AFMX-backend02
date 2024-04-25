@@ -5,12 +5,12 @@ const registerCountry = async (countryDetails) => {
   const {
     //Field values from UI
     countryName,
-    continent,
     countryShortName,
     countryPhoneCode,
     createdDate,
     updatedDate,
     isActive,
+    latLng
   } = countryDetails;
 
   // Check Existing Country
@@ -35,13 +35,13 @@ const registerCountry = async (countryDetails) => {
   const newCountryDetails = await CountryModel({
     //Save in Country Model
     countryId: nextCountryId,
-    continent,
     countryName,
     countryShortName,
     countryPhoneCode,
     createdDate,
     updatedDate,
     isActive,
+    latLng
   });
 
   const newDetails = await newCountryDetails.save();

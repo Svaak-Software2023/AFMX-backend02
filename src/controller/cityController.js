@@ -31,7 +31,7 @@ const updateCity = async (req, res) => {
 
 const getAllRegistersCity = async (req, res) => {
   try {
-    const getResponse = await cityService.getAllRegistersCity();
+    const getResponse = await cityService.getAllRegistersCity(req.query);
     return res.json({
       message: "Fetch all city register details successfully ",
       getResponse,

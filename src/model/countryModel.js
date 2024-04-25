@@ -6,9 +6,13 @@ const countrySchema = new Schema({
     type: Number,
     required: true,
   },
-  continent: {
-    type: String,
-    required: true,
+  latLng: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: { type: [], default: [0.0, 0.0] },
   },
   countryName: {
     type: String,
@@ -37,10 +41,13 @@ const countrySchema = new Schema({
 });
 
 // Define pre hook to update updatedDate before findOneAndUpdate
-countrySchema.pre('findOneAndUpdate', function(next) {
+countrySchema.pre("findOneAndUpdate", function (next) {
   this._update.updatedDate = new Date(); // Set updatedDate to current date/time
   next();
 });
+
+// Ensure index for GeoJSON Point type for efficient querying
+countrySchema.index({ latLng: '2dsphere' });
 
 const CountryModel = mongoose.model("Country", countrySchema);
 

@@ -31,7 +31,7 @@ const updateState = async (req, res) => {
 
 const getAllRegistersState = async (req, res) => {
   try {
-    const getResponse = await stateService.getAllRegistersState();
+    const getResponse = await stateService.getAllRegistersState(req.query);
     return res.json({
       message: "Fetch all state register details successfully ",
       getResponse,

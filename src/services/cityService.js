@@ -8,6 +8,7 @@ const registerCity = async (cityDetails) => {
     cityName,
     isCity,
     stateId,
+    latLng,
     createdDate,
     updatedDate,
     isActive,
@@ -43,6 +44,7 @@ const registerCity = async (cityDetails) => {
     cityName,
     isCity,
     stateId,
+    latLng,
     createdDate,
     updatedDate,
     isActive,
@@ -74,10 +76,16 @@ const updateCity = async (cityId, updateCityDetails) => {
 };
 
 // Get method
-const getAllRegistersCity = async () => {
-  const cityData = await CityModel.find({});
-  if (!cityData) {
-    throw new Error(errorMsg.FETCH_USERS_FAILED);
+const getAllRegistersCity = async (queryParams) => {
+  const { stateId } = queryParams; 
+  if(!stateId) {
+    throw new Error('Need to specify a state');
+  }
+  const cityData = await CityModel.find({ stateId: stateId, isCity: true});
+ 
+  if (cityData.length === 0) {
+    // No states found for the given countryId
+    return [];
   }
   return cityData;
 };

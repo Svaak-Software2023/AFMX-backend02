@@ -7,8 +7,17 @@ const stateSchema = new Schema({
     required: true,
   },
   countryId: {
-    type: Number,
+    type: Schema.Types.Number,
+    ref: 'Country',
     required: true,
+  },
+  latLng: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: { type: [], default: [0.0, 0.0] },
   },
   stateName: {
     type: String,
@@ -33,6 +42,9 @@ stateSchema.pre('findOneAndUpdate', function(next) {
   this._update.updatedDate = new Date(); // Set updatedDate to current date/time
   next();
 });
+
+// Ensure index for GeoJSON Point type for efficient querying
+stateSchema.index({ latLng: '2dsphere' });
 
 const StateModel = mongoose.model("State", stateSchema);
 
