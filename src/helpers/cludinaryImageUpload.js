@@ -7,7 +7,7 @@ cloudinary.config({
   secure: true,
 });
 
-// Function to upload multiple images
+// Function to  upload multiple images
 const fileUploadInCloudinary = async (filePath, folderName) => {
   if (!filePath) return null;
 

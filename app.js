@@ -1,4 +1,5 @@
 const express = require("express");
+const sendEmail = require("./src/utility/sendEmail.js");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,7 +9,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
 
-// Import Model 
+// Import Model
 const ProductCheckoutModel = require("./src/model/productCheckOutModel.js");
 const RxMemberShipeModel = require("./src/model/rXMembershipModel.js");
 const ClientModel = require("./src/model/clientModel.js");
@@ -16,20 +17,20 @@ const CartItemsModel = require("./src/model/cartItemsModel.js");
 
 // Define all the routes
 const advertise_route = require("./src/routes/advertiseRoute.js");
-const admin_route = require('./src/routes/superAdminRoute.js');
+const admin_route = require("./src/routes/superAdminRoute.js");
 const client_route = require("./src/routes/clientRoute.js");
-const clientPaymentOption_route = require('./src/routes/clientPaymentOptionRoute.js');
+const clientPaymentOption_route = require("./src/routes/clientPaymentOptionRoute.js");
 const complaintCategory_route = require("./src/routes/complaintCategoryRoute.js");
 const complaintStatus_route = require("./src/routes/complaintStatusRoute.js");
 const complaint_route = require("./src/routes/complaintRoute.js");
-const cartItem_route = require('./src/routes/cartItemsRoute.js');
+const cartItem_route = require("./src/routes/cartItemsRoute.js");
 const country_route = require("./src/routes/countryRoute.js");
 const contact_route = require("./src/routes/contactRoute.js");
-const cart_route = require('./src/routes/cartRoute.js');
+const cart_route = require("./src/routes/cartRoute.js");
 const city_route = require("./src/routes/cityRoute.js");
-const productDeliveryAdress_route = require('./src/routes/productDeliveryAddressRoute.js');
-const productcategory_route = require('./src/routes/productCategoryRoute.js');
-const product_route = require('./src/routes/productRoute.js');
+const productDeliveryAdress_route = require("./src/routes/productDeliveryAddressRoute.js");
+const productcategory_route = require("./src/routes/productCategoryRoute.js");
+const product_route = require("./src/routes/productRoute.js");
 const role_route = require("./src/routes/roleRoute.js");
 const state_route = require("./src/routes/stateRoute.js");
 const service_department_route = require("./src/routes/serviceDepartmentRoute.js");
@@ -44,11 +45,12 @@ const miniTv_route = require("./src/routes/miniTvRoute.js");
 app.use(morgan("dev"));
 // for communicate with cors platform
 app.use(cors());
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"]
-
-}))
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 // To handle the incoming request
 app.use(express.json());
 
@@ -56,60 +58,92 @@ app.get("/", (req, res) => {
   return res.send("fetching the data");
 });
 
-
 // Define a route handler for handling successful payments for shoping center
-app.get('/session-status/:CHECKOUT_SESSION_ID', async (req, res) => {
+app.get("/session-status/:CHECKOUT_SESSION_ID", async (req, res) => {
   try {
     const cartId = req.query.cartId;
     const sessionId = req.params.CHECKOUT_SESSION_ID;
-   const session = await stripe.checkout.sessions.retrieve(sessionId);
-   if ((session.payment_status === 'paid') && (session.status === 'complete')) {
-       // Update payment status in the database 
-      const updatedDocument = await ProductCheckoutModel.findOneAndUpdate({cartId,sessionId},{$set:{payment_status:session.payment_status}},  { new: true } // Return the modified document after update
-      )
-        // Get the list of product IDs checked out in the session
-      const productIds = updatedDocument.products.map(product => product.productId);
-      
-        console.log("productIds", productIds);
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.payment_status === "paid" && session.status === "complete") {
+      // Update payment status in the database
+      const updatedDocument = await ProductCheckoutModel.findOneAndUpdate(
+        { cartId, sessionId },
+        { $set: { payment_status: session.payment_status } },
+        { new: true } // Return the modified document after update
+      );
+      // Get the list of product IDs checked out in the session
+      const productIds = updatedDocument.products.map(
+        (product) => product.productId
+      );
 
-        // Delete cart items associated with the checked out products
-      await CartItemsModel.deleteMany({ cartId, productId: { $in: productIds } });
-      
-      return res.status(200).redirect('https://americasfinestmaintenance.com/#/success')
-   }
+      console.log("productIds", productIds);
+
+      // Delete cart items associated with the checked out products
+      await CartItemsModel.deleteMany({
+        cartId,
+        productId: { $in: productIds },
+      });
+
+      return res
+        .status(200)
+        .redirect("https://americasfinestmaintenance.com/#/success");
+    }
   } catch (error) {
-    return res.status(500).redirect('https://americasfinestmaintenance.com/#/cancel')
+    return res
+      .status(500)
+      .redirect("https://americasfinestmaintenance.com/#/cancel");
   }
 });
 
 // Define a route handler for handling successful payments rx membership
- app.get('/payment/success/:CHECKOUT_SESSION_ID', async (req, res) => {
+app.get("/payment/success/:CHECKOUT_SESSION_ID", async (req, res) => {
   try {
-      const sessionId = req.params.CHECKOUT_SESSION_ID;
+    const sessionId = req.params.CHECKOUT_SESSION_ID;
 
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
-      const sessionPaymentStatus = session.payment_status; 
+    // Retrieve session data from Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log("Session retrived session", session);
 
-      if (sessionPaymentStatus === 'paid' && session.status === 'complete') {
-          // Update payment status in the database based on session ID
-          const updatedData = await RxMemberShipeModel.findOneAndUpdate(
-              { stripeSessionId: sessionId },
-              { $set: { paymentStatus: sessionPaymentStatus } },
-              { new: true }
-          );
-          // Update isRxRestRoomMember in the database based on session ID and user id
-          await ClientModel.findOneAndUpdate(
-            {clientId: updatedData.user},
-            { $set: { isRxRestRoomMember: updatedData.memberShipName } },
-            { new: true }
-            )
-          return res.redirect('https://americasfinestmaintenance.com/#/success');
-      } else {
-          throw new Error("Payment not completed or session status is not 'complete'");
-      }
+    const sessionPaymentStatus = session.payment_status;
+
+    if (sessionPaymentStatus === "paid" && session.status === "complete") {
+      // Update payment status in the database based on session ID
+      const updatedData = await RxMemberShipeModel.findOneAndUpdate(
+        { stripeSessionId: sessionId },
+        { $set: { paymentStatus: sessionPaymentStatus } },
+        { new: true }
+      );
+
+      // Update isRxRestRoomMember in the database based on session ID and user id
+      await ClientModel.findOneAndUpdate(
+        { clientId: updatedData.user },
+        { $set: { isRxRestRoomMember: updatedData.memberShipName } },
+        { new: true }
+      );
+      // Retrieve the  
+      const retrieveInvoice = await stripe.invoices.retrieve(session.invoice);
+      console.log("retrieveInvoice", retrieveInvoice);
+
+      const url = retrieveInvoice.hosted_invoice_url;
+
+      // Send email to the customer with invoice as attachment
+      const customerEmail = retrieveInvoice.customer_email;
+      const subject = "Payment Successful - Invoice";
+      const data = `Your payment was successful. Thank you for your purchase!
+                    <p>Click <a href="${url}">here</a> to view the invoice and reciept if you download the reciept to see the actual invoice.</p>
+                `;
+
+      await sendEmail(customerEmail, subject, data);
+
+      return res.redirect("https://americasfinestmaintenance.com/#/success");
+    } else {
+      throw new Error(
+        "Payment not completed or session status is not 'complete'"
+      );
+    }
   } catch (error) {
-      console.error("Error handling success URL:", error);
-      return res.redirect('https://americasfinestmaintenance.com/#/cancel');
+    console.error("Error handling success URL:", error);
+    return res.redirect("https://americasfinestmaintenance.com/#/cancel");
   }
 });
 
