@@ -19,6 +19,10 @@ const stateSchema = new Schema({
     },
     coordinates: { type: [], default: [0.0, 0.0] },
   },
+  isFlag: {
+    type: Boolean,
+    default: false,
+  },
   stateName: {
     type: String,
     required: true,

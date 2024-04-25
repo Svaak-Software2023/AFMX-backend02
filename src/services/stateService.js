@@ -11,6 +11,7 @@ const registerState = async (stateDetails) => {
     createdDate,
     updatedDate,
     isActive,
+    isFlag
   } = stateDetails;
 
   // Validate the country based on Id

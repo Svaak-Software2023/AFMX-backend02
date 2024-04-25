@@ -10,7 +10,8 @@ const registerCountry = async (countryDetails) => {
     createdDate,
     updatedDate,
     isActive,
-    latLng
+    latLng,
+    isFlag
   } = countryDetails;
 
   // Check Existing Country

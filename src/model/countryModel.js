@@ -14,6 +14,10 @@ const countrySchema = new Schema({
     },
     coordinates: { type: [], default: [0.0, 0.0] },
   },
+  isFlag: {
+    type: Boolean,
+    default: false,
+  },
   countryName: {
     type: String,
     required: true,
